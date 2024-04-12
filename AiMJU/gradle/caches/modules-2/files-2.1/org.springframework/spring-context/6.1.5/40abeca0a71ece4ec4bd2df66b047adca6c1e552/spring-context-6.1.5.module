@@ -1,0 +1,138 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework",
+    "module": "spring-context",
+    "version": "6.1.5",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.6"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework",
+          "module": "spring-aop",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-beans",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-core",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-expression",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "io.micrometer",
+          "module": "micrometer-observation",
+          "version": {
+            "requires": "1.12.4"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-context-6.1.5.jar",
+          "url": "spring-context-6.1.5.jar",
+          "size": 1303871,
+          "sha512": "9d34d08c6e6741b834a1a14a9db447b979f9603b8f9657c3b157105b4d819891173f2726448e56acc3928b13e68c791313184adb9e7259a5a19457f9c321fd83",
+          "sha256": "8f85eb0abe1e80f62a831f74be135e3cbbe0587a510417af74fdd2e3bea4eec7",
+          "sha1": "735d1bd7372d7c53e7b31b4a9c980ce2e0b26424",
+          "md5": "63e65c963507543c720e53f43e524290"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework",
+          "module": "spring-aop",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-beans",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-core",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-expression",
+          "version": {
+            "requires": "6.1.5"
+          }
+        },
+        {
+          "group": "io.micrometer",
+          "module": "micrometer-observation",
+          "version": {
+            "requires": "1.12.4"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-context-6.1.5.jar",
+          "url": "spring-context-6.1.5.jar",
+          "size": 1303871,
+          "sha512": "9d34d08c6e6741b834a1a14a9db447b979f9603b8f9657c3b157105b4d819891173f2726448e56acc3928b13e68c791313184adb9e7259a5a19457f9c321fd83",
+          "sha256": "8f85eb0abe1e80f62a831f74be135e3cbbe0587a510417af74fdd2e3bea4eec7",
+          "sha1": "735d1bd7372d7c53e7b31b4a9c980ce2e0b26424",
+          "md5": "63e65c963507543c720e53f43e524290"
+        }
+      ]
+    }
+  ]
+}

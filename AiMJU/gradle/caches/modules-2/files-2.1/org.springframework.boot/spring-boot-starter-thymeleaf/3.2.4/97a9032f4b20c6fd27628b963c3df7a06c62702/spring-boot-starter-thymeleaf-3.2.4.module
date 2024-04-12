@@ -1,0 +1,188 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework.boot",
+    "module": "spring-boot-starter-thymeleaf",
+    "version": "3.2.4",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.6.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter",
+          "version": {
+            "requires": "3.2.4"
+          }
+        },
+        {
+          "group": "org.thymeleaf",
+          "module": "thymeleaf-spring6",
+          "version": {
+            "requires": "3.1.2.RELEASE"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "url": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "size": 4771,
+          "sha512": "81b675a93a5c90976d4ab72bd5693edb449c6ae867fe133c45812d136f5fe429729b9e3cf5f8a9201c480c2630143131f1de0521aec5eb555122a51e77cacf1d",
+          "sha256": "2ba33fc61463117a2654a36a4cdd86a5b33001058a3353a8b0f5bde8645dbb42",
+          "sha1": "db900acbd0bbeb7a8682fe6aeb477d17fe501ac1",
+          "md5": "e907a1df6b37fff2a6126eb4e893953e"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter",
+          "version": {
+            "requires": "3.2.4"
+          }
+        },
+        {
+          "group": "org.thymeleaf",
+          "module": "thymeleaf-spring6",
+          "version": {
+            "requires": "3.1.2.RELEASE"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "url": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "size": 4771,
+          "sha512": "81b675a93a5c90976d4ab72bd5693edb449c6ae867fe133c45812d136f5fe429729b9e3cf5f8a9201c480c2630143131f1de0521aec5eb555122a51e77cacf1d",
+          "sha256": "2ba33fc61463117a2654a36a4cdd86a5b33001058a3353a8b0f5bde8645dbb42",
+          "sha1": "db900acbd0bbeb7a8682fe6aeb477d17fe501ac1",
+          "md5": "e907a1df6b37fff2a6126eb4e893953e"
+        }
+      ]
+    },
+    {
+      "name": "mavenOptionalApiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "url": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "size": 4771,
+          "sha512": "81b675a93a5c90976d4ab72bd5693edb449c6ae867fe133c45812d136f5fe429729b9e3cf5f8a9201c480c2630143131f1de0521aec5eb555122a51e77cacf1d",
+          "sha256": "2ba33fc61463117a2654a36a4cdd86a5b33001058a3353a8b0f5bde8645dbb42",
+          "sha1": "db900acbd0bbeb7a8682fe6aeb477d17fe501ac1",
+          "md5": "e907a1df6b37fff2a6126eb4e893953e"
+        }
+      ],
+      "capabilities": [
+        {
+          "group": "org.springframework.boot",
+          "name": "spring-boot-starter-thymeleaf-maven-optional",
+          "version": "3.2.4"
+        }
+      ]
+    },
+    {
+      "name": "mavenOptionalRuntimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "url": "spring-boot-starter-thymeleaf-3.2.4.jar",
+          "size": 4771,
+          "sha512": "81b675a93a5c90976d4ab72bd5693edb449c6ae867fe133c45812d136f5fe429729b9e3cf5f8a9201c480c2630143131f1de0521aec5eb555122a51e77cacf1d",
+          "sha256": "2ba33fc61463117a2654a36a4cdd86a5b33001058a3353a8b0f5bde8645dbb42",
+          "sha1": "db900acbd0bbeb7a8682fe6aeb477d17fe501ac1",
+          "md5": "e907a1df6b37fff2a6126eb4e893953e"
+        }
+      ],
+      "capabilities": [
+        {
+          "group": "org.springframework.boot",
+          "name": "spring-boot-starter-thymeleaf-maven-optional",
+          "version": "3.2.4"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-thymeleaf-3.2.4-javadoc.jar",
+          "url": "spring-boot-starter-thymeleaf-3.2.4-javadoc.jar",
+          "size": 4746,
+          "sha512": "85bc7a5067a014ab44723f60999377fa826f3be68c3551f46742461bee507f90f3b95c39f3e5c7b4a9534e6844e494bef9decbb568511b7cacdae12b743dacbe",
+          "sha256": "9fcfedb7f51d7607e996b2c937b51f6637a2197fb376d2423527bd3e0ce9507c",
+          "sha1": "8be3fab416d2c5287ad520d8606b63d257cae538",
+          "md5": "756b1d5ea78dc75becdeda939844b3a8"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-thymeleaf-3.2.4-sources.jar",
+          "url": "spring-boot-starter-thymeleaf-3.2.4-sources.jar",
+          "size": 4744,
+          "sha512": "f2dd9a7aba4990b4dbca8d6f820443e8adb4034b2ec4c9f6ce0d3ff2939c002747d02705299c43a025e1fb4f44dc0c725ee3cf0de2b8752d793b88a01917f976",
+          "sha256": "1da8887c20d8ae4b1ae87af9d3525f166f812746afb23a6dc0e80e86290c559c",
+          "sha1": "95c006d7695039d8988fef31a0c9e5ecb4d54ac4",
+          "md5": "eea34a73405601101e880576ad8a7958"
+        }
+      ]
+    }
+  ]
+}
