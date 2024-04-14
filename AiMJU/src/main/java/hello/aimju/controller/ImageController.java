@@ -18,7 +18,7 @@ public class ImageController {
     }
 
     @PostMapping("/upload")
-    public void uploadImage(@RequestParam("file") MultipartFile file) {
-        imageService.uploadImage(file);
+    public CompletionDto uploadImage(@RequestParam("file") MultipartFile file) {
+        return imageService.uploadAndProcessImage(file);
     }
 }

@@ -21,11 +21,11 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/chatGpt")
-public class ChatGPTController {
+public class ChatGptController {
 
     private final ChatGptService chatGptService;
 
-    public ChatGPTController(ChatGptService chatGptService) {
+    public ChatGptController(ChatGptService chatGptService) {
         this.chatGptService = chatGptService;
     }
 
