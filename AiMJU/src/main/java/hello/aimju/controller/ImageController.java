@@ -1,5 +1,6 @@
 package hello.aimju.controller;
 
+import hello.aimju.gpt.dto.CompletionDto;
 import hello.aimju.roboflow.ImageService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
