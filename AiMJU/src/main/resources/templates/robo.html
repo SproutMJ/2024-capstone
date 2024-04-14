@@ -2,13 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Upload Image</title>
+  <title>Upload and Get Recipe</title>
 </head>
 <body>
 <h1>Upload Image</h1>
-<form method="post" action="/image/upload" enctype="multipart/form-data">
-  <input type="file" name="file">
-  <button type="submit">Upload</button>
+<form id="uploadForm" enctype="multipart/form-data">
+  <input type="file" id="fileInput" name="file">
+  <button type="button" onclick="uploadImage()">Upload</button>
 </form>
+
+<div id="promptResult"></div>
+<div id="recipeResult"></div>
+
+<script>
+  async function uploadImage() {
+    const fileInput = document.getElementById('fileInput');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+      const response = await fetch('/image/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const completionDto = await response.json();
+        displayPrompt(completionDto.prompt);
+        await getRecipe(completionDto);
+      } else {
+        throw new Error('Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  }
+
+  async function getRecipe(completionDto) {
+    try {
+      const response = await fetch('/api/v1/chatGpt/legacyPrompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(completionDto)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        displayRecipe(result);
+      } else {
+        throw new Error('Failed to get recipe');
+      }
+    } catch (error) {
+      console.error('Error getting recipe:', error);
+    }
+  }
+
+  function displayPrompt(prompt) {
+    const promptResultDiv = document.getElementById('promptResult');
+    promptResultDiv.innerHTML = '<h2>Prompt</h2>';
+    promptResultDiv.innerHTML += `<pre>${prompt}</pre>`;
+  }
+
+  function displayRecipe(result) {
+    const recipeResultDiv = document.getElementById('recipeResult');
+    recipeResultDiv.innerHTML = '<h2>Recipe</h2>';
+
+    // API 응답에서 choices 배열의 첫 번째 요소의 text 필드를 추출
+    const recipeText = result.choices[0].text;
+
+    // 줄바꿈 문자(\n)을 HTML 줄바꿈 태그(<br>)로 대체하여 표시
+    const formattedRecipeText = recipeText.replace(/\n/g, '<br>');
+
+    // 화면에 텍스트 출력
+    recipeResultDiv.innerHTML += `<pre>${formattedRecipeText}</pre>`;
+  }
+</script>
 </body>
 </html>
