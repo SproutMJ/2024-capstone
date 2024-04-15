@@ -2,82 +2,151 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Upload and Get Recipe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Recommendation</title>
 </head>
 <body>
-<h1>Upload Image</h1>
-<form id="uploadForm" enctype="multipart/form-data">
-  <input type="file" id="fileInput" name="file">
-  <button type="button" onclick="uploadImage()">Upload</button>
-</form>
+<h2>Recipe Recommendation</h2>
 
-<div id="promptResult"></div>
+<div id="initialContainer">
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="uploadAndProcessImage()">Upload and Process Image</button>
+</div>
+
+<div id="ingredientsContainer" style="display: none;">
+  <div id="ingredientInputs">
+    <!-- Ingredient inputs will be dynamically added here -->
+  </div>
+  <button onclick="addIngredientInput()">Add Ingredient</button>
+  <button onclick="searchRecipes()">Search Recipes</button>
+</div>
+
 <div id="recipeResult"></div>
 
 <script>
-  async function uploadImage() {
-    const fileInput = document.getElementById('fileInput');
+  function addIngredientInput() {
+    const ingredientsContainer = document.getElementById('ingredientsContainer');
+
+    // 새로운 입력창 추가
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'ingredientInput';
+    input.placeholder = 'Enter ingredient';
+    ingredientsContainer.querySelector('#ingredientInputs').appendChild(input);
+  }
+
+  function uploadAndProcessImage() {
+    const fileInput = document.getElementById('imageInput');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert('Please select an image file.');
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
+    formData.append('file', file);
 
-    try {
-      const response = await fetch('/api/photo-recognition', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        const completionDto = await response.json();
-        displayPrompt(completionDto.prompt);
-        await getRecipe(completionDto);
-      } else {
-        throw new Error('Failed to upload image');
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    }
+    // 이미지 업로드 및 처리 요청
+    fetch('/api/photo-recognition', {
+      method: 'POST',
+      body: formData
+    })
+            .then(response => response.text())
+            .then(result => {
+              showIngredients(result); // 처리 결과를 재료 입력창에 표시
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Error occurred while processing image.');
+            });
   }
 
-  async function getRecipe(completionDto) {
-    try {
-      const response = await fetch('/api/v1/chatGpt/legacyPrompt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(completionDto)
-      });
+  function showIngredients(result) {
+    const ingredients = result.split(',').map(ingredient => ingredient.trim());
+    const ingredientInputs = document.getElementById('ingredientInputs');
 
-      if (response.ok) {
-        const result = await response.json();
-        displayRecipe(result);
-      } else {
-        throw new Error('Failed to get recipe');
-      }
-    } catch (error) {
-      console.error('Error getting recipe:', error);
-    }
+    // 기존의 재료 입력창 초기화
+    ingredientInputs.innerHTML = '';
+
+    // 이미지 처리 결과를 입력창에 자동으로 채움
+    ingredients.forEach((ingredient, index) => {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'ingredientInput';
+      input.placeholder = `Ingredient ${index + 1}`;
+      input.value = ingredient; // 이미지 처리 결과를 입력창에 자동 입력
+      ingredientInputs.appendChild(input);
+    });
+
+    // 재료 입력 컨테이너를 보이도록 설정
+    document.getElementById('initialContainer').style.display = 'none';
+    document.getElementById('ingredientsContainer').style.display = 'block';
   }
 
-  function displayPrompt(prompt) {
-    const promptResultDiv = document.getElementById('promptResult');
-    promptResultDiv.innerHTML = '<h2>Prompt</h2>';
-    promptResultDiv.innerHTML += `<pre>${prompt}</pre>`;
+  let savedPrompt;
+
+  function searchRecipes() {
+    const ingredientInputs = document.querySelectorAll('.ingredientInput');
+    const ingredients = Array.from(ingredientInputs).map(input => input.value);
+
+    // 재료들을 서버로 전송하여 /api/recommendation 엔드포인트에 요청 보내기
+    fetch('/api/recommendation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(ingredients)
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to get recommendation');
+              }
+              return response.json();
+            })
+            .then(completionDto => {
+              savedPrompt = completionDto.prompt;
+              // 받은 CompletionDto를 /api/legacyPrompt 엔드포인트에 전송하여 결과 받기
+              return fetch('/api/v1/chatGpt/legacyPrompt', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(completionDto)
+              });
+            })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to process legacy prompt');
+              }
+              return response.json();
+            })
+            .then(result => {
+              displayRecipeResult(result);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Error occurred while searching recipes.');
+            });
+
+    // 재료 입력창 숨기기
+    document.getElementById('ingredientsContainer').style.display = 'none';
   }
 
-  function displayRecipe(result) {
+  function displayRecipeResult(result) {
     const recipeResultDiv = document.getElementById('recipeResult');
-    recipeResultDiv.innerHTML = '<h2>Recipe</h2>';
-
-    // API 응답에서 choices 배열의 첫 번째 요소의 text 필드를 추출
-    const recipeText = result.choices[0].text;
-
-    // 줄바꿈 문자(\n)을 HTML 줄바꿈 태그(<br>)로 대체하여 표시
-    const formattedRecipeText = recipeText.replace(/\n/g, '<br>');
-
-    // 화면에 텍스트 출력
-    recipeResultDiv.innerHTML += `<pre>${formattedRecipeText}</pre>`;
+    recipeResultDiv.innerHTML = '<h3>Recommended Recipes</h3>';
+    recipeResultDiv.innerHTML += `<p><strong>${savedPrompt}</strong></p>`;
+    if (result && result.choices && result.choices.length > 0) {
+      const recipeText = result.choices[0].text; // 첫 번째 선택지의 텍스트 가져오기
+      const formattedRecipeText = recipeText.replace(/\n/g, '<br>');
+      recipeResultDiv.innerHTML += `<p>${formattedRecipeText}</p>`;
+    } else {
+      recipeResultDiv.innerHTML += '<p>No recipes found.</p>';
+    }
   }
+
 </script>
+
 </body>
 </html>

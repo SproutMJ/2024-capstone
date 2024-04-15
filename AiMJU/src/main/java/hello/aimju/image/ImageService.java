@@ -1,4 +1,4 @@
-package hello.aimju.roboflow;
+package hello.aimju.image;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +11,11 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ImageService {
+    private IngredientMapper ingredientMapper;
 
     // Roboflow API 키
     @Value("${roboflow.api-key}")
@@ -26,7 +25,7 @@ public class ImageService {
     @Value("${roboflow.api-endpoint}")
     private String ROBOFLOW_API_ENDPOINT;
 
-    public CompletionDto uploadAndProcessImage(MultipartFile imageFile) {
+    public String uploadAndProcessImage(MultipartFile imageFile) {
         try {
             // Base64 인코딩
             String encodedFile = new String(Base64.getEncoder().encode(imageFile.getBytes()), StandardCharsets.US_ASCII);
@@ -62,17 +61,9 @@ public class ImageService {
                 }
                 reader.close();
 
-                // 예측 결과를 CompletionDto로 변환하여 반환
-                List<String> classNames = extractClassNamesFromResponse(responseBuilder.toString());
-                String prompt = String.join(" ", classNames) + "으로 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘";
+                // 예측 결과를 String 형으로 변환하여 반환
 
-                return CompletionDto.builder()
-                        .model("gpt-3.5-turbo-instruct")
-                        .prompt(prompt)
-                        .temperature(0.3f)
-                        .max_tokens(1000)
-                        .build();
-
+                return extractClassIdFromResponse(responseBuilder.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -85,6 +76,17 @@ public class ImageService {
         }
 
         return null; // 예측 결과를 받지 못한 경우
+    }
+
+    public CompletionDto checkAndConfirmIngredients(List<String> ingredients) {
+        String prompt = String.join(" ", ingredients) +
+                "으로 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘";
+        return CompletionDto.builder()
+                .model("gpt-3.5-turbo-instruct")
+                .prompt(prompt)
+                .temperature(0.3f)
+                .max_tokens(1000)
+                .build();
     }
 
     /*
@@ -116,5 +118,57 @@ public class ImageService {
         }
 
         return classNames;
+    }
+
+    private String extractClassIdFromResponse(String response) {
+        Set<Integer> classIds = new HashSet<>();
+        String ingredients = "";
+        try {
+            // JSON 파싱을 위한 ObjectMapper 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+            // JSON 문자열을 JsonNode로 변환
+            JsonNode rootNode = objectMapper.readTree(response);
+
+            // "predictions" 배열의 각 객체에서 "class" 필드 값을 추출하여 리스트에 추가
+            if (rootNode.has("predictions")) {
+                JsonNode predictionsNode = rootNode.get("predictions");
+                if (predictionsNode.isArray()) {
+                    for (JsonNode predictionNode : predictionsNode) {
+                        if (predictionNode.has("class_id")) {
+                            int classId = predictionNode.get("class_id").asInt();
+                            System.out.println(predictionNode.get("class").asText() + classId);
+                            classIds.add(classId);
+                        }
+                    }
+                }
+            }
+            ingredients = joinIngredients(classIds);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return ingredients;
+    }
+
+    private String joinIngredients(Set<Integer> classIds) {
+        StringJoiner resultJoiner = new StringJoiner(", ");
+
+        // classIds에 대해 반복하면서 IngredientMapper를 참조하여 문자열 구성
+        for (int classId : classIds) {
+            try {
+                // 정적(static) 메서드 호출: 클래스 이름으로 직접 호출
+                IngredientMapper ingredient = IngredientMapper.getByClassId(classId);
+                String className = ingredient.getClassName();
+
+                // StringJoiner에 클래스 이름 추가
+                resultJoiner.add(className);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid class_id: " + classId);
+                // 예외 처리: 유효하지 않은 class_id에 대한 처리
+            }
+        }
+
+        // StringJoiner를 사용하여 최종 결과 문자열 생성
+        return resultJoiner.toString();
     }
 }
