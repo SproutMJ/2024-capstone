@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/api")
 public class ImageController {
 
     private final ImageService imageService;
@@ -18,7 +18,10 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping("/upload")
+    /*
+    * 사진 업로드 후 재료 인식
+    * */
+    @PostMapping("/photo-recognition")
     public CompletionDto uploadImage(@RequestParam("file") MultipartFile file) {
         return imageService.uploadAndProcessImage(file);
     }
