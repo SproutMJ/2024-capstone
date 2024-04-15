@@ -23,11 +23,4 @@ public class ChatRequestMsgDto {
         this.role = role;
         this.content = content;
     }
-//    private Object content;
-//
-//    @Builder
-//    public ChatRequestMsgDto(String role, Object content) {
-//        this.role = role;
-//        this.content = content;
-//    }
 }

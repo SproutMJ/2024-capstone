@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/view")
 public class HomeController {
+    /*
+    * robo 페이지 보여줌
+    * */
     @GetMapping("/robo")
     public String robo(){
-        return "robo"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
+        return "robo";
     }
 
 }

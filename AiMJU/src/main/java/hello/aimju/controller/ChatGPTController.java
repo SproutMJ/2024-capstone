@@ -51,8 +51,8 @@ public class ChatGptController {
     }
 
     /**
-     * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다. : gpt-3.5-turbo-instruct, babbage-002, davinci-002
-     *
+     * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
+     * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002
      * @param completionDto {}
      * @return ResponseEntity<Map < String, Object>>
      */
@@ -64,8 +64,8 @@ public class ChatGptController {
     }
 
     /**
-     * [API] 최신 ChatGPT 프롬프트 명령어를 수행합니다. : gpt-4, gpt-4 turbo, gpt-3.5-turbo
-     *
+     * [API] 최신 ChatGPT 프롬프트 명령어를 수행합니다.
+     * 사용 가능한 모델: gpt-4, gpt-4 turbo, gpt-3.5-turbo
      * @param chatCompletionDto
      * @return
      */
