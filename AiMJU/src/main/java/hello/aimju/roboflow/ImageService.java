@@ -18,12 +18,13 @@ import java.util.List;
 @Service
 public class ImageService {
 
-    // Roboflow API 엔드포인트
-    private static final String ROBOFLOW_API_ENDPOINT = "https://detect.roboflow.com/your-model/42";
-
     // Roboflow API 키
     @Value("${roboflow.api-key}")
     private String ROBOFLOW_API_KEY;
+
+    // Roboflow API Endpoint
+    @Value("${roboflow.api-endpoint}")
+    private String ROBOFLOW_API_ENDPOINT;
 
     public CompletionDto uploadAndProcessImage(MultipartFile imageFile) {
         try {
@@ -31,7 +32,7 @@ public class ImageService {
             String encodedFile = new String(Base64.getEncoder().encode(imageFile.getBytes()), StandardCharsets.US_ASCII);
 
             // 업로드 URL 생성
-            String uploadURL = "https://detect.roboflow.com/foodey/3?api_key=" + ROBOFLOW_API_KEY + "&name=YOUR_IMAGE.jpg";
+            String uploadURL = ROBOFLOW_API_ENDPOINT + "?api_key=" + ROBOFLOW_API_KEY + "&name=YOUR_IMAGE.jpg";
 
             // HTTP 요청 설정
             HttpURLConnection connection = null;
@@ -86,6 +87,9 @@ public class ImageService {
         return null; // 예측 결과를 받지 못한 경우
     }
 
+    /*
+    * 클래스 이름(재료명) 추출
+    * */
     private List<String> extractClassNamesFromResponse(String response) {
         List<String> classNames = new ArrayList<>();
 
