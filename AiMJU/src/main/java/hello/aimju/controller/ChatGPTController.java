@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/chatGpt")
+@RequestMapping(value = "/api")
 public class ChatGptController {
 
     private final ChatGptService chatGptService;
@@ -32,7 +32,7 @@ public class ChatGptController {
     /**
      * [API] ChatGPT 모델 리스트를 조회합니다.
      */
-    @GetMapping("/modelList")
+    @GetMapping("/modelList-gpt")
     public ResponseEntity<List<Map<String, Object>>> selectModelList() {
         List<Map<String, Object>> result = chatGptService.modelList();
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -44,7 +44,7 @@ public class ChatGptController {
      * @param modelName
      * @return
      */
-    @GetMapping("/model")
+    @GetMapping("/model-gpt")
     public ResponseEntity<Map<String, Object>> isValidModel(@RequestParam(name = "modelName") String modelName) {
         Map<String, Object> result = chatGptService.isValidModel(modelName);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -53,13 +53,12 @@ public class ChatGptController {
     /**
      * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
      * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002
-     * @param completionDto {}
+     * @param ingredients
      * @return ResponseEntity<Map < String, Object>>
      */
-    @PostMapping("/legacyPrompt")
-    public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody CompletionDto completionDto) {
-        log.debug("param :: " + completionDto.toString());
-        Map<String, Object> result = chatGptService.legacyPrompt(completionDto);
+    @PostMapping("/recommendation-gpt")
+    public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody List<String> ingredients) {
+        Map<String, Object> result = chatGptService.legacyPrompt(ingredients);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -69,7 +68,7 @@ public class ChatGptController {
      * @param chatCompletionDto
      * @return
      */
-    @PostMapping("/prompt")
+    @PostMapping("/prompt-gpt")
     public ResponseEntity<Map<String, Object>> selectPrompt(@RequestBody ChatCompletionDto chatCompletionDto) {
         log.debug("param :: " + chatCompletionDto.toString());
         Map<String, Object> result = chatGptService.prompt(chatCompletionDto);

@@ -84,14 +84,13 @@
     document.getElementById('ingredientsContainer').style.display = 'block';
   }
 
-  let savedPrompt;
-
   function searchRecipes() {
     const ingredientInputs = document.querySelectorAll('.ingredientInput');
     const ingredients = Array.from(ingredientInputs).map(input => input.value);
+    const displayPrompt = ingredients.join(', ') + ' 로 만들 수 있는 음식 레시피 추천해줘';
 
     // 재료들을 서버로 전송하여 /api/recommendation 엔드포인트에 요청 보내기
-    fetch('/api/recommendation', {
+    fetch('/api/recommendation-gpt', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -104,25 +103,8 @@
               }
               return response.json();
             })
-            .then(completionDto => {
-              savedPrompt = completionDto.prompt;
-              // 받은 CompletionDto를 /api/legacyPrompt 엔드포인트에 전송하여 결과 받기
-              return fetch('/api/v1/chatGpt/legacyPrompt', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(completionDto)
-              });
-            })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Failed to process legacy prompt');
-              }
-              return response.json();
-            })
             .then(result => {
-              displayRecipeResult(result);
+              displayRecipeResult(result, displayPrompt);
             })
             .catch(error => {
               console.error('Error:', error);
@@ -133,10 +115,10 @@
     document.getElementById('ingredientsContainer').style.display = 'none';
   }
 
-  function displayRecipeResult(result) {
+  function displayRecipeResult(result, displayPrompt) {
     const recipeResultDiv = document.getElementById('recipeResult');
     recipeResultDiv.innerHTML = '<h3>Recommended Recipes</h3>';
-    recipeResultDiv.innerHTML += `<p><strong>${savedPrompt}</strong></p>`;
+    recipeResultDiv.innerHTML += `<p><strong>${displayPrompt}</strong></p>`;
     if (result && result.choices && result.choices.length > 0) {
       const recipeText = result.choices[0].text; // 첫 번째 선택지의 텍스트 가져오기
       const formattedRecipeText = recipeText.replace(/\n/g, '<br>');

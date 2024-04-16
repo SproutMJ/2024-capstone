@@ -22,7 +22,7 @@ public interface ChatGptService {
 
     Map<String, Object> isValidModel(String modelName);
 
-    Map<String, Object> legacyPrompt(CompletionDto completionDto);
+    Map<String, Object> legacyPrompt(List<String> ingredients);
 
     Map<String, Object> prompt(ChatCompletionDto chatCompletionDto);
 }

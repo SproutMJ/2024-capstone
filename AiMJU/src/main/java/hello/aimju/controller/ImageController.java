@@ -1,11 +1,8 @@
 package hello.aimju.controller;
 
-import hello.aimju.gpt.dto.CompletionDto;
-import hello.aimju.image.ImageService;
+import hello.aimju.image.Service.ImageService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -25,11 +22,4 @@ public class ImageController {
         return imageService.uploadAndProcessImage(file);
     }
 
-    /*
-    * 인식한 재료 확인 후 CompletionDto 만들어줌
-    * */
-    @PostMapping("recommendation")
-    public CompletionDto checkIngredients(@RequestBody List<String> ingredients) {
-        return imageService.checkAndConfirmIngredients(ingredients);
-    }
 }
