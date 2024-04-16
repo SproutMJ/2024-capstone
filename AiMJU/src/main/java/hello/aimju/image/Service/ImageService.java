@@ -1,8 +1,8 @@
-package hello.aimju.image;
+package hello.aimju.image.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hello.aimju.gpt.dto.CompletionDto;
+import hello.aimju.image.Enum.IngredientMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,17 +76,6 @@ public class ImageService {
         }
 
         return null; // 예측 결과를 받지 못한 경우
-    }
-
-    public CompletionDto checkAndConfirmIngredients(List<String> ingredients) {
-        String prompt = String.join(" ", ingredients) +
-                "으로 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘";
-        return CompletionDto.builder()
-                .model("gpt-3.5-turbo-instruct")
-                .prompt(prompt)
-                .temperature(0.3f)
-                .max_tokens(1000)
-                .build();
     }
 
     /*

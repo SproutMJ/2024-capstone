@@ -1,4 +1,4 @@
-package hello.aimju.image;
+package hello.aimju.image.Enum;
 
 public enum IngredientMapper {
     AVOCADO(0, "아보카도"),
