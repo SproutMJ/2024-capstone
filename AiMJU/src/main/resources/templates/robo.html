@@ -87,9 +87,10 @@
   function searchRecipes() {
     const ingredientInputs = document.querySelectorAll('.ingredientInput');
     const ingredients = Array.from(ingredientInputs).map(input => input.value);
+    // 사용자에게 보이게 할 질문
     const displayPrompt = ingredients.join(', ') + ' 로 만들 수 있는 음식 레시피 추천해줘';
 
-    // 재료들을 서버로 전송하여 /api/recommendation 엔드포인트에 요청 보내기
+    // 재료들을 서버로 전송하여 /api/recommendation-gpt 엔드포인트에 요청 보내기
     fetch('/api/recommendation-gpt', {
       method: 'POST',
       headers: {

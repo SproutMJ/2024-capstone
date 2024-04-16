@@ -1,5 +1,6 @@
 package hello.aimju.image.Enum;
 
+// 각각에 class_id에 맞는 식재료 한글명
 public enum IngredientMapper {
     AVOCADO(0, "아보카도"),
     BEAN_SPROUTS(1, "콩나물"),

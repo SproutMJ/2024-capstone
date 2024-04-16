@@ -25,6 +25,10 @@ public class ImageService {
     @Value("${roboflow.api-endpoint}")
     private String ROBOFLOW_API_ENDPOINT;
 
+    /**
+     * roboflow 모델 API에 이미지 보내서 인식된 재료를 String 형으로 가져옴
+     * @return : "파, 마늘, 양파, 삼겹살, ..."
+     * */
     public String uploadAndProcessImage(MultipartFile imageFile) {
         try {
             // Base64 인코딩
@@ -78,9 +82,11 @@ public class ImageService {
         return null; // 예측 결과를 받지 못한 경우
     }
 
-    /*
-    * 클래스 이름(재료명) 추출
-    * */
+    /**
+     * 클래스 이름(재료명) 추출
+     * 재료가 많아질 시, class 이름으로 중복 검사하기에는 시간이 오래걸림
+     * 지금은 사용하지 않음
+     * */
     private List<String> extractClassNamesFromResponse(String response) {
         List<String> classNames = new ArrayList<>();
 
@@ -109,8 +115,12 @@ public class ImageService {
         return classNames;
     }
 
+    /**
+     * class_id 중복을 없애줌
+     * 이후 joinIngredients 사용
+     * */
     private String extractClassIdFromResponse(String response) {
-        Set<Integer> classIds = new HashSet<>();
+        Set<Integer> classIds = new HashSet<>(); // 빠른 중복검사를 위해 HashSet 사용
         String ingredients = "";
         try {
             // JSON 파싱을 위한 ObjectMapper 생성
@@ -139,6 +149,9 @@ public class ImageService {
         return ingredients;
     }
 
+    /**
+     * IngredientMapper Enum Class를 이용해서 class_id에 맞는 재료의 한글명 가져옴
+     * */
     private String joinIngredients(Set<Integer> classIds) {
         StringJoiner resultJoiner = new StringJoiner(", ");
 

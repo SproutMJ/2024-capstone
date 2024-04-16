@@ -189,9 +189,9 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
 
-    /*
+    /**
      * 인식한 재료 확인 후 CompletionDto 만들어줌
-     * */
+     */
     private CompletionDto makePrompt(List<String> ingredients) {
         String prompt = String.join(" ", ingredients) +
                 "으로 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘";
