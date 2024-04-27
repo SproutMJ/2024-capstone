@@ -1,7 +1,6 @@
 package hello.aimju.controller;
 
 import hello.aimju.gpt.dto.ChatCompletionDto;
-import hello.aimju.gpt.dto.CompletionDto;
 import hello.aimju.gpt.service.ChatGptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -51,18 +50,6 @@ public class ChatGptController {
     }
 
     /**
-     * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
-     * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002
-     * @param ingredients
-     * @return ResponseEntity<Map < String, Object>>
-     */
-    @PostMapping("/recommendation-gpt")
-    public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody List<String> ingredients) {
-        Map<String, Object> result = chatGptService.legacyPrompt(ingredients);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    /**
      * [API] 최신 ChatGPT 프롬프트 명령어를 수행합니다.
      * 사용 가능한 모델: gpt-4, gpt-4 turbo, gpt-3.5-turbo
      * @param chatCompletionDto
@@ -72,6 +59,18 @@ public class ChatGptController {
     public ResponseEntity<Map<String, Object>> selectPrompt(@RequestBody ChatCompletionDto chatCompletionDto) {
         log.debug("param :: " + chatCompletionDto.toString());
         Map<String, Object> result = chatGptService.prompt(chatCompletionDto);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
+     * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002
+     * @param question
+     * @return ResponseEntity<Map < String, Object>>
+     */
+    @PostMapping("/recommendation-gpt")
+    public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody String question) {
+        Map<String, Object> result = chatGptService.legacyPrompt(question);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
