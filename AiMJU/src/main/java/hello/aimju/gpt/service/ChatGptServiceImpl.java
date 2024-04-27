@@ -123,14 +123,14 @@ public class ChatGptServiceImpl implements ChatGptService {
     /**
      * ChatGTP 프롬프트 검색
      *
-     * @param ingredients
+     * @param question
      * @return Map<String, Object>
      */
     @Override
-    public Map<String, Object> legacyPrompt(List<String> ingredients) {
+    public Map<String, Object> legacyPrompt(String question) {
         log.debug("[+] 레거시 프롬프트를 수행합니다.");
 
-        CompletionDto completionDto = makePrompt(ingredients);
+        CompletionDto completionDto = makePrompt(question);
 
         // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
         HttpHeaders headers = chatGPTConfig.httpHeaders();
@@ -192,12 +192,11 @@ public class ChatGptServiceImpl implements ChatGptService {
     /**
      * 인식한 재료 확인 후 CompletionDto 만들어줌
      */
-    private CompletionDto makePrompt(List<String> ingredients) {
-        String prompt = String.join(" ", ingredients) +
-                "으로 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘";
+    // "으로 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘";
+    private CompletionDto makePrompt(String question) {
         return CompletionDto.builder()
                 .model("gpt-3.5-turbo-instruct")
-                .prompt(prompt)
+                .prompt(question)
                 .temperature(0.3f)
                 .max_tokens(1000)
                 .build();
