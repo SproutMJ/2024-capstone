@@ -1,11 +1,20 @@
 package hello.aimju.Recipe_Recommand_Message.domain;
 
 import hello.aimju.Recipe.domain.Recipe;
+import jakarta.persistence.*;
+import lombok.Getter;
 
+@Entity
+@Getter
 public class RecipeRecommandMessage {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Recipe recipeId;
     private String content;
     private Long isUser;
-    private ChatType chatType
+    //    @Em
+    private ChatType chatType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
 }
