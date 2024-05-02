@@ -5,12 +5,14 @@ import hello.aimju.Comment.domain.Comment;
 import hello.aimju.Recipe.domain.Recipe;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +26,9 @@ public class User {
     private List<Recipe> recipes = new ArrayList<>();
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+    public User(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 }

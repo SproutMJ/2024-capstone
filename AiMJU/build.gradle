@@ -11,6 +11,10 @@ java {
     sourceCompatibility = '17'
 }
 
+compileJava {
+    options.compilerArgs << "-parameters"
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -24,9 +28,17 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+
+    implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+    implementation 'org.hibernate.validator:hibernate-validator-cdi:6.2.0.Final'
+
     implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
 }
 

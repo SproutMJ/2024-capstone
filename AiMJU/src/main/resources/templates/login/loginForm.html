@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>로그인</h2>
+    </div>
+
+    <form id="loginForm" action="/api/login" method="post">
+
+        <div id="globalErrors"></div>
+
+        <div>
+            <label for="userName">로그인 ID</label>
+            <input type="text" id="userName" name="userName" class="form-control">
+            <div id="userNameErrors" class="field-error"></div>
+        </div>
+        <div>
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" class="form-control">
+            <div id="passwordErrors" class="field-error"></div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="button" onclick="submitForm()">로그인</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg" onclick="location.href='items.html'">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+
+<script>
+    function submitForm() {
+        var formData = {
+            userName: document.getElementById("userName").value,
+            password: document.getElementById("password").value
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/login", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    window.location.href = "/";
+                } else {
+                    var errorResponse = JSON.parse(xhr.responseText);
+                    displayErrors(errorResponse);
+                }
+            }
+        };
+        xhr.send(JSON.stringify(formData));
+    }
+
+    function displayErrors(errors) {
+        var globalErrorsDiv = document.getElementById("globalErrors");
+        globalErrorsDiv.innerHTML = "";
+        errors.forEach(function (error) {
+            var p = document.createElement("p");
+            p.innerText = error.defaultMessage;
+            globalErrorsDiv.appendChild(p);
+        });
+
+        var userNameErrorsDiv = document.getElementById("userNameErrors");
+        userNameErrorsDiv.innerHTML = "";
+        var passwordErrorsDiv = document.getElementById("passwordErrors");
+        passwordErrorsDiv.innerHTML = "";
+        errors.forEach(function (error) {
+            if (error.field === "userName") {
+                userNameErrorsDiv.innerText = error.defaultMessage;
+            } else if (error.field === "password") {
+                passwordErrorsDiv.innerText = error.defaultMessage;
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
