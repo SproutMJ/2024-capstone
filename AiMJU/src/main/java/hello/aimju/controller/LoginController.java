@@ -20,10 +20,16 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
     private final LoginService loginService;
 
+    /*
+    BindingResult bindingResult: 유효성 검사 후 발생한 바인딩 오류를 포함하는 객체.
+    @RequestParam(defaultValue = "/") String redirectURL: 로그인 후 리다이렉트할 URL을 받음. 이 값이 없을 경우 기본적으로 "/"로 리다이렉트.
+    HttpServletRequest request: 현재 HTTP 요청에 대한 정보를 담고 있는 객체. 세션을 생성하거나 사용자 정보를 저장하기 위해 사용됨.
+    @RequestBody @Valid LoginRequestDto loginRequestDto: 프론트에서 보내줘야함.
+     */
     @PostMapping("/login")
-    public String loginV4(@RequestBody @Valid LoginRequestDto loginRequestDto, BindingResult bindingResult,
-                          @RequestParam(defaultValue = "/") String redirectURL,
-                          HttpServletRequest request) {
+    public String login(@RequestBody @Valid LoginRequestDto loginRequestDto, BindingResult bindingResult,
+                        @RequestParam(defaultValue = "/") String redirectURL,
+                        HttpServletRequest request) {
 
         if (bindingResult.hasErrors()) {
             return "login/loginForm";
@@ -47,7 +53,7 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public String logoutV3(HttpServletRequest request) {
+    public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
