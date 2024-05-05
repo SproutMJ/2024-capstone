@@ -90,11 +90,13 @@
     // 사용자에게 보여줄 질문
     const realIngredients = ingredients.join(', ');
     const displayPrompt = realIngredients + '로 만들 수 있는 음식을 추천해줘.';
-    const realPrompt = realIngredients + '로 만들 수 있는 음식 5가지를 추천해줘. '
-            + '이때 형식은 음식1, 음식2, 음식3, 음식4, 음식5야';
+    const realPrompt = realIngredients + '로 만들 수 있는 음식 5가지를 추천해줘.'
+            + '숫자 대신 쉼표(,)를 사용하여 형식을 만들어야 해. 번호는 사용하지 말고 쉼표를 사용해야 해.'
+            + '즉 형식은 아래와 같게 해야한다는 거야.'
+            +'\n 음식1, 음식2, 음식3, 음식4, 음식5';
 
     // 재료를 서버로 전송하여 음식 추천 요청 보내기
-    fetch('/api/recommendation-gpt', {
+    fetch('/api/recommendation-menu', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -120,15 +122,14 @@
     document.getElementById('ingredientsContainer').style.display = 'none';
   }
 
-  function displayFoodResult(result, displayPrompt, realIngredients) {
+  function displayFoodResult(foods, displayPrompt, realIngredients) {
     const recipeResultDiv = document.getElementById('recipeResult');
     recipeResultDiv.innerHTML = '<h3>Recommended Recipes</h3>';
     recipeResultDiv.innerHTML += `<p><strong>${displayPrompt}</strong></p>`;
 
-    // 음식 추천을 버튼 형식으로 화면에 표시
-    if (result && result.choices && result.choices.length > 0) {
-      const recommendedFoods = result.choices[0].text.split(', '); // 음식 추천을 배열로 분리
-      recommendedFoods.forEach(food => {
+    // 추천된 음식을 버튼 형식으로 화면에 표시
+    if (foods.length > 0) {
+      foods.forEach(food => {
         const button = document.createElement('button');
         button.textContent = food;
         button.addEventListener('click', () => {
@@ -143,8 +144,10 @@
 
   function searchRecipes(food, realIngredients) {
     const displayPrompt = food + ' 레시피를 알려줘.';
-    const realPrompt = food + "를 " + realIngredients
-            + '가지고 만들 수 있는 음식 하나를 추천해주고, 필요한 재료와 순차적으로 레시피를 설명해줘';
+    const realPrompt = realIngredients + "를 활용하여" + food
+            + '를 만들고 싶어, 필요한 재료와 레시피를 순차적으로 설명해줘. 만일 추가적으로 필요한 재료가 있으면 추천해주고'
+            + '이때 형식은 아래와 같아야해 추가재료는 재료를 분리하지 말고 재료에 포함시켜줘! \n' + '재료:\n1.재료1\n2.재료2\n3.재료3\n'
+            + '레시피:\n1.요리순서1\n2.요리순서2\n3.요리순서3';
     // 선택한 음식에 대한 추가 질문 요청
     fetch('/api/recommendation-gpt', {
       method: 'POST',
@@ -173,10 +176,13 @@
     const recipeResultDiv = document.getElementById('recipeResult');
     recipeResultDiv.innerHTML = '<h3>Recommended Recipes</h3>';
     recipeResultDiv.innerHTML += `<p><strong>${displayPrompt}</strong></p>`;
-    if (result && result.choices && result.choices.length > 0) {
-      const recipeText = result.choices[0].text; // 첫 번째 선택지의 텍스트 가져오기
-      const formattedRecipeText = recipeText.replace(/\n/g, '<br>');
-      recipeResultDiv.innerHTML += `<p>${formattedRecipeText}</p>`;
+
+    if (result && result.ingredients && result.instructions) {
+      const ingredients = result.ingredients.join('<br>');
+      const instructions = result.instructions.join('<br>');
+
+      recipeResultDiv.innerHTML += `<p><strong>Ingredients:</strong><br>${ingredients}</p>`;
+      recipeResultDiv.innerHTML += `<p><strong>Instructions:</strong><br>${instructions}</p>`;
     } else {
       recipeResultDiv.innerHTML += '<p>No recipes found.</p>';
     }

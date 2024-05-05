@@ -2,6 +2,7 @@ package hello.aimju.gpt.service;
 
 import hello.aimju.gpt.dto.ChatCompletionDto;
 import hello.aimju.gpt.dto.CompletionDto;
+import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,4 +26,8 @@ public interface ChatGptService {
     Map<String, Object> legacyPrompt(String question);
 
     Map<String, Object> prompt(ChatCompletionDto chatCompletionDto);
+
+    GptRecipeResponseDto getRecipeResponse(String question);
+
+    List<String> extractFoods(String question);
 }
