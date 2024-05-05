@@ -1,16 +1,14 @@
 package hello.aimju.controller;
 
 import hello.aimju.User.dto.SignupRequestDto;
+import hello.aimju.User.dto.UserInfoResponseDto;
 import hello.aimju.User.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
@@ -19,5 +17,10 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         return userService.signup(signupRequestDto);
+    }
+
+    @GetMapping("/user-info/{userId}")
+    public UserInfoResponseDto getUserInfo(@PathVariable Long userId){
+        return userService.getUserInfo(userId);
     }
 }
