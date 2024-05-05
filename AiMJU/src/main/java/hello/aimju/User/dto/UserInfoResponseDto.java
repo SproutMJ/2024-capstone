@@ -1,0 +1,14 @@
+package hello.aimju.User.dto;
+
+import lombok.Getter;
+
+@Getter
+public class UserInfoResponseDto {
+    private String userName;
+    private String password;
+
+    public UserInfoResponseDto(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
+}

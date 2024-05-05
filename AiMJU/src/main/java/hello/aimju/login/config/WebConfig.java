@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")//아래 경로 빼고 모든 경로 체크
-                .excludePathPatterns("/", "/api/signup", "/api/login", "/api/logout",
+                .excludePathPatterns("/", "/api/signup", "/api/login", "/api/logout", "/api/user-info/**",
                         "/css/**", "/*.ico", "/error");
     }
 }

@@ -3,6 +3,7 @@ package hello.aimju.User.service;
 import hello.aimju.User.domain.User;
 import hello.aimju.User.dto.SignupRequestDto;
 import hello.aimju.User.dto.StatusResponseDto;
+import hello.aimju.User.dto.UserInfoResponseDto;
 import hello.aimju.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,17 @@ public class UserService {
 
         StatusResponseDto res = new StatusResponseDto("회원가입이 완료되었습니다.", 200);
         return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    public UserInfoResponseDto getUserInfo(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("해당 사용자가 존재하지 않습니다.");
+        }
+
+        User userInfo = user.get();
+
+        return new UserInfoResponseDto(userInfo.getUserName(), userInfo.getPassword());
     }
 
 }
