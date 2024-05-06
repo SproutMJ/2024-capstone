@@ -91,7 +91,7 @@
     const realIngredients = ingredients.join(', ');
     const displayPrompt = realIngredients + '로 만들 수 있는 음식을 추천해줘.';
     const realPrompt = realIngredients + '로 만들 수 있는 음식 5가지를 추천해줘.'
-            + '숫자 대신 쉼표(,)를 사용하여 형식을 만들어야 해. 번호는 사용하지 말고 쉼표를 사용해야 해.'
+            + '숫자 대신 쉼표(,)를 사용하여 형식을 만들어야 해. 번호는 사용하지 말고 쉼표를 사용해야 해. 번호 사용하면 죽여버린다'
             + '즉 형식은 아래와 같게 해야한다는 거야.'
             +'\n 음식1, 음식2, 음식3, 음식4, 음식5';
 
@@ -146,7 +146,8 @@
     const displayPrompt = food + ' 레시피를 알려줘.';
     const realPrompt = realIngredients + "를 활용하여" + food
             + '를 만들고 싶어, 필요한 재료와 레시피를 순차적으로 설명해줘. 만일 추가적으로 필요한 재료가 있으면 추천해주고'
-            + '이때 형식은 아래와 같아야해 추가재료는 재료를 분리하지 말고 재료에 포함시켜줘! \n' + '재료:\n1.재료1\n2.재료2\n3.재료3\n'
+            + '추가재료는 재료를 분리하지 말고 재료에 포함시켜줘. 이때 형식은 반드시 아래와 같아야해\n'
+            + '재료:\n1.재료1\n2.재료2\n3.재료3\n'
             + '레시피:\n1.요리순서1\n2.요리순서2\n3.요리순서3';
     // 선택한 음식에 대한 추가 질문 요청
     fetch('/api/recommendation-gpt', {
@@ -164,7 +165,8 @@
             })
             .then(result  => {
               // 서버로부터 받은 응답 처리
-              displayRecipeResult(result, displayPrompt);
+              console.log(result)
+              displayRecipeResult(food, result, displayPrompt);
             })
             .catch(error => {
               console.error('Error:', error);
@@ -172,7 +174,7 @@
             });
   }
 
-  function displayRecipeResult(result, displayPrompt) {
+  function displayRecipeResult(food, result, displayPrompt) {
     const recipeResultDiv = document.getElementById('recipeResult');
     recipeResultDiv.innerHTML = '<h3>Recommended Recipes</h3>';
     recipeResultDiv.innerHTML += `<p><strong>${displayPrompt}</strong></p>`;
@@ -183,10 +185,52 @@
 
       recipeResultDiv.innerHTML += `<p><strong>Ingredients:</strong><br>${ingredients}</p>`;
       recipeResultDiv.innerHTML += `<p><strong>Instructions:</strong><br>${instructions}</p>`;
+
+      // 바로 저장
+      saveRecipe(food, result);
     } else {
       recipeResultDiv.innerHTML += '<p>No recipes found.</p>';
     }
   }
+
+  function saveRecipe(food, result) {
+    // 재료와 레시피 정보 추출
+    const ingredients = result.ingredients;
+    const instructions = result.instructions;
+
+    // RecipeRequestDto 생성
+    const recipeRequestDto = {
+      menu: food, // 메뉴 이름은 선택한 음식으로 설정
+      userId: parseInt(1), // 사용자 ID는 임시로 1로 설정, 정수형으로 변환
+      ingredients: ingredients, // 대문자 -> 소문자로 수정
+      recipeInfoList: instructions // 대문자 -> 소문자로 수정
+    };
+    console.log(recipeRequestDto)
+
+    // RecipeRequestDto를 서버로 전송하여 저장 요청
+    fetch('/api/save-recipe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(recipeRequestDto)
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to save recipe');
+              }
+              return response.json();
+            })
+            .then(result => {
+              console.log('Recipe saved successfully:', result);
+              alert('Recipe saved successfully!');
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Error occurred while saving recipe.');
+            });
+  }
+
 
 </script>
 
