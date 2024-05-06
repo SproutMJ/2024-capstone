@@ -28,7 +28,6 @@ public class LoginController {
      */
     @PostMapping("/login")
     public String login(@RequestBody @Valid LoginRequestDto loginRequestDto, BindingResult bindingResult,
-                        @RequestParam(defaultValue = "/") String redirectURL,
                         HttpServletRequest request) {
 
         if (bindingResult.hasErrors()) {
@@ -48,7 +47,7 @@ public class LoginController {
         //세션에 로그인 회원 정보 보관
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginUser);
 
-        return "redirect:" + redirectURL;
+        return "redirect:/";
 
     }
 

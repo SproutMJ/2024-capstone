@@ -1,6 +1,7 @@
 package hello.aimju.controller;
 
 import hello.aimju.gpt.dto.ChatCompletionDto;
+import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import hello.aimju.gpt.service.ChatGptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -68,9 +69,21 @@ public class ChatGptController {
      * @param question
      * @return ResponseEntity<Map < String, Object>>
      */
-    @PostMapping("/recommendation-gpt")
+    @PostMapping("/recommendation")
     public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody String question) {
         Map<String, Object> result = chatGptService.legacyPrompt(question);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PostMapping("/recommendation-gpt")
+    public GptRecipeResponseDto selectRecipeLegacyPrompt(@RequestBody String question) {
+        return chatGptService.getRecipeResponse(question);
+    }
+
+    @PostMapping("/recommendation-menu")
+    public List<String> selectMenuLegacyPrompt(@RequestBody String question) {
+        return chatGptService.extractFoods(question);
+    }
+
+
 }
