@@ -1,7 +1,6 @@
-package hello.aimju.User.dto;
+package hello.aimju.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 

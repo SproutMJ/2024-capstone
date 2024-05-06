@@ -1,7 +1,7 @@
 package hello.aimju.login.service;
 
-import hello.aimju.User.domain.User;
-import hello.aimju.User.repository.UserRepository;
+import hello.aimju.user.domain.User;
+import hello.aimju.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

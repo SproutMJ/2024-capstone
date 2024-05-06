@@ -1,7 +1,7 @@
 package hello.aimju.login.argumentresolver;
 
 
-import hello.aimju.User.domain.User;
+import hello.aimju.user.domain.User;
 import hello.aimju.login.session.SessionConst;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

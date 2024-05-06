@@ -1,7 +1,7 @@
 package hello.aimju.chat.chat_room.domain;
 
 import hello.aimju.chat.chat_message.domain.ChatMessage;
-import hello.aimju.User.domain.User;
+import hello.aimju.user.domain.User;
 import hello.aimju.timestamp.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;

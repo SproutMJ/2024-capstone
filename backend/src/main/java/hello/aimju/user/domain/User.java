@@ -1,8 +1,8 @@
-package hello.aimju.User.domain;
+package hello.aimju.user.domain;
 
 import hello.aimju.Board.domain.Board;
 import hello.aimju.Comment.domain.Comment;
-import hello.aimju.Recipe.domain.Recipe;
+import hello.aimju.recipe.domain.Recipe;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package hello.aimju.controller;
 
-import hello.aimju.User.domain.User;
+import hello.aimju.user.domain.User;
 import hello.aimju.login.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

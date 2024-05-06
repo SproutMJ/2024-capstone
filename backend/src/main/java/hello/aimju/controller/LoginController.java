@@ -1,6 +1,6 @@
 package hello.aimju.controller;
 
-import hello.aimju.User.domain.User;
+import hello.aimju.user.domain.User;
 import hello.aimju.login.dto.LoginRequestDto;
 import hello.aimju.login.service.LoginService;
 import hello.aimju.login.session.SessionConst;

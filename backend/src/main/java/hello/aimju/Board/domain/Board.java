@@ -1,7 +1,7 @@
 package hello.aimju.Board.domain;
 
 import hello.aimju.Comment.domain.Comment;
-import hello.aimju.User.domain.User;
+import hello.aimju.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 

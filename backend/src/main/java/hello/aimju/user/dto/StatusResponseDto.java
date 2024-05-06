@@ -1,4 +1,4 @@
-package hello.aimju.User.dto;
+package hello.aimju.user.dto;
 
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
-package hello.aimju.Recipe.domain;
+package hello.aimju.recipe.domain;
 
-import hello.aimju.User.domain.User;
+import hello.aimju.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -12,7 +12,6 @@ public class Recipe {
     @Column(name = "recipe_id")
     private Long id;
     private String menu;
-    private Long scrap;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

@@ -1,10 +1,10 @@
-package hello.aimju.User.service;
+package hello.aimju.user.service;
 
-import hello.aimju.User.domain.User;
-import hello.aimju.User.dto.SignupRequestDto;
-import hello.aimju.User.dto.StatusResponseDto;
-import hello.aimju.User.dto.UserInfoResponseDto;
-import hello.aimju.User.repository.UserRepository;
+import hello.aimju.user.domain.User;
+import hello.aimju.user.dto.SignupRequestDto;
+import hello.aimju.user.dto.StatusResponseDto;
+import hello.aimju.user.dto.UserInfoResponseDto;
+import hello.aimju.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

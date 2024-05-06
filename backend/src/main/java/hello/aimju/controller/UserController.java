@@ -1,8 +1,8 @@
 package hello.aimju.controller;
 
-import hello.aimju.User.dto.SignupRequestDto;
-import hello.aimju.User.dto.UserInfoResponseDto;
-import hello.aimju.User.service.UserService;
+import hello.aimju.user.dto.SignupRequestDto;
+import hello.aimju.user.dto.UserInfoResponseDto;
+import hello.aimju.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
