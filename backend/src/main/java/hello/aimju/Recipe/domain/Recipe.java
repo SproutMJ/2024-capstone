@@ -1,12 +1,8 @@
 package hello.aimju.Recipe.domain;
 
-import hello.aimju.Recipe_Recommand_Message.domain.RecipeRecommandMessage;
 import hello.aimju.User.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -20,6 +16,4 @@ public class Recipe {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "recipe")
-    private List<RecipeRecommandMessage> recipeRecommandMessages = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-package hello.aimju.Recipe_Recommand_Message.domain;
+package hello.aimju.chat.chat_message.domain;
 
 public enum ChatType {
     message,
