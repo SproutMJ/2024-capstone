@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class RecipeRequestDto {
+public class SaveRecipeRequestDto {
     private String menu;
     private Long userId;
     private List<String> Ingredients;

@@ -199,13 +199,13 @@
     const instructions = result.instructions;
 
     // RecipeRequestDto 생성
-    const recipeRequestDto = {
+    const saveRecipeRequestDto = {
       menu: food, // 메뉴 이름은 선택한 음식으로 설정
       userId: parseInt(1), // 사용자 ID는 임시로 1로 설정, 정수형으로 변환
       ingredients: ingredients, // 대문자 -> 소문자로 수정
       recipeInfoList: instructions // 대문자 -> 소문자로 수정
     };
-    console.log(recipeRequestDto)
+    console.log(saveRecipeRequestDto)
 
     // RecipeRequestDto를 서버로 전송하여 저장 요청
     fetch('/api/save-recipe', {
@@ -213,7 +213,7 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(recipeRequestDto)
+      body: JSON.stringify(saveRecipeRequestDto)
     })
             .then(response => {
               if (!response.ok) {

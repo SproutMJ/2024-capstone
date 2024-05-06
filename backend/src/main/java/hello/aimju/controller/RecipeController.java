@@ -1,12 +1,12 @@
 package hello.aimju.controller;
 
-import hello.aimju.recipe.dto.RecipeRequestDto;
+import hello.aimju.recipe.dto.GetRecipeResponseDto;
+import hello.aimju.recipe.dto.SaveRecipeRequestDto;
 import hello.aimju.recipe.service.RecipeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +16,12 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     @PostMapping("/save-recipe")
-    public String saveRecipe(@RequestBody RecipeRequestDto recipeRequestDto) {
-        return recipeService.saveRecipe(recipeRequestDto);
+    public String saveRecipe(@RequestBody SaveRecipeRequestDto saveRecipeRequestDto) {
+        return recipeService.saveRecipe(saveRecipeRequestDto);
+    }
+
+    @GetMapping("/recipes")
+    public List<GetRecipeResponseDto> getRecipes() {
+        return recipeService.getAllRecipes();
     }
 }
