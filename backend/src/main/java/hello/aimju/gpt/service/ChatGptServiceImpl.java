@@ -251,7 +251,7 @@ public class ChatGptServiceImpl implements ChatGptService {
         return CompletionDto.builder()
                 .model("gpt-3.5-turbo-instruct")
                 .prompt(question)
-                .temperature(1.0f)
+                .temperature(0.8f)
                 .max_tokens(1000)
                 .build();
     }
