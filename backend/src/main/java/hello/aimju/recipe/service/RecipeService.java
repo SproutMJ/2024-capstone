@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,9 @@ public class RecipeService {
         // Recipe 엔티티 생성 및 저장
         Recipe recipe = new Recipe();
         recipe.setMenu(recipeRequestDto.getMenu());
-        // 유저 ID로 사용자 엔티티(User)를 찾아서 Recipe에 설정하는 코드가 필요할 수 있습니다.
-        // recipe.setUser(user);
+        Optional<User> optionalUser = userRepository.findById(recipeRequestDto.getUserId());
+        User user = optionalUser.orElseThrow(() -> new IllegalArgumentException("User not found"));
+        recipe.setUser(user);
         recipeRepository.save(recipe);
 
         // 재료(Ingredients) 저장
