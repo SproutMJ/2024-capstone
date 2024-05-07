@@ -10,6 +10,5 @@ import java.util.List;
 @Setter
 public class ChatRoomRequestDto {
     private String menu;
-    private Long userId;
     private List<ChatMessageRequestDto> messages;
 }
