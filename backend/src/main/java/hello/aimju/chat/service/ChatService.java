@@ -2,6 +2,7 @@ package hello.aimju.chat.service;
 
 import hello.aimju.chat.chat_message.domain.ChatMessage;
 import hello.aimju.chat.chat_message.dto.ChatMessageRequestDto;
+import hello.aimju.chat.chat_message.dto.GetAllChatMessageResponseDto;
 import hello.aimju.chat.chat_message.repository.ChatMessageRepository;
 import hello.aimju.chat.chat_room.domain.ChatRoom;
 import hello.aimju.chat.chat_room.dto.ChatRoomRequestDto;
@@ -41,7 +42,17 @@ public class ChatService {
     public List<GetAllChatRoomResponseDto> getAllChatRooms(HttpSession session) {
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByUserId(getUserFromSession(session).getId());
         return chatRoomList.stream()
-                .map(this::mapToDto)
+                .map(this::mapToChatRoomDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetAllChatMessageResponseDto> getAllChatMessages(Long chatId) {
+        // 채팅방 ID로 해당 채팅방의 모든 메시지 조회
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatId);
+
+        // ChatMessage를 GetAllChatMessageResponseDto로 변환
+        return chatMessages.stream()
+                .map(this::mapToMessageDto)
                 .collect(Collectors.toList());
     }
 
@@ -57,11 +68,19 @@ public class ChatService {
         return loginUser;
     }
 
-    private GetAllChatRoomResponseDto mapToDto(ChatRoom chatRoom) {
+    private GetAllChatRoomResponseDto mapToChatRoomDto(ChatRoom chatRoom) {
         GetAllChatRoomResponseDto dto = new GetAllChatRoomResponseDto();
         dto.setChatId(chatRoom.getId());
         dto.setMenu(chatRoom.getMenu());
         dto.setCreatedAt(chatRoom.getCreatedAt()); // ChatRoom에 생성일자 필드가 있어야 함
+        return dto;
+    }
+
+    private GetAllChatMessageResponseDto mapToMessageDto(ChatMessage chatMessage) {
+        GetAllChatMessageResponseDto dto = new GetAllChatMessageResponseDto();
+        dto.setChatType(chatMessage.getChatType());
+        dto.setIsUser(chatMessage.getIsUser());
+        dto.setContent(chatMessage.getContent());
         return dto;
     }
 }

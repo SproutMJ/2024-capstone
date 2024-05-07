@@ -1,5 +1,6 @@
 package hello.aimju.controller;
 
+import hello.aimju.chat.chat_message.dto.GetAllChatMessageResponseDto;
 import hello.aimju.chat.chat_room.dto.ChatRoomRequestDto;
 import hello.aimju.chat.chat_room.dto.GetAllChatRoomResponseDto;
 import hello.aimju.chat.service.ChatService;
@@ -31,5 +32,10 @@ public class ChatController {
     @GetMapping("/chatrooms")
     public List<GetAllChatRoomResponseDto> getAllChatRooms(HttpSession session) {
         return chatService.getAllChatRooms(session);
+    }
+
+    @GetMapping("/chatroom/{chatId}")
+    public List<GetAllChatMessageResponseDto> getAllChatMessages(@PathVariable Long chatId) {
+        return chatService.getAllChatMessages(chatId);
     }
 }
