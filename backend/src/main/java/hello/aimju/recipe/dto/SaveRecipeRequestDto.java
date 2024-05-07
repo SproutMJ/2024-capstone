@@ -9,7 +9,6 @@ import java.util.List;
 @Setter
 public class SaveRecipeRequestDto {
     private String menu;
-    private Long userId;
     private List<String> Ingredients;
     private List<String> RecipeInfoList;
 }

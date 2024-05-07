@@ -1,11 +1,14 @@
 package hello.aimju.recipe.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class GetRecipeResponseDto {
     private String menu;
-    private Long recipeId;
+    private List<String> Ingredients;
+    private List<String> RecipeInfoList;
 }

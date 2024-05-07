@@ -1,6 +1,8 @@
 package hello.aimju.recipe.service;
 
+import hello.aimju.login.session.SessionConst;
 import hello.aimju.recipe.domain.Recipe;
+import hello.aimju.recipe.dto.GetAllRecipesResponseDto;
 import hello.aimju.recipe.dto.GetRecipeResponseDto;
 import hello.aimju.recipe.dto.SaveRecipeRequestDto;
 import hello.aimju.recipe.ingredients.domain.Ingredients;
@@ -10,12 +12,13 @@ import hello.aimju.recipe.recipe_info.repository.RecipeInfoRepository;
 import hello.aimju.recipe.repository.RecipeRepository;
 import hello.aimju.user.domain.User;
 import hello.aimju.user.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +29,11 @@ public class RecipeService {
     private final RecipeInfoRepository recipeInfoRepository;
     private final UserRepository userRepository;
 
-    public String saveRecipe(SaveRecipeRequestDto saveRecipeRequestDto) {
+    public String saveRecipe(SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
         // Recipe 엔티티 생성 및 저장
         Recipe recipe = new Recipe();
         recipe.setMenu(saveRecipeRequestDto.getMenu());
-        Optional<User> optionalUser = userRepository.findById(saveRecipeRequestDto.getUserId());
-        User user = optionalUser.orElseThrow(() -> new IllegalArgumentException("User not found"));
-        recipe.setUser(user);
+        recipe.setUser(getUserFromSession(session));
         recipeRepository.save(recipe);
 
         // 재료(Ingredients) 저장
@@ -56,12 +57,40 @@ public class RecipeService {
         return recipe.getMenu();
     }
 
-    public List<GetRecipeResponseDto> getAllRecipes() {
-        List<Recipe> recipes = recipeRepository.findAll();
-        List<GetRecipeResponseDto> responseDtoList = new ArrayList<>();
+    public List<GetAllRecipesResponseDto> getAllRecipes(HttpSession session) {
+        List<Recipe> recipes = recipeRepository.findAllByUserId(getUserFromSession(session).getId());
+        List<GetAllRecipesResponseDto> responseDtoList = new ArrayList<>();
         for (Recipe recipe : recipes) {
-            responseDtoList.add(new GetRecipeResponseDto(recipe.getMenu(), recipe.getId()));
+            responseDtoList.add(new GetAllRecipesResponseDto(recipe.getMenu(), recipe.getId()));
         }
         return responseDtoList;
+    }
+
+    public GetRecipeResponseDto getRecipeDetails(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다. ID: " + recipeId));
+
+        GetRecipeResponseDto responseDto = new GetRecipeResponseDto();
+        responseDto.setMenu(recipe.getMenu());
+        responseDto.setIngredients(recipe.getIngredients().stream()
+                .map(Ingredients::getIngredient)
+                .collect(Collectors.toList()));
+        responseDto.setRecipeInfoList(recipe.getRecipeInfoList().stream()
+                .map(RecipeInfo::getInformation)
+                .collect(Collectors.toList()));
+
+        return responseDto;
+    }
+
+    private User getUserFromSession(HttpSession session) {
+        // 세션에서 사용자 정보 가져오기
+        User loginUser = (User) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        // 만약 세션에 사용자 정보가 없다면 로그인하지 않은 상태이므로 적절히 처리
+        if (loginUser == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
+
+        return loginUser;
     }
 }
