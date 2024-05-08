@@ -21,7 +21,7 @@ public class UserService {
         String userName = requestDto.getUserName();
         String password = requestDto.getPassword();
 
-
+        System.out.println("userName = " + userName);
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUserName(userName);
         if (checkUsername.isPresent()) {
