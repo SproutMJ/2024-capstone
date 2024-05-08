@@ -2,6 +2,7 @@ package hello.aimju.Board.service;
 
 import hello.aimju.Board.domain.Board;
 import hello.aimju.Board.dto.RetrieveBoardResponseDto;
+import hello.aimju.Board.dto.RetrieveOneBoardResponseDto;
 import hello.aimju.Board.dto.WriteBoardRequestDto;
 import hello.aimju.Board.repository.BoardRepository;
 import hello.aimju.login.session.SessionConst;
@@ -25,7 +26,7 @@ public class BoardService {
         LocalDate now = LocalDate.now();
         Board board = Board.builder()
                 .title(writeBoardRequestDto.getTitle())
-                .created_Time(now)
+                .createdTime(now)
                 .content(writeBoardRequestDto.getContent())
                 .user(getUserFromSession(session))
                 .build();
@@ -46,9 +47,11 @@ public class BoardService {
 
     public ResponseEntity<?> retrieveOneBoard(Long id) {
         List<Board> allByUserId = boardRepository.findAllByUserId(id);
-        List<RetrieveBoardResponseDto> getBoardLists = allByUserId.stream()
-                .map(tmp -> RetrieveBoardResponseDto.builder()
+        List<RetrieveOneBoardResponseDto> getBoardLists = allByUserId.stream()
+                .map(tmp -> RetrieveOneBoardResponseDto.builder()
+                        .author(tmp.getUser().getUserName())
                         .title(tmp.getTitle())
+                        .createdTime(tmp.getCreatedTime())
                         .content(tmp.getContent())
                         .build())
                 .collect(Collectors.toList());
