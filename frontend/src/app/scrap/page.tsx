@@ -23,7 +23,7 @@ import Link from "next/link"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 
-export function page() {
+export default function page() {
   return (
     <>
       <header className="flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow-md">
