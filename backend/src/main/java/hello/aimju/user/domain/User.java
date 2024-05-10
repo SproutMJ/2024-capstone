@@ -2,6 +2,7 @@ package hello.aimju.user.domain;
 
 import hello.aimju.Board.domain.Board;
 import hello.aimju.Comment.domain.Comment;
+import hello.aimju.chat.chat_room.domain.ChatRoom;
 import hello.aimju.recipe.domain.Recipe;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,11 +21,13 @@ public class User {
     private Long id;
     private String userName;
     private String password;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recipe> recipes = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoom> chatRooms = new ArrayList<>();
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Board> boards = new ArrayList<>();
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Recipe> recipes = new ArrayList<>();
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     public User(String userName, String password) {
