@@ -38,5 +38,11 @@ public class RecipeController {
         return recipeService.deleteRecipe(recipeId, session);
     }
 
+    @PutMapping("/recipe/{recipeId}")
+    public String updateRecipe(@PathVariable Long recipeId,
+                               @RequestBody SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
+        return  recipeService.updateRecipe(recipeId, saveRecipeRequestDto, session);
+    }
+
 
 }
