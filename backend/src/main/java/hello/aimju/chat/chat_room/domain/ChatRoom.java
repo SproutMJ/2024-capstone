@@ -22,7 +22,7 @@ public class ChatRoom extends Timestamped{ // created_at 알아서 생성해줌
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public ChatRoom(User user, String menu) {

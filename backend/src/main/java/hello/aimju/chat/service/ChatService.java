@@ -12,9 +12,14 @@ import hello.aimju.login.session.SessionConst;
 import hello.aimju.user.domain.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,13 +35,16 @@ public class ChatService {
         chatRoomRepository.save(chatRoom);
 
         // ChatMessage 데이터 저장
+        List<ChatMessage> chatMessages = new ArrayList<>();
         for (ChatMessageRequestDto chatMessageRequestDto : chatRoomRequestDto.getMessages()) {
-            ChatMessage chatMessage = new ChatMessage(chatMessageRequestDto.getContent(),
+            ChatMessage chatMessage = new ChatMessage(
+                    chatMessageRequestDto.getContent(),
                     chatMessageRequestDto.getIsUser(),
                     chatMessageRequestDto.getChatType(),
                     chatRoom);
-            chatMessageRepository.save(chatMessage);
+            chatMessages.add(chatMessage);
         }
+        chatMessageRepository.saveAll(chatMessages);
     }
 
     public List<GetAllChatRoomResponseDto> getAllChatRooms(HttpSession session) {
@@ -54,6 +62,26 @@ public class ChatService {
         return chatMessages.stream()
                 .map(this::mapToMessageDto)
                 .collect(Collectors.toList());
+    }
+
+    public ResponseEntity<?> deleteChatRoom(Long chatId, HttpSession session) {
+        // 채팅방을 찾습니다.
+        Optional<ChatRoom> optionalChat = chatRoomRepository.findById(chatId);
+        if (!optionalChat.isPresent()) {
+            // 채팅방이 존재하지 않는 경우
+            return ResponseEntity.notFound().build();
+        }
+        ChatRoom chatRoom = optionalChat.get();
+
+        // 채팅방의 소유자가 아닌 경우
+        if (!Objects.equals(chatRoom.getUser().getId(), getUserFromSession(session).getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제할 권한이 없습니다.");
+        }
+
+        // 채팅방 삭제
+        chatRoomRepository.delete(chatRoom);
+
+        return ResponseEntity.ok("채팅방이 성공적으로 삭제되었습니다.");
     }
 
     private User getUserFromSession(HttpSession session) {
