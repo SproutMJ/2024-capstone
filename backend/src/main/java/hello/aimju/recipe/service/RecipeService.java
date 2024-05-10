@@ -14,10 +14,13 @@ import hello.aimju.user.domain.User;
 import hello.aimju.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,6 +83,25 @@ public class RecipeService {
                 .collect(Collectors.toList()));
 
         return responseDto;
+    }
+
+    public ResponseEntity<?> deleteRecipe(Long recipeId, HttpSession session) {
+        Long currentUserId = getUserFromSession(session).getId();
+        Optional<Recipe> recipe = recipeRepository.findById(recipeId);
+        if (recipe.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 레시피입니다.");
+        }
+        Long ownerId = recipe.get().getUser().getId();
+
+        if (!Objects.equals(currentUserId, ownerId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        // 레시피 삭제 로직
+        recipeRepository.deleteById(recipeId);
+
+        // 삭제 후 응답
+        return ResponseEntity.ok("레시피가 성공적으로 삭제되었습니다.");
     }
 
     private User getUserFromSession(HttpSession session) {

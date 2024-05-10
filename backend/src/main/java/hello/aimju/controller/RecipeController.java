@@ -6,6 +6,7 @@ import hello.aimju.recipe.dto.SaveRecipeRequestDto;
 import hello.aimju.recipe.service.RecipeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,4 +32,11 @@ public class RecipeController {
     public GetRecipeResponseDto getRecipeDetails(@PathVariable Long recipeId) {
         return recipeService.getRecipeDetails(recipeId);
     }
+
+    @DeleteMapping("/recipe/{recipeId}")
+    public ResponseEntity<?> deleteRecipe(@PathVariable Long recipeId, HttpSession session) {
+        return recipeService.deleteRecipe(recipeId, session);
+    }
+
+
 }
