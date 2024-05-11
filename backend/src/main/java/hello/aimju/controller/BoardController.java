@@ -1,5 +1,6 @@
 package hello.aimju.controller;
 
+import hello.aimju.Board.dto.ModifyBoardRequestDto;
 import hello.aimju.Board.dto.WriteBoardRequestDto;
 import hello.aimju.Board.service.BoardService;
 import jakarta.servlet.http.HttpSession;
@@ -21,11 +22,22 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body("잘만들음");
     }
     @GetMapping
-    public ResponseEntity<?> retrieve(){
-        return boardService.retrieveBoard();
+    public ResponseEntity<?> retrieve(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "5") int size){
+        return boardService.retrieveBoard(page, size);
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> retrieveOneBoard(@PathVariable Long id){
         return boardService.retrieveOneBoard(id);
+    }
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<?> deleteBoard(@PathVariable Long boardId,HttpSession session) throws Exception {
+        boardService.deleteBoard(boardId,session);
+        return ResponseEntity.status(HttpStatus.OK).body("댓글삭제완료");
+    }
+    @PatchMapping
+    public ResponseEntity<?> modifyBoard(@RequestBody ModifyBoardRequestDto modifyBoardRequestDto, HttpSession session) throws Exception {
+        return boardService.modifyBoard(modifyBoardRequestDto,session);
+
     }
 }

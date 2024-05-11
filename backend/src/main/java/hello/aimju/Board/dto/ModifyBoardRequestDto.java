@@ -1,11 +1,11 @@
 package hello.aimju.Board.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
-public class RetrieveBoardResponseDto {
+@AllArgsConstructor
+public class ModifyBoardRequestDto {
     private Long id;
     private String title;
     private String content;

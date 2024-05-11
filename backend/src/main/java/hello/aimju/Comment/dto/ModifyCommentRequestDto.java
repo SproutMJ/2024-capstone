@@ -1,12 +1,11 @@
 package hello.aimju.Comment.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
-public class RetrieveCommentsResponseDto {
+@AllArgsConstructor
+public class ModifyCommentRequestDto {
     private Long id;
-    private String name;
     private String content;
 }
