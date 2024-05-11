@@ -1,5 +1,7 @@
 package hello.aimju.controller;
 
+import hello.aimju.Board.dto.ModifyBoardRequestDto;
+import hello.aimju.Comment.dto.ModifyCommentRequestDto;
 import hello.aimju.Comment.dto.WriteCommentRequestDto;
 import hello.aimju.Comment.service.CommentService;
 import jakarta.servlet.http.HttpSession;
@@ -25,8 +27,13 @@ public class CommentController {
         return commentService.retrieveComments(boardId);
     }
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long commentId){
-        commentService.deleteComment(commentId);
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId,HttpSession session) throws Exception {
+        commentService.deleteComment(commentId,session);
         return ResponseEntity.status(HttpStatus.OK).body("댓글삭제완료");
+    }
+    @PatchMapping
+    public ResponseEntity<?> modifyComment(@RequestBody ModifyCommentRequestDto modifyBoardRequestDto, HttpSession session) throws Exception {
+        return commentService.modifyBoard(modifyBoardRequestDto,session);
+
     }
 }

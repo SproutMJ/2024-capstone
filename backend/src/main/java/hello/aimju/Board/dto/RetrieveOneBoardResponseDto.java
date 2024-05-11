@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class RetrieveOneBoardResponseDto {
+    private Long id;
     private LocalDate createdTime;
     private String author;
     private String title;

@@ -29,4 +29,10 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public void update(String title, String content) {
+        System.out.println("title = " + title);
+        System.out.println("content = " + content);
+        this.title = title;
+        this.content = content;
+    }
 }
