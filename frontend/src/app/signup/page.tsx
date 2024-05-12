@@ -17,36 +17,72 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+'use client';
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 
 export default function page() {
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    if (id === 'id') {
+      setId(value);
+    } else if (id === 'password') {
+      setPassword(value);
+    } else if (id === 'confirm-password') {
+      setConfirmPassword(value);
+    }
+  };
+
+  async function signUp() {
+    const userName = id;
+    const res = await fetch('http://localhost:8080/api/signup',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({userName, password})
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch data')
+    }
+
+    router.push('/')
+  }
+
   return (
     <div className="mx-auto max-w-md space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Become a Member</h1>
-        <p className="text-gray-500 dark:text-gray-400">Enter your information to create a membership account.</p>
+        <h1 className="text-3xl font-bold">환영합니다!</h1>
+        <p className="text-gray-500 dark:text-gray-400">아래에 정보를 입력해주세요.</p>
       </div>
       <Card>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="id">ID</Label>
-            <Input id="id" placeholder="Enter your ID" required />
+            <Label htmlFor="id">아이디</Label>
+            <Input id="id" placeholder="" required value={id} onChange={handleInputChange}/>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" placeholder="Enter your password" required type="password" />
+            <Label htmlFor="password">비밀번호</Label>
+            <Input id="password" placeholder="" required type="password" value={password} onChange={handleInputChange}/>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm Password</Label>
-            <Input id="confirm-password" placeholder="Confirm your password" required type="password" />
+            <Label htmlFor="confirm-password">비밀번호 확인</Label>
+            <Input id="confirm-password" placeholder="" required type="password" value={confirmPassword} onChange={handleInputChange}/>
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" type="submit">
-            Become a Member
+          <Button className="w-full" type="submit" onClick={signUp}>
+            회원가입
           </Button>
         </CardFooter>
       </Card>
