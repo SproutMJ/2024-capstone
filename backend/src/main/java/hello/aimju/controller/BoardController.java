@@ -23,8 +23,13 @@ public class BoardController {
     }
     @GetMapping
     public ResponseEntity<?> retrieve(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "5") int size){
-        return boardService.retrieveBoard(page, size);
+                                      @RequestParam(defaultValue = "5") int size,
+                                      @RequestParam(required = false) String searchKeyword){
+        if (searchKeyword == null) {
+            return boardService.retrieveBoard(page, size);
+        }else{
+            return boardService.retrieveSearchBoard(page, size,searchKeyword);
+        }
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> retrieveOneBoard(@PathVariable Long id){
@@ -38,6 +43,5 @@ public class BoardController {
     @PatchMapping
     public ResponseEntity<?> modifyBoard(@RequestBody ModifyBoardRequestDto modifyBoardRequestDto, HttpSession session) throws Exception {
         return boardService.modifyBoard(modifyBoardRequestDto,session);
-
     }
 }
