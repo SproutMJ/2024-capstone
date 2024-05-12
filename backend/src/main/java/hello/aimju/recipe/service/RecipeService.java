@@ -13,11 +13,15 @@ import hello.aimju.recipe.repository.RecipeRepository;
 import hello.aimju.user.domain.User;
 import hello.aimju.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,33 +33,37 @@ public class RecipeService {
     private final RecipeInfoRepository recipeInfoRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public String saveRecipe(SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
         // Recipe 엔티티 생성 및 저장
         Recipe recipe = new Recipe();
         recipe.setMenu(saveRecipeRequestDto.getMenu());
         recipe.setUser(getUserFromSession(session));
-        recipeRepository.save(recipe);
+        recipe = recipeRepository.save(recipe);
 
         // 재료(Ingredients) 저장
-        List<String> ingredientsList = saveRecipeRequestDto.getIngredients();
-        for (String ingredient : ingredientsList) {
+        List<Ingredients> ingredientsList = new ArrayList<>();
+        for (String ingredient : saveRecipeRequestDto.getIngredients()) {
             Ingredients ingredients = new Ingredients();
             ingredients.setIngredient(ingredient);
             ingredients.setRecipe(recipe);
-            ingredientsRepository.save(ingredients);
+            ingredientsList.add(ingredients);
         }
+        ingredientsRepository.saveAll(ingredientsList);
 
         // 레시피 정보(RecipeInfo) 저장
-        List<String> recipeInfoList = saveRecipeRequestDto.getRecipeInfoList();
-        for (String recipeInfo : recipeInfoList) {
+        List<RecipeInfo> recipeInfoList = new ArrayList<>();
+        for (String recipeInfo : saveRecipeRequestDto.getRecipeInfoList()) {
             RecipeInfo info = new RecipeInfo();
             info.setInformation(recipeInfo);
             info.setRecipe(recipe);
-            recipeInfoRepository.save(info);
+            recipeInfoList.add(info);
         }
+        recipeInfoRepository.saveAll(recipeInfoList);
 
         return recipe.getMenu();
     }
+
 
     public List<GetAllRecipesResponseDto> getAllRecipes(HttpSession session) {
         List<Recipe> recipes = recipeRepository.findAllByUserId(getUserFromSession(session).getId());
@@ -80,6 +88,70 @@ public class RecipeService {
                 .collect(Collectors.toList()));
 
         return responseDto;
+    }
+
+    public ResponseEntity<?> deleteRecipe(Long recipeId, HttpSession session) {
+        Long currentUserId = getUserFromSession(session).getId();
+        Optional<Recipe> recipe = recipeRepository.findById(recipeId);
+        if (recipe.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 레시피입니다.");
+        }
+        Long ownerId = recipe.get().getUser().getId();
+
+        if (!Objects.equals(currentUserId, ownerId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        // 레시피 삭제 로직
+        recipeRepository.deleteById(recipeId);
+
+        // 삭제 후 응답
+        return ResponseEntity.ok("레시피가 성공적으로 삭제되었습니다.");
+    }
+
+    @Transactional
+    public String updateRecipe(Long recipeId, SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
+        // 기존의 레시피를 찾습니다.
+        Recipe existingRecipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다."));
+
+        // 현재 사용자의 ID를 가져옵니다.
+        Long currentUserId = getUserFromSession(session).getId();
+
+        // 기존 레시피의 소유자와 현재 사용자를 비교하여 권한이 있는지 확인합니다.
+        if (!Objects.equals(existingRecipe.getUser().getId(), currentUserId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        // 레시피 내용을 업데이트합니다.
+        existingRecipe.setMenu(saveRecipeRequestDto.getMenu());
+
+        // 재료(Ingredients)를 업데이트합니다.
+        List<String> ingredientsList = saveRecipeRequestDto.getIngredients();
+        List<Ingredients> existingIngredients = existingRecipe.getIngredients();
+        existingIngredients.clear(); // 기존 재료를 모두 제거합니다.
+        for (String ingredient : ingredientsList) {
+            Ingredients ingredients = new Ingredients();
+            ingredients.setIngredient(ingredient);
+            ingredients.setRecipe(existingRecipe);
+            existingIngredients.add(ingredients); // 새로운 재료를 추가합니다.
+        }
+
+        // 레시피 정보(RecipeInfo)를 업데이트합니다.
+        List<String> recipeInfoList = saveRecipeRequestDto.getRecipeInfoList();
+        List<RecipeInfo> existingRecipeInfoList = existingRecipe.getRecipeInfoList();
+        existingRecipeInfoList.clear(); // 기존 레시피 정보를 모두 제거합니다.
+        for (String recipeInfo : recipeInfoList) {
+            RecipeInfo info = new RecipeInfo();
+            info.setInformation(recipeInfo);
+            info.setRecipe(existingRecipe);
+            existingRecipeInfoList.add(info); // 새로운 레시피 정보를 추가합니다.
+        }
+
+        // 업데이트된 레시피를 저장합니다.
+        recipeRepository.save(existingRecipe);
+
+        return existingRecipe.getMenu();
     }
 
     private User getUserFromSession(HttpSession session) {
