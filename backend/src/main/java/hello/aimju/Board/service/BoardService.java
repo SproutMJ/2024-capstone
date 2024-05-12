@@ -49,9 +49,24 @@ public class BoardService {
                         .build())
                 .collect(Collectors.toList());
 
+
         return new ResponseEntity<>(getBoardLists,HttpStatus.OK);
     }
 
+    public ResponseEntity<?> retrieveSearchBoard(int page, int size, String searchKeyword) {
+
+        Pageable pageable;
+        pageable = PageRequest.of(page, size, Sort.by("createdTime"));
+        Page<Board> boardLists = boardRepository.findByTitleContaining(searchKeyword,pageable);
+        List<RetrieveBoardResponseDto> getBoardLists = boardLists.stream()
+                .map(tmp -> RetrieveBoardResponseDto.builder()
+                        .id(tmp.getId())
+                        .title(tmp.getTitle())
+                        .content(tmp.getContent())
+                        .build())
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(getBoardLists,HttpStatus.OK);
+    }
     public ResponseEntity<?> retrieveOneBoard(Long id) {
         Board findBoard = boardRepository.findById(id).get();
         RetrieveOneBoardResponseDto board = RetrieveOneBoardResponseDto.builder()
@@ -76,12 +91,12 @@ public class BoardService {
         boardRepository.save(board);
         return new ResponseEntity<>(resBoard,HttpStatus.OK);
     }
+
     public void deleteBoard(Long boardId, HttpSession session) throws Exception {
         Board board = boardRepository.findById(boardId).get();
         checkUser(getUserFromSession(session),board.getUser());
         boardRepository.deleteById(boardId);
     }
-
     private User getUserFromSession(HttpSession session) {
         // 세션에서 사용자 정보 가져오기
         User loginUser = (User) session.getAttribute(SessionConst.LOGIN_MEMBER);
@@ -93,6 +108,7 @@ public class BoardService {
 
         return loginUser;
     }
+
     private void checkUser(User live, User save) throws Exception {
         if (live.getId() != save.getId()){
             throw new Exception("자신의 댓글만 삭제할 수 있어요");
