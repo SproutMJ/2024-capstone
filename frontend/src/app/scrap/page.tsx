@@ -17,264 +17,298 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+'use client';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button"
 import { SheetTrigger, SheetContent, Sheet } from "@/components/ui/sheet"
 import Link from "next/link"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 
+type Recipe = {
+  menu: string;
+  recipeId: number;
+};
+
+type RecipeDetail = {
+  menu: string;
+  ingredients: string[];
+  recipeInfoList: string[];
+};
+
 export default function page() {
-  return (
-    <>
-      <header className="flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow-md">
-        <div className="flex items-center space-x-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <MenuIcon className="h-6 w-6" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left">
-              <div className="grid gap-4 p-4">
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <HomeIcon className="h-5 w-5" />
-                  Home
-                </Link>
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <UserIcon className="h-5 w-5" />
-                  My Page
-                </Link>
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <ScissorsIcon className="h-5 w-5" />
-                  Scrap
-                </Link>
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <ClipboardIcon className="h-5 w-5" />
-                  Bulletin Board
-                </Link>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <Link className="text-lg font-bold" href="#">
-            My App
-          </Link>
-        </div>
-        <div className="flex items-center space-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <BellIcon className="h-6 w-6" />
-                <span className="sr-only">Notifications</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">New message</p>
-                    <p className="text-sm text-gray-500">You have a new message</p>
-                  </div>
-                  <span className="text-xs text-gray-500">5 min ago</span>
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeDetail | null>(null);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await axios.get("/api/recipes");
+        setRecipes(response.data);
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
+
+    const handleLearnMoreClick = async (recipeId: number) => {
+        try {
+            const response = await axios.get(`/api/recipe/${recipeId}`);
+            const recipeDetails: RecipeDetail = response.data;
+
+            setSelectedRecipe({
+                ...recipeDetails,
+                ingredients: [recipeDetails.ingredients.join(', ')],
+                recipeInfoList: recipeDetails.recipeInfoList.map((info, index) => `${index + 1}. ${info}`)
+            });
+        } catch (error) {
+            console.error("레시피 상세 정보를 가져오는 동안 오류가 발생했습니다:", error);
+        }
+    };
+
+
+    return (
+      <>
+        <header className="flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow-md">
+          <div className="flex items-center space-x-4">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <MenuIcon className="h-6 w-6"/>
+                  <span className="sr-only">Toggle navigation menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <div className="grid gap-4 p-4">
+                  <Link
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
+                      href="#"
+                  >
+                    <HomeIcon className="h-5 w-5"/>
+                    Home
+                  </Link>
+                  <Link
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
+                      href="#"
+                  >
+                    <UserIcon className="h-5 w-5"/>
+                    My Page
+                  </Link>
+                  <Link
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
+                      href="#"
+                  >
+                    <ScissorsIcon className="h-5 w-5"/>
+                    Scrap
+                  </Link>
+                  <Link
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
+                      href="#"
+                  >
+                    <ClipboardIcon className="h-5 w-5"/>
+                    Bulletin Board
+                  </Link>
                 </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Mention in a post</p>
-                    <p className="text-sm text-gray-500">You were mentioned in a post</p>
-                  </div>
-                  <span className="text-xs text-gray-500">1 hour ago</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">New follower</p>
-                    <p className="text-sm text-gray-500">You have a new follower</p>
-                  </div>
-                  <span className="text-xs text-gray-500">2 days ago</span>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height={24}
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "24/24",
-                    objectFit: "cover",
-                  }}
-                  width={24}
-                />
-                <span className="sr-only">User menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Signed in as John Doe</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="#">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="#">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="#">Logout</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
-      <main className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 gap-6">
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 1</CardTitle>
-                <CardDescription>This is the first card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 2</CardTitle>
-                <CardDescription>This is the second card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 3</CardTitle>
-                <CardDescription>This is the third card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 4</CardTitle>
-                <CardDescription>This is the fourth card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
+              </SheetContent>
+            </Sheet>
+            <Link className="text-lg font-bold" href="#">
+              My App
+            </Link>
           </div>
-        </div>
-        <div className="fixed bottom-6 right-6" />
-      </main>
-    </>
+          <div className="flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <BellIcon className="h-6 w-6"/>
+                  <span className="sr-only">Notifications</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">New message</p>
+                      <p className="text-sm text-gray-500">You have a new message</p>
+                    </div>
+                    <span className="text-xs text-gray-500">5 min ago</span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Mention in a post</p>
+                      <p className="text-sm text-gray-500">You were mentioned in a post</p>
+                    </div>
+                    <span className="text-xs text-gray-500">1 hour ago</span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">New follower</p>
+                      <p className="text-sm text-gray-500">You have a new follower</p>
+                    </div>
+                    <span className="text-xs text-gray-500">2 days ago</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <img
+                      alt="Avatar"
+                      className="rounded-full"
+                      height={24}
+                      src="/placeholder.svg"
+                      style={{
+                        aspectRatio: "24/24",
+                        objectFit: "cover",
+                      }}
+                      width={24}
+                  />
+                  <span className="sr-only">User menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Signed in as John Doe</DropdownMenuLabel>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem>
+                  <Link href="#">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="#">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem>
+                  <Link href="#">Logout</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+        <main className="py-8">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 gap-6">
+              {recipes.map((recipe, index) => (
+                  <Card key={index}>
+                    <CardHeader>
+                      <CardTitle>{recipe.menu}</CardTitle>
+                      <CardDescription>{recipe.menu} 입니다.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {selectedRecipe && selectedRecipe.menu === recipe.menu && (
+                          <div>
+                            <h2>재료:</h2>
+                            <ul>
+                              <li>{selectedRecipe.ingredients[0]}</li>
+                              <br/>
+                            </ul>
+                            <h2>조리 순서:</h2>
+                            <ol>
+                              {selectedRecipe.recipeInfoList.map((info, i) => (
+                                  <li key={i}>{info}</li>
+                              ))}
+                            </ol>
+                          </div>
+                      )}
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="outline" onClick={() => {
+                        if (selectedRecipe && selectedRecipe.menu === recipe.menu) {
+                          setSelectedRecipe(null); // 레시피가 이미 열려있을 경우에는 숨기기
+                        } else {
+                          handleLearnMoreClick(recipe.recipeId); // 레시피가 열려있지 않을 경우에는 자세히 알아보기
+                        }
+                      }}>
+                        {selectedRecipe && selectedRecipe.menu === recipe.menu ? "숨기기" : "레시피 보기"}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+              ))}
+            </div>
+          </div>
+          <div className="fixed bottom-6 right-6"/>
+        </main>
+      </>
   )
 }
 
 function BellIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-    </svg>
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+      </svg>
   )
 }
 
 
 function ClipboardIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-    </svg>
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      </svg>
   )
 }
 
 
 function HomeIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
   )
 }
 
 
 function MenuIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

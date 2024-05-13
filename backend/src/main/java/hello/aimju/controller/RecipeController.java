@@ -30,7 +30,8 @@ public class RecipeController {
 
     @GetMapping("/recipe/{recipeId}")
     public GetRecipeResponseDto getRecipeDetails(@PathVariable Long recipeId) {
-        return recipeService.getRecipeDetails(recipeId);
+        GetRecipeResponseDto recipeDetails = recipeService.getRecipeDetails(recipeId);
+        return recipeDetails;
     }
 
     @DeleteMapping("/recipe/{recipeId}")
