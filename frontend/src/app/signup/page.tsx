@@ -44,7 +44,7 @@ export default function page() {
 
   async function signUp() {
     const userName = id;
-    const res = await fetch('http://localhost:8080/api/signup',{
+    const res = await fetch('/api/signup',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
