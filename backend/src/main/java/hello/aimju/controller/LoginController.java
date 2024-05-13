@@ -9,12 +9,15 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @RequestMapping(value = "/api")
 public class LoginController {
@@ -27,18 +30,18 @@ public class LoginController {
     @RequestBody @Valid LoginRequestDto loginRequestDto: 프론트에서 보내줘야함.
      */
     @PostMapping("/login")
-    public String login(@RequestBody @Valid LoginRequestDto loginRequestDto, BindingResult bindingResult,
-                        HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto, BindingResult bindingResult,
+                                   HttpServletRequest request) {
 
         if (bindingResult.hasErrors()) {
-            return "login/loginForm";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         User loginUser = loginService.login(loginRequestDto.getUserName(), loginRequestDto.getPassword());
 
         if (loginUser == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
-            return "login/loginForm";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         //로그인 성공 처리
@@ -47,16 +50,15 @@ public class LoginController {
         //세션에 로그인 회원 정보 보관
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginUser);
 
-        return "redirect:/";
-
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/";
+        return ResponseEntity.ok().build();
     }
 }
