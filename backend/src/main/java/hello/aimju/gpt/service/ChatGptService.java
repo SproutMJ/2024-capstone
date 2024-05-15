@@ -27,6 +27,8 @@ public interface ChatGptService {
 
     Map<String, Object> prompt(ChatCompletionDto chatCompletionDto);
 
+    List<String> extractFoodsPrompt(String ingredients);
+
     GptRecipeResponseDto getRecipeResponse(String question);
 
     List<String> extractFoods(String question);

@@ -63,6 +63,12 @@ public class ChatGptController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/prompt-menu")
+    public List<String> menuPrompt(@RequestBody String ingredients) {
+        List<String> foods = chatGptService.extractFoodsPrompt(ingredients);
+        return foods;
+    }
+
     /**
      * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
      * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002

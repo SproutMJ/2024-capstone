@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.aimju.gpt.config.ChatGptConfig;
 import hello.aimju.gpt.dto.ChatCompletionDto;
+import hello.aimju.gpt.dto.ChatRequestMsgDto;
 import hello.aimju.gpt.dto.CompletionDto;
 import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * ChatGPT Service 구현체
@@ -119,6 +121,60 @@ public class ChatGptServiceImpl implements ChatGptService {
         return result;
     }
 
+
+
+    /**
+     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
+     */
+    private String recipeQuestionBuilder(String ingredients) {
+        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
+                + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
+                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+    }
+
+    public List<String> extractFoodsPrompt(String ingredients) {
+        String question = foodNameQuestionBuilder(ingredients);
+        ChatCompletionDto completionDto = chatCompletionDtoBuilder(question);
+        Map<String, Object> resultMap = prompt(completionDto);
+        String responseContent = extractContent(resultMap);
+        if (responseContent == null || responseContent.isEmpty()) {
+            return new ArrayList<>();
+        }
+        // Split the responseContent by commas and trim any whitespace
+        return Arrays.stream(responseContent.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
+     */
+    private String foodNameQuestionBuilder(String ingredients) {
+        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
+                + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
+                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+    }
+
+    /**
+     * 질문을 포함한 유효한 request 형식을 만들어줌
+     */
+    private ChatCompletionDto chatCompletionDtoBuilder(String question) {
+        String model = "gpt-4-turbo";
+        List<ChatRequestMsgDto> messages = new ArrayList<>();
+
+        ChatRequestMsgDto message = ChatRequestMsgDto.builder()
+                .role("system")
+                .content(question)
+                .build();
+
+        messages.add(message);
+
+        return ChatCompletionDto.builder()
+                .model(model)
+                .messages(messages)
+                .build();
+    }
+
     /**
      * 신규 모델에 대한 프롬프트
      *
@@ -152,7 +208,37 @@ public class ChatGptServiceImpl implements ChatGptService {
         return resultMap;
     }
 
+    /**
+     * gpt의 response에서 원하는 값(질문에 대한 대답)만 추출
+     */
+    public String extractContent(Map<String, Object> resultMap) {
+        try {
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) resultMap.get("choices");
 
+            if (choices != null && !choices.isEmpty()) {
+                Map<String, Object> choice = choices.get(0);
+
+                Map<String, Object> message = (Map<String, Object>) choice.get("message");
+
+                if (message != null) {
+                    return (String) message.get("content");
+                }
+            }
+        } catch (ClassCastException e) {
+            log.debug("ClassCastException :: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    /*******************************************************************************************************************
+     * gpt-3.5-turbo-instruct용 함수
+     *
+     * @param question {}
+     * 음식 + 재료를 포함한 레시피에 대한 질문을 question으로 받아줌
+     * @return GptRecipeResponseDto
+     * question에 대한 응답을 {재료:{재료1, 재료2...} 레시피:{레시피1, 레시피2...}} 형식으로 해줌
+     */
     public GptRecipeResponseDto getRecipeResponse(String question) {
         Map<String, Object> resultMap = legacyPrompt(question);
         GptRecipeResponseDto gptRecipeResponseDto = new GptRecipeResponseDto();
@@ -189,6 +275,14 @@ public class ChatGptServiceImpl implements ChatGptService {
         return gptRecipeResponseDto;
     }
 
+    /**
+     * gpt-3.5-turbo-instruct용 함수
+     *
+     * @param question {}
+     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문
+     * @return List<String>
+     * question에 대한 응답을 {음식1, 음식2, 음식3, 음식4, 음식5}형식으로 해줌
+     */
     public List<String> extractFoods(String question) {
         Map<String, Object> resultMap = legacyPrompt(question);
         List<String> foods = new ArrayList<>();
@@ -206,12 +300,10 @@ public class ChatGptServiceImpl implements ChatGptService {
         return foods;
     }
 
-
-
     /**
      * ChatGTP 프롬프트 검색
      *
-     * @param question
+     * @param question {}
      * @return Map<String, Object>
      */
     @Override
