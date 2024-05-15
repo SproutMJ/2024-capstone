@@ -51,51 +51,60 @@ public class ChatGptController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    /**
+
+    /****************************************************실제사용********************************************************
      * [API] 최신 ChatGPT 프롬프트 명령어를 수행합니다.
      * 사용 가능한 모델: gpt-4, gpt-4 turbo, gpt-3.5-turbo
      * @param chatCompletionDto
-     * @return
+     * @return ResponseEntity<Map < String, Object>>
      */
-    @PostMapping("/prompt-gpt")
+    @PostMapping("/recommendation")
     public ResponseEntity<Map<String, Object>> selectPrompt(@RequestBody ChatCompletionDto chatCompletionDto) {
         log.debug("param :: " + chatCompletionDto.toString());
         Map<String, Object> result = chatGptService.prompt(chatCompletionDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/prompt-menu")
+    /**gpt-4-turbo
+     * 1번 질문
+     * 해당 식재료로 만들 수 있는 음식들을 반환해줌
+     */
+    @PostMapping("/recommendation-menu")
     public List<String> menuPrompt(@RequestBody String ingredients) {
         List<String> foods = chatGptService.extractFoodsPrompt(ingredients);
         return foods;
     }
 
-    @PostMapping("/prompt-recipe")
+    /**gpt-4-turbo
+     * 2번 질문
+     * 선택한 음식을 만들 수 있는 레시피를 반환해줌
+     */
+    @PostMapping("/recommendation-recipe")
     public GptRecipeResponseDto recipePrompt(@RequestBody GptRecipeRequestDto requestDto) {
         return chatGptService.extractRecipePrompt(requestDto);
     }
+    /*******************************************************************************************************************
 
-    /**
+
+     /**구 버전
      * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
      * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002
-     * @param question
+     * @param question {}
      * @return ResponseEntity<Map < String, Object>>
      */
-    @PostMapping("/recommendation")
+    @PostMapping("/recommendation-legacy")
     public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody String question) {
         Map<String, Object> result = chatGptService.legacyPrompt(question);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/recommendation-gpt")
-    public GptRecipeResponseDto selectRecipeLegacyPrompt(@RequestBody String question) {
-        return chatGptService.getRecipeResponse(question);
-    }
-
-    @PostMapping("/recommendation-menu")
+    @PostMapping("/recommendation-legacy-menu")
     public List<String> selectMenuLegacyPrompt(@RequestBody String question) {
         return chatGptService.extractFoods(question);
     }
 
-
+    @PostMapping("/recommendation-legacy-recipe")
+    public GptRecipeResponseDto selectRecipeLegacyPrompt(@RequestBody String question) {
+        return chatGptService.getRecipeResponse(question);
+    }
 }

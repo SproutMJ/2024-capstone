@@ -121,6 +121,44 @@ public class ChatGptServiceImpl implements ChatGptService {
         return result;
     }
 
+    /***************************************************gpt-4-turbo*****************************************************
+     * 1번 질문
+     * 해당 식재료로 만들 수 있는 음식들을 반환해줌
+     *
+     * @param ingredients {}
+     * @return List<String>
+     */
+    public List<String> extractFoodsPrompt(String ingredients) {
+        String question = foodNameQuestionBuilder(ingredients); // 질문 형성
+        ChatCompletionDto completionDto = chatCompletionDtoBuilder(question); // 요청 형식 형성
+        Map<String, Object> resultMap = prompt(completionDto); // gpt api에 요청 및 반환
+        String responseContent = extractContent(resultMap); // 반환형에서 응답만 추출
+        if (responseContent == null || responseContent.isEmpty()) {
+            return new ArrayList<>();
+        }
+        // 추출한 응답 List<String>로 반환
+        return Arrays.stream(responseContent.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * extractFoodsPrompt 에서 사용
+     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
+     */
+    private String foodNameQuestionBuilder(String ingredients) {
+        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
+                + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
+                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+    }
+
+    /**
+     * 2번 질문
+     * 선택한 음식을 만들 수 있는 레시피를 반환해줌
+     *
+     * @param requestDto GptRecipeRequestDto
+     * @return GptRecipeResponseDto
+     */
     public GptRecipeResponseDto extractRecipePrompt(GptRecipeRequestDto requestDto) {
         String ingredientsQuestion = realIngredientsQuestionBuilder(requestDto); // 질문 형성
         ChatCompletionDto ingredientsCompletionDto = chatCompletionDtoBuilder(ingredientsQuestion); // 요청 형식 형성
@@ -137,7 +175,8 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     /**
-     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
+     * extractRecipePrompt 에서 사용
+     * 해당 음식을 만드는데 꼭 필요한 재료를 추출하는 질문을 만들어줌
      */
     private String realIngredientsQuestionBuilder(GptRecipeRequestDto requestDto) {
         String ingredientsStr = String.join(", ", requestDto.getIngredients());
@@ -157,6 +196,10 @@ public class ChatGptServiceImpl implements ChatGptService {
         }
     }
 
+    /**
+     * extractRecipePrompt 에서 사용
+     * 어떤 재료로 어떤 음식을 만드는데 필요한 레시피를 얻기위한 질문
+     */
     private String recipeQuestionBuilder(String menu, String ingredients) {
         return ingredients + "를 가지고 " + menu + " 1인분을 만들꺼야\\n"
                 + "구체적인 재료와 레시피를 추천해주는데 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
@@ -165,6 +208,10 @@ public class ChatGptServiceImpl implements ChatGptService {
                 + "레시피:\\n1.요리순서1\\n2.요리순서2\\n3.요리순서3";
     }
 
+    /**
+     * extractRecipePrompt 에서 사용
+     * 얻은 레시피를 원하는 형식으로 바꿔줌
+     */
     private static GptRecipeResponseDto parseRecipe(String recipe) {
         List<String> ingredients = new ArrayList<>();
         List<String> instructions = new ArrayList<>();
@@ -200,35 +247,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     /**
-     * 신규 모델에 대한 프롬프트
-     *
-     * @param ingredients {}
-     * @return List<String>
-     */
-    public List<String> extractFoodsPrompt(String ingredients) {
-        String question = foodNameQuestionBuilder(ingredients); // 질문 형성
-        ChatCompletionDto completionDto = chatCompletionDtoBuilder(question); // 요청 형식 형성
-        Map<String, Object> resultMap = prompt(completionDto); // gpt api에 요청 및 반환
-        String responseContent = extractContent(resultMap); // 반환형에서 응답만 추출
-        if (responseContent == null || responseContent.isEmpty()) {
-            return new ArrayList<>();
-        }
-        // 추출한 응답 List<String>로 반환
-        return Arrays.stream(responseContent.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
-     */
-    private String foodNameQuestionBuilder(String ingredients) {
-        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
-                + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
-                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
-    }
-
-    /**
+     * 모든 extractPrompt 에서 사용
      * 질문을 포함한 유효한 request 형식을 만들어줌
      */
     private ChatCompletionDto chatCompletionDtoBuilder(String question) {
@@ -249,6 +268,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     /**
+     * 모든 extractPrompt 에서 사용
      * 신규 모델에 대한 프롬프트
      *
      * @param chatCompletionDto {}
@@ -282,6 +302,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     /**
+     * 모든 extractPrompt 에서 사용
      * gpt의 response에서 원하는 값(질문에 대한 대답)만 추출
      */
     public String extractContent(Map<String, Object> resultMap) {
@@ -304,7 +325,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
 
-    /******************************************************구버전********************************************************
+    /************************************************gpt-3.5-turbo-instruct*********************************************
      * gpt-3.5-turbo-instruct용 함수
      *
      * @param question {}
