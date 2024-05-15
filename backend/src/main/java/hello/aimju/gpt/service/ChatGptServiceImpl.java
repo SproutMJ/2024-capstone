@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.aimju.gpt.config.ChatGptConfig;
-import hello.aimju.gpt.dto.ChatCompletionDto;
-import hello.aimju.gpt.dto.ChatRequestMsgDto;
-import hello.aimju.gpt.dto.CompletionDto;
-import hello.aimju.gpt.dto.GptRecipeResponseDto;
+import hello.aimju.gpt.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -19,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * ChatGPT Service 구현체
@@ -121,26 +121,99 @@ public class ChatGptServiceImpl implements ChatGptService {
         return result;
     }
 
+    public GptRecipeResponseDto extractRecipePrompt(GptRecipeRequestDto requestDto) {
+        String ingredientsQuestion = realIngredientsQuestionBuilder(requestDto); // 질문 형성
+        ChatCompletionDto ingredientsCompletionDto = chatCompletionDtoBuilder(ingredientsQuestion); // 요청 형식 형성
+        Map<String, Object> ingredientsResultMap = prompt(ingredientsCompletionDto); // gpt api에 요청 및 반환
+        String realIngredients = extractRealIngredients(extractContent(ingredientsResultMap)); // 반환형에서 응답만 추출
 
+        String recipeQuestion = recipeQuestionBuilder(requestDto.getMenu(), realIngredients);
+        ChatCompletionDto recipeChatCompletionDto = chatCompletionDtoBuilder(recipeQuestion);
+        Map<String, Object> recipeResultMap = prompt(recipeChatCompletionDto);
+        String realRecipe = extractContent(recipeResultMap);
+        System.out.println(realRecipe);
+
+        return parseRecipe(realRecipe);
+    }
 
     /**
      * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
      */
-    private String recipeQuestionBuilder(String ingredients) {
-        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
+    private String realIngredientsQuestionBuilder(GptRecipeRequestDto requestDto) {
+        String ingredientsStr = String.join(", ", requestDto.getIngredients());
+        return requestDto.getMenu() + "를 만드는데 아래의 식재료들이 모두 필요할까?\\n"
+                + ingredientsStr + "\\n 필요없는 식재료는 빼주고 필요한 식재료는 추가해줘"
                 + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
-                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+                + "\\n 수정된 식재료: 식재료1, 식재료2, 식재료3....";
     }
 
+    public String extractRealIngredients(String ingredientsResult) {
+        int colonIndex = ingredientsResult.indexOf(":");
+
+        if (colonIndex != -1 && colonIndex < ingredientsResult.length() - 1) {
+            return ingredientsResult.substring(colonIndex + 2);
+        } else {
+            return ingredientsResult;
+        }
+    }
+
+    private String recipeQuestionBuilder(String menu, String ingredients) {
+        return ingredients + "를 가지고 " + menu + " 1인분을 만들꺼야\\n"
+                + "구체적인 재료와 레시피를 추천해주는데 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
+                + "\\n메뉴: 음식이름"
+                + "재료:\\n1.재료1\\n2.재료2\\n3.재료3\\n"
+                + "레시피:\\n1.요리순서1\\n2.요리순서2\\n3.요리순서3";
+    }
+
+    private static GptRecipeResponseDto parseRecipe(String recipe) {
+        List<String> ingredients = new ArrayList<>();
+        List<String> instructions = new ArrayList<>();
+
+        int ingredientStartIndex = recipe.indexOf("재료:");
+        if (ingredientStartIndex != -1) {
+            int ingredientEndIndex = recipe.indexOf("레시피:", ingredientStartIndex);
+            if (ingredientEndIndex != -1) {
+                String ingredientsSection = recipe.substring(ingredientStartIndex + 4, ingredientEndIndex).trim();
+                extractItems(ingredientsSection, ingredients);
+            }
+        }
+
+        int instructionStartIndex = recipe.indexOf("레시피:");
+        if (instructionStartIndex != -1) {
+            String instructionsSection = recipe.substring(instructionStartIndex + 5).trim();
+            extractItems(instructionsSection, instructions);
+        }
+
+        return new GptRecipeResponseDto(ingredients, instructions);
+    }
+
+    private static void extractItems(String section, List<String> items) {
+        // Split the section into lines
+        String[] lines = section.split("\\n");
+
+        // Extract items from each line
+        for (String line : lines) {
+            // Remove the numbering (e.g., "1. ", "2. ") and trim the line
+            String item = line.replaceAll("^\\d+\\.\\s*", "").trim();
+            items.add(item);
+        }
+    }
+
+    /**
+     * 신규 모델에 대한 프롬프트
+     *
+     * @param ingredients {}
+     * @return List<String>
+     */
     public List<String> extractFoodsPrompt(String ingredients) {
-        String question = foodNameQuestionBuilder(ingredients);
-        ChatCompletionDto completionDto = chatCompletionDtoBuilder(question);
-        Map<String, Object> resultMap = prompt(completionDto);
-        String responseContent = extractContent(resultMap);
+        String question = foodNameQuestionBuilder(ingredients); // 질문 형성
+        ChatCompletionDto completionDto = chatCompletionDtoBuilder(question); // 요청 형식 형성
+        Map<String, Object> resultMap = prompt(completionDto); // gpt api에 요청 및 반환
+        String responseContent = extractContent(resultMap); // 반환형에서 응답만 추출
         if (responseContent == null || responseContent.isEmpty()) {
             return new ArrayList<>();
         }
-        // Split the responseContent by commas and trim any whitespace
+        // 추출한 응답 List<String>로 반환
         return Arrays.stream(responseContent.split(","))
                 .map(String::trim)
                 .collect(Collectors.toList());
@@ -231,7 +304,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
 
-    /*******************************************************************************************************************
+    /******************************************************구버전********************************************************
      * gpt-3.5-turbo-instruct용 함수
      *
      * @param question {}

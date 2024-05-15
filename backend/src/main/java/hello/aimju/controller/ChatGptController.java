@@ -1,6 +1,7 @@
 package hello.aimju.controller;
 
 import hello.aimju.gpt.dto.ChatCompletionDto;
+import hello.aimju.gpt.dto.GptRecipeRequestDto;
 import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import hello.aimju.gpt.service.ChatGptService;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,11 @@ public class ChatGptController {
     public List<String> menuPrompt(@RequestBody String ingredients) {
         List<String> foods = chatGptService.extractFoodsPrompt(ingredients);
         return foods;
+    }
+
+    @PostMapping("/prompt-recipe")
+    public GptRecipeResponseDto recipePrompt(@RequestBody GptRecipeRequestDto requestDto) {
+        return chatGptService.extractRecipePrompt(requestDto);
     }
 
     /**
