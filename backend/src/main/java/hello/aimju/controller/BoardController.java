@@ -40,7 +40,7 @@ public class BoardController {
         boardService.deleteBoard(boardId,session);
         return ResponseEntity.status(HttpStatus.OK).body("댓글삭제완료");
     }
-    @PatchMapping
+    @PutMapping
     public ResponseEntity<?> modifyBoard(@RequestBody ModifyBoardRequestDto modifyBoardRequestDto, HttpSession session) throws Exception {
         return boardService.modifyBoard(modifyBoardRequestDto,session);
     }
