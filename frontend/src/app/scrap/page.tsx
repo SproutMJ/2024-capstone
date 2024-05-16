@@ -19,6 +19,7 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 'use client';
 import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
 import axios from "axios";
 import { Button } from "@/components/ui/button"
 import { SheetTrigger, SheetContent, Sheet } from "@/components/ui/sheet"
@@ -40,6 +41,9 @@ type RecipeDetail = {
 export default function page() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeDetail | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [recipeToDelete, setRecipeToDelete] = useState<number | null>(null);
+
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -68,6 +72,28 @@ export default function page() {
             console.error("레시피 상세 정보를 가져오는 동안 오류가 발생했습니다:", error);
         }
     };
+
+  const handleDeleteClick = async () => {
+    if (recipeToDelete !== null) {
+      try {
+        await axios.delete(`/api/recipe/${recipeToDelete}`);
+        setRecipes(recipes.filter(recipe => recipe.recipeId !== recipeToDelete));
+        closeModal();
+      } catch (error) {
+        console.error("Error deleting recipe:", error);
+      }
+    }
+  };
+
+  const openModal = (recipeId: number) => {
+    setRecipeToDelete(recipeId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setRecipeToDelete(null);
+  };
 
 
     return (
@@ -199,7 +225,6 @@ export default function page() {
                   <Card key={index}>
                     <CardHeader>
                       <CardTitle>{recipe.menu}</CardTitle>
-                      <CardDescription>{recipe.menu} 입니다.</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {selectedRecipe && selectedRecipe.menu === recipe.menu && (
@@ -218,7 +243,7 @@ export default function page() {
                           </div>
                       )}
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="flex justify-between">
                       <Button variant="outline" onClick={() => {
                         if (selectedRecipe && selectedRecipe.menu === recipe.menu) {
                           setSelectedRecipe(null); // 레시피가 이미 열려있을 경우에는 숨기기
@@ -228,15 +253,42 @@ export default function page() {
                       }}>
                         {selectedRecipe && selectedRecipe.menu === recipe.menu ? "숨기기" : "레시피 보기"}
                       </Button>
+                      <Button variant="outline" className="text-red-500 border-red-500"
+                              onClick={() => openModal(recipe.recipeId)}>
+                        <TrashIcon className="h-6 w-6"/>
+                      </Button>
                     </CardFooter>
                   </Card>
               ))}
             </div>
           </div>
           <div className="fixed bottom-6 right-6"/>
+
+          {/* 삭제 확인 모달 */}
+          <Modal
+              isOpen={isModalOpen}
+              onRequestClose={closeModal}
+              contentLabel="레시피 삭제 확인"
+              className="fixed inset-0 flex items-center justify-center z-50 outline-none"
+              overlayClassName="fixed inset-0 bg-black bg-opacity-70 z-40"
+          >
+            {/* 모달 내부 스타일을 JSX 내에서 설정 */}
+            <div style={{
+              backgroundColor: "#333", /* 검은색 배경색 */
+              color: "#fff", /* 텍스트 색상 */
+              padding: "20px", /* 내부 간격 설정 */
+              borderRadius: "8px" /* 모서리 둥글게 설정 */
+            }}>
+              <h2 className="text-lg font-semibold mb-4">정말 삭제하시겠습니까?</h2>
+              <div className="flex justify-end mt-4">
+                <Button variant="outline" onClick={closeModal}>취소</Button>
+                <Button variant="outline" className="ml-2 text-red-500 border-red-500" onClick={handleDeleteClick}>네</Button>
+              </div>
+            </div>
+          </Modal>
         </main>
       </>
-  )
+    )
 }
 
 function BellIcon(props) {
@@ -309,53 +361,53 @@ function MenuIcon(props) {
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="4" x2="20" y1="12" y2="12" />
-      <line x1="4" x2="20" y1="6" y2="6" />
-      <line x1="4" x2="20" y1="18" y2="18" />
-    </svg>
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <line x1="4" x2="20" y1="12" y2="12"/>
+        <line x1="4" x2="20" y1="6" y2="6"/>
+        <line x1="4" x2="20" y1="18" y2="18"/>
+      </svg>
   )
 }
 
 
 function ScissorsIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="6" cy="6" r="3" />
-      <path d="M8.12 8.12 12 12" />
-      <path d="M20 4 8.12 15.88" />
-      <circle cx="6" cy="18" r="3" />
-      <path d="M14.8 14.8 20 20" />
-    </svg>
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <circle cx="6" cy="6" r="3"/>
+        <path d="M8.12 8.12 12 12"/>
+        <path d="M20 4 8.12 15.88"/>
+        <circle cx="6" cy="18" r="3"/>
+        <path d="M14.8 14.8 20 20"/>
+      </svg>
   )
 }
 
 
 function UserIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
@@ -366,4 +418,26 @@ function UserIcon(props) {
       <circle cx="12" cy="7" r="4" />
     </svg>
   )
+}
+
+function TrashIcon(props) {
+  return (
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" />
+        <path d="M10 11v6" />
+        <path d="M14 11v6" />
+      </svg>
+  );
 }
