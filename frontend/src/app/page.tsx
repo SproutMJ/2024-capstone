@@ -17,6 +17,9 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+'use client';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import { Button } from "@/components/ui/button"
 import { SheetTrigger, SheetContent, Sheet } from "@/components/ui/sheet"
 import Link from "next/link"
@@ -24,6 +27,17 @@ import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, Dropdown
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 
 export default function page() {
+  const handleLogout = async () => {
+    try {
+      // 로그아웃 요청 보내기
+      await axios.post('/api/logout');
+      // 로그아웃 후 로그인 페이지로 이동
+      router.push('/login');
+    } catch (error) {
+      console.error('로그아웃 중 오류가 발생했습니다:', error);
+    }
+  };
+  const router = useRouter();
   return (
     <>
       <header className="flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow-md">
@@ -53,7 +67,7 @@ export default function page() {
                 </Link>
                 <Link
                   className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
+                  href="/scrap"
                 >
                   <ScissorsIcon className="h-5 w-5" />
                   Scrap
@@ -139,7 +153,7 @@ export default function page() {
                 <Link href="#">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <Link href="#">Logout</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>

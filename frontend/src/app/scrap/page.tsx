@@ -18,6 +18,7 @@ To read more about using these font, please visit the Next.js documentation:
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
 'use client';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
@@ -44,6 +45,18 @@ export default function page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recipeToDelete, setRecipeToDelete] = useState<number | null>(null);
 
+  const handleLogout = async () => {
+    try {
+      // 로그아웃 요청 보내기
+      await axios.post('/api/logout');
+      // 로그아웃 후 로그인 페이지로 이동
+      router.push('/login');
+    } catch (error) {
+      console.error('로그아웃 중 오류가 발생했습니다:', error);
+    }
+  };
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -111,7 +124,7 @@ export default function page() {
                 <div className="grid gap-4 p-4">
                   <Link
                       className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                      href="#"
+                      href="/"
                   >
                     <HomeIcon className="h-5 w-5"/>
                     Home
@@ -211,7 +224,7 @@ export default function page() {
                   <Link href="#">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <Link href="#">Logout</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
