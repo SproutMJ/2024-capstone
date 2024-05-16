@@ -61,33 +61,32 @@ export default function Page() {
       <div className="flex h-screen w-full items-center justify-center bg-gray-100 px-4 dark:bg-gray-950">
         <div className="w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold">Welcome back</h2>
-            <p className="text-gray-500 dark:text-gray-400">Enter your credentials to access your account.</p>
+            <h2 className="text-2xl font-bold">AI 명종원</h2>
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="id">ID</Label>
+              <Label htmlFor="id">아이디</Label>
               <Input
                   id="id"
-                  placeholder="Enter your ID"
+                  placeholder="아이디를 입력해주세요"
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">비밀번호</Label>
               <Input
                   id="password"
-                  placeholder="Enter your password"
+                  placeholder="비밀번호를 입력해주세요"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button className="flex-1" onClick={handleLogin}>Login</Button>
-              <Button className="flex-1" variant="outline" onClick={handleRegister}>Register</Button>
+              <Button className="flex-1" onClick={handleLogin}>로그인</Button>
+              <Button className="flex-1" variant="outline" onClick={handleRegister}>회원가입</Button>
             </div>
           </div>
         </div>
