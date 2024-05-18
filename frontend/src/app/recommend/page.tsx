@@ -23,6 +23,7 @@ import Link from "next/link"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
+import {Input} from "@/components/ui/input";
 
 export default function page() {
   return (
@@ -152,61 +153,130 @@ export default function page() {
         <div className="grid grid-cols-1 gap-6">
           <Card className="flex flex-col">
             <CardHeader>
-              <CardTitle>New Message</CardTitle>
+              <CardTitle>레시피 추천</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
               <div className="flex items-start space-x-4">
                 <Avatar>
-                  <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg" />
-                  <AvatarFallback>JP</AvatarFallback>
+                  <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback></AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col space-y-2">
                   <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                    <p>Hey there! Just wanted to check in and see how you're doing.</p>
+                    <p>환영합니다! 재료를 인식할 사진을 업로드 해주세요!</p>
                   </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">5 min ago</span>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <Avatar>
-                  <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-2">
-                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                    <p>I'm doing great, thanks for asking! How about you?</p>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">2 min ago</span>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <Avatar>
-                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                  <AvatarFallback>ML</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-2">
-                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                    <p>I'm doing well too, thanks for asking! Let's catch up soon.</p>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">1 min ago</span>
                 </div>
               </div>
               <div className="flex items-start space-x-4 justify-end">
                 <div className="flex flex-col space-y-2">
                   <div className="rounded-lg bg-blue-500 text-white p-4">
-                    <p>Hey guys, I'm doing great! Let's definitely catch up soon.</p>
+                    <p>사진 업로드 하기</p>
+                    <Input type={"file"}></Input>
+                    <div className="flex justify-end">
+                      <Button>보내기</Button>
+                    </div>
                   </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">30 sec ago</span>
                 </div>
                 <Avatar>
-                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
+                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>YU</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>인식된 재료는 다음과 같습니다.</p>
+                    <p>, , , , , , </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>재료를 추가하거나 수정하시겠습니까?</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 justify-end">
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-blue-500 text-white p-4">
+                    <div>
+                      <Button>예</Button><Button>아니오</Button>
+                    </div>
+                  </div>
+                </div>
+                <Avatar>
+                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>YU</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>최종 입력된 재료는 다음과 같습니다.</p>
+                    <p>, , , , ,</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>해당 재료로 만들 수 있는 음식은 다음과 같습니다.</p>
+                    <ol>
+                      <li>생선구이</li>
+                      <li>미역국</li>
+                    </ol>
+                    <p>어떤 재료의 음식의 레시피를 보시겠습니까?</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>생선 구이의 레시피는 다음과 같습니다.</p>
+                    <p>레시피</p>
+                    <p>만개의 레시피 링크: </p>
+                    <p>저장하시겠습니까?</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 justify-end">
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-blue-500 text-white p-4">
+                    <div>
+                      <Button>예</Button><Button>아니오</Button>
+                    </div>
+                  </div>
+                </div>
+                <Avatar>
+                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
                   <AvatarFallback>YU</AvatarFallback>
                 </Avatar>
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className="fixed bottom-6 right-6" />
+        <div className="fixed bottom-6 right-6"/>
       </main>
     </>
   )
@@ -214,21 +284,21 @@ export default function page() {
 
 function ClipboardIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-    </svg>
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      </svg>
   )
 }
 
