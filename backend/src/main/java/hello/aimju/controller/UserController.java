@@ -1,5 +1,6 @@
 package hello.aimju.controller;
 
+import hello.aimju.user.dto.ChangeUserNameRequestDto;
 import hello.aimju.user.dto.SignupRequestDto;
 import hello.aimju.user.dto.UserDetailResponseDto;
 import hello.aimju.user.dto.UserInfoResponseDto;
@@ -29,5 +30,10 @@ public class UserController {
     @GetMapping("/user-detail")
     public UserDetailResponseDto getUserDetail(HttpSession session){
         return userService.getUserDetail(session);
+    }
+
+    @PutMapping("/user/change-userName")
+    public ResponseEntity<?> changeUserName(@RequestBody ChangeUserNameRequestDto requestDto, HttpSession session) {
+        return userService.changeUserName(requestDto, session);
     }
 }

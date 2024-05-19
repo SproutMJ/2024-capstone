@@ -2,12 +2,10 @@ package hello.aimju.user.service;
 
 import hello.aimju.login.session.SessionConst;
 import hello.aimju.user.domain.User;
-import hello.aimju.user.dto.SignupRequestDto;
-import hello.aimju.user.dto.StatusResponseDto;
-import hello.aimju.user.dto.UserDetailResponseDto;
-import hello.aimju.user.dto.UserInfoResponseDto;
+import hello.aimju.user.dto.*;
 import hello.aimju.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +51,23 @@ public class UserService {
     public UserDetailResponseDto getUserDetail(HttpSession session) {
         User user = getUserFromSession(session);
         return new UserDetailResponseDto(user);
+    }
+
+    @Transactional
+    public ResponseEntity<?> changeUserName(ChangeUserNameRequestDto requestDto, HttpSession session) {
+        User user = getUserFromSession(session);
+        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassWord().equals(user.getPassword())) {
+            if (userRepository.existsByUserName(requestDto.getNewUserName())) {
+                return new ResponseEntity<>(new StatusResponseDto("이미 존재하는 사용자 이름입니다.", 400), HttpStatus.BAD_REQUEST);
+            }
+            user.setUserName(requestDto.getNewUserName());
+            userRepository.save(user);
+            StatusResponseDto res = new StatusResponseDto("이름이 변경되었습니다.", 200);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }
+        else {
+            throw new IllegalArgumentException("회원정보가 일치하지 않습니다");
+        }
     }
 
     private User getUserFromSession(HttpSession session) {
