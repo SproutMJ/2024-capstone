@@ -10,5 +10,5 @@ import java.util.List;
 public class SaveRecipeRequestDto {
     private String menu;
     private List<String> Ingredients;
-    private List<String> RecipeInfoList;
+    private List<String> instructions;
 }

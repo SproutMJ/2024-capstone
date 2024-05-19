@@ -53,7 +53,7 @@ public class RecipeService {
 
         // 레시피 정보(RecipeInfo) 저장
         List<RecipeInfo> recipeInfoList = new ArrayList<>();
-        for (String recipeInfo : saveRecipeRequestDto.getRecipeInfoList()) {
+        for (String recipeInfo : saveRecipeRequestDto.getInstructions()) {
             RecipeInfo info = new RecipeInfo();
             info.setInformation(recipeInfo);
             info.setRecipe(recipe);
@@ -138,7 +138,7 @@ public class RecipeService {
         }
 
         // 레시피 정보(RecipeInfo)를 업데이트합니다.
-        List<String> recipeInfoList = saveRecipeRequestDto.getRecipeInfoList();
+        List<String> recipeInfoList = saveRecipeRequestDto.getInstructions();
         List<RecipeInfo> existingRecipeInfoList = existingRecipe.getRecipeInfoList();
         existingRecipeInfoList.clear(); // 기존 레시피 정보를 모두 제거합니다.
         for (String recipeInfo : recipeInfoList) {

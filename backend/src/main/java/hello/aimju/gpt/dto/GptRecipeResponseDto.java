@@ -14,6 +14,4 @@ import java.util.List;
 public class GptRecipeResponseDto {
     private List<String> ingredients;
     private List<String> instructions;
-
-
 }
