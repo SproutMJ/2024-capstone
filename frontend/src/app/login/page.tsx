@@ -51,6 +51,7 @@ export default function Page() {
       router.push('/');
     } catch (error) {
       console.error('Login error:', error);
+      window.alert("정보가 일치하지 않습니다");
       // 에러 처리 로직 추가
     }
   };

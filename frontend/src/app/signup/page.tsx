@@ -56,7 +56,7 @@ export default function page() {
       throw new Error('Failed to fetch data')
     }
 
-    router.push('/')
+    router.push('/login')
   }
 
   return (
