@@ -56,9 +56,9 @@ public class UserService {
     @Transactional
     public ResponseEntity<?> changeUserName(ChangeUserNameRequestDto requestDto, HttpSession session) {
         User user = getUserFromSession(session);
-        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassWord().equals(user.getPassword())) {
+        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassword().equals(user.getPassword())) {
             if (userRepository.existsByUserName(requestDto.getNewUserName())) {
-                return new ResponseEntity<>(new StatusResponseDto("이미 존재하는 사용자 이름입니다.", 400), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new StatusResponseDto("이미 존재하는 사용자 이름입니다.", 400), HttpStatus.OK);
             }
             user.setUserName(requestDto.getNewUserName());
             userRepository.save(user);
@@ -66,21 +66,21 @@ public class UserService {
             return new ResponseEntity<>(res, HttpStatus.OK);
         }
         else {
-            throw new IllegalArgumentException("회원정보가 일치하지 않습니다");
+            return new ResponseEntity<>(new StatusResponseDto("회원 정보가 일치하지 않습니다", 401), HttpStatus.OK);
         }
     }
 
     @Transactional
     public ResponseEntity<?> changePassword(ChangePasswordRequestDto requestDto, HttpSession session) {
         User user = getUserFromSession(session);
-        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassWord().equals(user.getPassword())) {
+        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassword().equals(user.getPassword())) {
             user.setPassword(requestDto.getNewPassword());
             userRepository.save(user);
             StatusResponseDto res = new StatusResponseDto("비밀번호가 변경되었습니다.", 200);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }
         else {
-            throw new IllegalArgumentException("회원정보가 일치하지 않습니다");
+            return new ResponseEntity<>(new StatusResponseDto("회원 정보가 일치하지 않습니다", 401), HttpStatus.OK);
         }
     }
 
@@ -93,7 +93,7 @@ public class UserService {
             return new ResponseEntity<>(res, HttpStatus.OK);
         }
         else {
-            throw new IllegalArgumentException("회원정보가 일치하지 않습니다");
+            return new ResponseEntity<>(new StatusResponseDto("회원 정보가 일치하지 않습니다", 401), HttpStatus.OK);
         }
     }
 
