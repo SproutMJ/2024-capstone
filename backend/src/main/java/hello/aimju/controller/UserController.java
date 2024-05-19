@@ -1,9 +1,6 @@
 package hello.aimju.controller;
 
-import hello.aimju.user.dto.ChangeUserNameRequestDto;
-import hello.aimju.user.dto.SignupRequestDto;
-import hello.aimju.user.dto.UserDetailResponseDto;
-import hello.aimju.user.dto.UserInfoResponseDto;
+import hello.aimju.user.dto.*;
 import hello.aimju.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -35,5 +32,15 @@ public class UserController {
     @PutMapping("/user/change-userName")
     public ResponseEntity<?> changeUserName(@RequestBody ChangeUserNameRequestDto requestDto, HttpSession session) {
         return userService.changeUserName(requestDto, session);
+    }
+
+    @PutMapping("/user/change-password")
+    public ResponseEntity<?> changeUserName(@RequestBody ChangePasswordRequestDto requestDto, HttpSession session) {
+        return userService.changePassword(requestDto, session);
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<?> deleteUser(@RequestBody SignupRequestDto requestDto, HttpSession session) {
+        return userService.deleteUser(requestDto, session);
     }
 }

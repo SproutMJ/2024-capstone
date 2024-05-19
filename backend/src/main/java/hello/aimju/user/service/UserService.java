@@ -70,6 +70,33 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<?> changePassword(ChangePasswordRequestDto requestDto, HttpSession session) {
+        User user = getUserFromSession(session);
+        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassWord().equals(user.getPassword())) {
+            user.setPassword(requestDto.getNewPassword());
+            userRepository.save(user);
+            StatusResponseDto res = new StatusResponseDto("비밀번호가 변경되었습니다.", 200);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }
+        else {
+            throw new IllegalArgumentException("회원정보가 일치하지 않습니다");
+        }
+    }
+
+    public ResponseEntity<?> deleteUser(SignupRequestDto requestDto, HttpSession session) {
+        User user = getUserFromSession(session);
+        if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassword().equals(user.getPassword())) {
+            userRepository.delete(user);
+            session.invalidate();
+            StatusResponseDto res = new StatusResponseDto("삭제되었습니다.", 200);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }
+        else {
+            throw new IllegalArgumentException("회원정보가 일치하지 않습니다");
+        }
+    }
+
     private User getUserFromSession(HttpSession session) {
         User loginUser = (User) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginUser == null) {
