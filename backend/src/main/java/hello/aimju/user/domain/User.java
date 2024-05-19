@@ -21,17 +21,37 @@ public class User {
     private Long id;
     private String userName;
     private String password;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Recipe> recipes = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ChatRoom> chatRooms = new ArrayList<>();
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Board> boards = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 
     public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
+    }
+
+    // 레시피 개수 반환
+    public int getRecipeCount() {
+        return recipes.size();
+    }
+
+    // 채팅방 개수 반환
+    public int getChatRoomCount() {
+        return chatRooms.size();
+    }
+
+    // 게시판 개수 반환
+    public int getBoardCount() {
+        return boards.size();
+    }
+
+    // 댓글 개수 반환
+    public int getCommentCount() {
+        return comments.size();
     }
 }
