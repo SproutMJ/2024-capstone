@@ -1,10 +1,13 @@
 package hello.aimju.user.service;
 
+import hello.aimju.login.session.SessionConst;
 import hello.aimju.user.domain.User;
 import hello.aimju.user.dto.SignupRequestDto;
 import hello.aimju.user.dto.StatusResponseDto;
+import hello.aimju.user.dto.UserDetailResponseDto;
 import hello.aimju.user.dto.UserInfoResponseDto;
 import hello.aimju.user.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +48,19 @@ public class UserService {
         User userInfo = user.get();
 
         return new UserInfoResponseDto(userInfo.getUserName(), userInfo.getPassword());
+    }
+
+    public UserDetailResponseDto getUserDetail(HttpSession session) {
+        User user = getUserFromSession(session);
+        return new UserDetailResponseDto(user);
+    }
+
+    private User getUserFromSession(HttpSession session) {
+        User loginUser = (User) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginUser == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
+        return loginUser;
     }
 
 }

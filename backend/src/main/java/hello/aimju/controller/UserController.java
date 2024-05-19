@@ -1,8 +1,10 @@
 package hello.aimju.controller;
 
 import hello.aimju.user.dto.SignupRequestDto;
+import hello.aimju.user.dto.UserDetailResponseDto;
 import hello.aimju.user.dto.UserInfoResponseDto;
 import hello.aimju.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +24,10 @@ public class UserController {
     @GetMapping("/user-info/{userId}")
     public UserInfoResponseDto getUserInfo(@PathVariable Long userId){
         return userService.getUserInfo(userId);
+    }
+
+    @GetMapping("/user-detail")
+    public UserDetailResponseDto getUserDetail(HttpSession session){
+        return userService.getUserDetail(session);
     }
 }
