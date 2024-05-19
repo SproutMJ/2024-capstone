@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {useRouter} from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function Page() {
   const [userName, setUserName] = useState('');
@@ -46,6 +47,7 @@ export default function Page() {
 
       // 로그인 성공 시 처리
       // 예: 페이지 이동 등
+      Cookies.set('auth_token', 'value', { expires: '', path: '' });
       router.push('/');
     } catch (error) {
       console.error('Login error:', error);

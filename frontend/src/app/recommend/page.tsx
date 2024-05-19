@@ -18,195 +18,144 @@ To read more about using these font, please visit the Next.js documentation:
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
 import { Button } from "@/components/ui/button"
-import { SheetTrigger, SheetContent, Sheet } from "@/components/ui/sheet"
 import Link from "next/link"
-import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
+import {Input} from "@/components/ui/input";
+import {Header} from "@/components/ui/header";
 
 export default function page() {
   return (
     <>
-      <header className="flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow-md">
-        <div className="flex items-center space-x-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <MenuIcon className="h-6 w-6" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left">
-              <div className="grid gap-4 p-4">
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <HomeIcon className="h-5 w-5" />
-                  Home
-                </Link>
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <UserIcon className="h-5 w-5" />
-                  My Page
-                </Link>
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <ScissorsIcon className="h-5 w-5" />
-                  Scrap
-                </Link>
-                <Link
-                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                  href="#"
-                >
-                  <ClipboardIcon className="h-5 w-5" />
-                  Bulletin Board
-                </Link>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <Link className="text-lg font-bold" href="#">
-            My App
-          </Link>
-        </div>
-        <div className="flex items-center space-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild />
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <div className="flex flex-col space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">New message</p>
-                      <p className="text-sm text-gray-500">You have a new message</p>
-                    </div>
-                    <span className="text-xs text-gray-500">5 min ago</span>
-                  </div>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="flex flex-col space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Mention in a post</p>
-                      <p className="text-sm text-gray-500">You were mentioned in a post</p>
-                    </div>
-                    <span className="text-xs text-gray-500">1 hour ago</span>
-                  </div>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="flex flex-col space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">New follower</p>
-                      <p className="text-sm text-gray-500">You have a new follower</p>
-                    </div>
-                    <span className="text-xs text-gray-500">2 days ago</span>
-                  </div>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height={24}
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "24/24",
-                    objectFit: "cover",
-                  }}
-                  width={24}
-                />
-                <span className="sr-only">User menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Signed in as John Doe</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="#">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="#">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="#">Logout</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+      <Header></Header>
       <main className="py-8">
         <div className="grid grid-cols-1 gap-6">
           <Card className="flex flex-col">
             <CardHeader>
-              <CardTitle>New Message</CardTitle>
+              <CardTitle>레시피 추천</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
               <div className="flex items-start space-x-4">
                 <Avatar>
-                  <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg" />
-                  <AvatarFallback>JP</AvatarFallback>
+                  <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback></AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col space-y-2">
                   <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                    <p>Hey there! Just wanted to check in and see how you're doing.</p>
+                    <p>환영합니다! 재료를 인식할 사진을 업로드 해주세요!</p>
                   </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">5 min ago</span>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <Avatar>
-                  <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-2">
-                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                    <p>I'm doing great, thanks for asking! How about you?</p>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">2 min ago</span>
-                </div>
-              </div>
-              <div className="flex items-start space-x-4">
-                <Avatar>
-                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                  <AvatarFallback>ML</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-2">
-                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                    <p>I'm doing well too, thanks for asking! Let's catch up soon.</p>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">1 min ago</span>
                 </div>
               </div>
               <div className="flex items-start space-x-4 justify-end">
                 <div className="flex flex-col space-y-2">
                   <div className="rounded-lg bg-blue-500 text-white p-4">
-                    <p>Hey guys, I'm doing great! Let's definitely catch up soon.</p>
+                    <p>사진 업로드 하기</p>
+                    <Input type={"file"}></Input>
+                    <div className="flex justify-end">
+                      <Button>보내기</Button>
+                    </div>
                   </div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">30 sec ago</span>
                 </div>
                 <Avatar>
-                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
+                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>YU</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>인식된 재료는 다음과 같습니다.</p>
+                    <p>, , , , , , </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>재료를 추가하거나 수정하시겠습니까?</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 justify-end">
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-blue-500 text-white p-4">
+                    <div>
+                      <Button>예</Button><Button>아니오</Button>
+                    </div>
+                  </div>
+                </div>
+                <Avatar>
+                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>YU</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>최종 입력된 재료는 다음과 같습니다.</p>
+                    <p>, , , , ,</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>해당 재료로 만들 수 있는 음식은 다음과 같습니다.</p>
+                    <ol>
+                      <li>생선구이</li>
+                      <li>미역국</li>
+                    </ol>
+                    <p>어떤 재료의 음식의 레시피를 보시겠습니까?</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <Avatar>
+                  <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                  <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                    <p>생선 구이의 레시피는 다음과 같습니다.</p>
+                    <p>레시피</p>
+                    <p>만개의 레시피 링크: </p>
+                    <p>저장하시겠습니까?</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 justify-end">
+                <div className="flex flex-col space-y-2">
+                  <div className="rounded-lg bg-blue-500 text-white p-4">
+                    <div>
+                      <Button>예</Button><Button>아니오</Button>
+                    </div>
+                  </div>
+                </div>
+                <Avatar>
+                  <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
                   <AvatarFallback>YU</AvatarFallback>
                 </Avatar>
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className="fixed bottom-6 right-6" />
+        <div className="fixed bottom-6 right-6"/>
       </main>
     </>
   )
@@ -214,21 +163,21 @@ export default function page() {
 
 function ClipboardIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-    </svg>
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+      >
+        <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      </svg>
   )
 }
 
