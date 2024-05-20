@@ -1,7 +1,6 @@
 package hello.aimju.gpt.service;
 
 import hello.aimju.gpt.dto.ChatCompletionDto;
-import hello.aimju.gpt.dto.CompletionDto;
 import hello.aimju.gpt.dto.GptRecipeRequestDto;
 import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,7 @@ import java.util.Map;
 
 @Service
 public interface ChatGptService {
-
-    List<Map<String, Object>> modelList();
-
-    Map<String, Object> isValidModel(String modelName);
-
-    Map<String, Object> legacyPrompt(String question);
+    //***************************************사용중*************************************
 
     Map<String, Object> prompt(ChatCompletionDto chatCompletionDto);
 
@@ -33,6 +27,14 @@ public interface ChatGptService {
     GptRecipeResponseDto extractRecipePrompt(GptRecipeRequestDto requestDto);
 
     String extractRecipePromptByString(GptRecipeRequestDto requestDto);
+
+    //***************************************사용 x*************************************
+
+    List<Map<String, Object>> modelList();
+
+    Map<String, Object> isValidModel(String modelName);
+
+    Map<String, Object> legacyPrompt(String question);
 
     GptRecipeResponseDto getRecipeResponse(String question);
 

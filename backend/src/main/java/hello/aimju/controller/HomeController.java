@@ -16,12 +16,12 @@ public class HomeController {
     /*
     * robo 페이지 보여줌
     * */
-    @GetMapping("/view/robo")
+//    @GetMapping("/view/robo")
     public String robo(){
         return "robo";
     }
 
-    @GetMapping("/")
+//    @GetMapping("/")
     public String home(@Login User loginUser, Model model) {
 
         //세션에 회원 데이터가 없으면 home
@@ -34,12 +34,12 @@ public class HomeController {
         return "robo";
     }
 
-    @GetMapping("/api/signup")
+//    @GetMapping("/api/signup")
     public String addForm(@ModelAttribute("member")User user) {
         return "members/addMemberForm";
     }
 
-    @GetMapping("/api/login")
+//    @GetMapping("/api/login")
     public String loginForm() {
         return "login/loginForm";
     }

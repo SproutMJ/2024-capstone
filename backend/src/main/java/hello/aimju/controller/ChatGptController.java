@@ -29,29 +29,6 @@ public class ChatGptController {
     public ChatGptController(ChatGptService chatGptService) {
         this.chatGptService = chatGptService;
     }
-
-    /**
-     * [API] ChatGPT 모델 리스트를 조회합니다.
-     */
-    @GetMapping("/modelList-gpt")
-    public ResponseEntity<List<Map<String, Object>>> selectModelList() {
-        List<Map<String, Object>> result = chatGptService.modelList();
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    /**
-     * [API] ChatGPT 유효한 모델인지 조회합니다.
-     *
-     * @param modelName
-     * @return
-     */
-    @GetMapping("/model-gpt")
-    public ResponseEntity<Map<String, Object>> isValidModel(@RequestParam(name = "modelName") String modelName) {
-        Map<String, Object> result = chatGptService.isValidModel(modelName);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-
     /****************************************************실제사용********************************************************
      * [API] 최신 ChatGPT 프롬프트 명령어를 수행합니다.
      * 사용 가능한 모델: gpt-4, gpt-4 turbo, gpt-3.5-turbo
@@ -91,24 +68,46 @@ public class ChatGptController {
     /*******************************************************************************************************************
 
 
-     /**구 버전
+     /******************************************************사용 X******************************************************
      * [API] Legacy ChatGPT 프롬프트 명령을 수행합니다.
      * 사용 가능한 모델: gpt-3.5-turbo-instruct, babbage-002, davinci-002
      * @param question {}
      * @return ResponseEntity<Map < String, Object>>
      */
-    @PostMapping("/recommendation-legacy")
+
+    /**
+     * [API] ChatGPT 모델 리스트를 조회합니다.
+     */
+//    @GetMapping("/modelList-gpt")
+    public ResponseEntity<List<Map<String, Object>>> selectModelList() {
+        List<Map<String, Object>> result = chatGptService.modelList();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * [API] ChatGPT 유효한 모델인지 조회합니다.
+     *
+     * @param modelName
+     * @return
+     */
+//    @GetMapping("/model-gpt")
+    public ResponseEntity<Map<String, Object>> isValidModel(@RequestParam(name = "modelName") String modelName) {
+        Map<String, Object> result = chatGptService.isValidModel(modelName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+//    @PostMapping("/recommendation-legacy")
     public ResponseEntity<Map<String, Object>> selectLegacyPrompt(@RequestBody String question) {
         Map<String, Object> result = chatGptService.legacyPrompt(question);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/recommendation-legacy-menu")
+//    @PostMapping("/recommendation-legacy-menu")
     public List<String> selectMenuLegacyPrompt(@RequestBody String question) {
         return chatGptService.extractFoods(question);
     }
 
-    @PostMapping("/recommendation-legacy-recipe")
+//    @PostMapping("/recommendation-legacy-recipe")
     public GptRecipeResponseDto selectRecipeLegacyPrompt(@RequestBody String question) {
         return chatGptService.getRecipeResponse(question);
     }

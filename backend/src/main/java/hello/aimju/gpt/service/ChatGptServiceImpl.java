@@ -17,9 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * ChatGPT Service 구현체
  *
@@ -49,79 +46,8 @@ public class ChatGptServiceImpl implements ChatGptService {
     @Value("${openai.url.legacy-prompt}")
     private String legacyPromptUrl;
 
-    /**
-     * 사용 가능한 모델 리스트를 조회하는 비즈니스 로직
-     *
-     * @return List<Map < String, Object>>
-     */
-    @Override
-    public List<Map<String, Object>> modelList() {
-        log.debug("[+] 모델 리스트를 조회합니다.");
-        List<Map<String, Object>> resultList = null;
-
-        // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
-        HttpHeaders headers = chatGPTConfig.httpHeaders();
-
-        // [STEP2] 통신을 위한 RestTemplate을 구성합니다.
-        ResponseEntity<String> response = chatGPTConfig
-                .restTemplate()
-                .exchange(modelUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-        try {
-            // [STEP3] Jackson을 기반으로 응답값을 가져옵니다.
-            ObjectMapper om = new ObjectMapper();
-            Map<String, Object> data = om.readValue(response.getBody(), new TypeReference<>() {
-            });
-
-            // [STEP4] 응답 값을 결과값에 넣고 출력을 해봅니다.
-            resultList = (List<Map<String, Object>>) data.get("data");
-            for (Map<String, Object> object : resultList) {
-                log.debug("ID: " + object.get("id"));
-                log.debug("Object: " + object.get("object"));
-                log.debug("Created: " + object.get("created"));
-                log.debug("Owned By: " + object.get("owned_by"));
-            }
-        } catch (JsonMappingException e) {
-            log.debug("JsonMappingException :: " + e.getMessage());
-        } catch (JsonProcessingException e) {
-            log.debug("JsonProcessingException :: " + e.getMessage());
-        } catch (RuntimeException e) {
-            log.debug("RuntimeException :: " + e.getMessage());
-        }
-        return resultList;
-    }
-
-    /**
-     * 모델이 유효한지 확인하는 비즈니스 로직
-     *
-     * @param modelName {}
-     * @return Map<String, Object>
-     */
-    @Override
-    public Map<String, Object> isValidModel(String modelName) {
-        log.debug("[+] 모델이 유효한지 조회합니다. 모델 : " + modelName);
-        Map<String, Object> result = new HashMap<>();
-
-        // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
-        HttpHeaders headers = chatGPTConfig.httpHeaders();
-
-        // [STEP2] 통신을 위한 RestTemplate을 구성합니다.
-        ResponseEntity<String> response = chatGPTConfig
-                .restTemplate()
-                .exchange(modelListUrl + "/" + modelName, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-        try {
-            // [STEP3] Jackson을 기반으로 응답값을 가져옵니다.
-            ObjectMapper om = new ObjectMapper();
-            result = om.readValue(response.getBody(), new TypeReference<>() {
-            });
-        } catch (JsonProcessingException e) {
-            log.debug("JsonMappingException :: " + e.getMessage());
-        } catch (RuntimeException e) {
-            log.debug("RuntimeException :: " + e.getMessage());
-        }
-        return result;
-    }
-
-    /***************************************************gpt-4-turbo*****************************************************
+    /***************************************************사용중*****************************************************
+     * gpt-4-turbo
      * 1번 질문
      * 해당 식재료로 만들 수 있는 음식들을 반환해줌
      *
@@ -133,23 +59,7 @@ public class ChatGptServiceImpl implements ChatGptService {
         ChatCompletionDto completionDto = chatCompletionDtoBuilder(question); // 요청 형식 형성
         Map<String, Object> resultMap = prompt(completionDto); // gpt api에 요청 및 반환
         String responseContent = extractContent(resultMap); // 반환형에서 응답만 추출
-        if (responseContent == null || responseContent.isEmpty()) {
-            return new ArrayList<>();
-        }
-        // 추출한 응답 List<String>로 반환
-        return Arrays.stream(responseContent.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * extractFoodsPrompt 에서 사용
-     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
-     */
-    private String foodNameQuestionBuilder(String ingredients) {
-        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
-                + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
-                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+        return extractIngredientsToFoods(responseContent);
     }
 
     /**
@@ -188,6 +98,16 @@ public class ChatGptServiceImpl implements ChatGptService {
     }
 
     /**
+     * extractFoodsPrompt 에서 사용
+     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 질문을 만들어줌
+     */
+    private String foodNameQuestionBuilder(String ingredients) {
+        return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
+                + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
+                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+    }
+
+    /**
      * extractRecipePrompt 에서 사용
      * 해당 음식을 만드는데 꼭 필요한 재료를 추출하는 질문을 만들어줌
      */
@@ -197,16 +117,6 @@ public class ChatGptServiceImpl implements ChatGptService {
                 + ingredientsStr + "\\n 필요없는 식재료는 빼주고 필요한 식재료는 추가해줘"
                 + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
                 + "\\n 수정된 식재료: 식재료1, 식재료2, 식재료3....";
-    }
-
-    public String extractRealIngredients(String ingredientsResult) {
-        int colonIndex = ingredientsResult.indexOf(":");
-
-        if (colonIndex != -1 && colonIndex < ingredientsResult.length() - 1) {
-            return ingredientsResult.substring(colonIndex + 2);
-        } else {
-            return ingredientsResult;
-        }
     }
 
     /**
@@ -219,44 +129,6 @@ public class ChatGptServiceImpl implements ChatGptService {
                 + "\\n메뉴: 음식이름"
                 + "재료:\\n1.재료1\\n2.재료2\\n3.재료3\\n"
                 + "레시피:\\n1.요리순서1\\n2.요리순서2\\n3.요리순서3";
-    }
-
-    /**
-     * extractRecipePrompt 에서 사용
-     * 얻은 레시피를 원하는 형식으로 바꿔줌
-     */
-    private static GptRecipeResponseDto parseRecipe(String recipe) {
-        List<String> ingredients = new ArrayList<>();
-        List<String> instructions = new ArrayList<>();
-
-        int ingredientStartIndex = recipe.indexOf("재료:");
-        if (ingredientStartIndex != -1) {
-            int ingredientEndIndex = recipe.indexOf("레시피:", ingredientStartIndex);
-            if (ingredientEndIndex != -1) {
-                String ingredientsSection = recipe.substring(ingredientStartIndex + 4, ingredientEndIndex).trim();
-                extractItems(ingredientsSection, ingredients);
-            }
-        }
-
-        int instructionStartIndex = recipe.indexOf("레시피:");
-        if (instructionStartIndex != -1) {
-            String instructionsSection = recipe.substring(instructionStartIndex + 5).trim();
-            extractItems(instructionsSection, instructions);
-        }
-
-        return new GptRecipeResponseDto(ingredients, instructions);
-    }
-
-    private static void extractItems(String section, List<String> items) {
-        // Split the section into lines
-        String[] lines = section.split("\\n");
-
-        // Extract items from each line
-        for (String line : lines) {
-            // Remove the numbering (e.g., "1. ", "2. ") and trim the line
-            String item = line.replaceAll("^\\d+\\.\\s*", "").trim();
-            items.add(item);
-        }
     }
 
     /**
@@ -337,9 +209,150 @@ public class ChatGptServiceImpl implements ChatGptService {
         return null;
     }
 
+    /**
+     * extractFoodsPrompt 에서 사용
+     * 어떤 재료로 어떤 음식을 만들 수 있는지에 대한 응답
+     */
+    private List<String> extractIngredientsToFoods(String responseContent) {
+        if (responseContent == null || responseContent.isEmpty()) {
+            return new ArrayList<>();
+        }
+        // 추출한 응답 List<String>로 반환
+        return Arrays.stream(responseContent.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+    }
 
-    /************************************************gpt-3.5-turbo-instruct*********************************************
-     * gpt-3.5-turbo-instruct용 함수
+    /**
+     * extractRecipePrompt 에서 사용
+     * 어떤 음식을 만드는데 필요한 유효한 재료에 대한 응답
+     */
+    private String extractRealIngredients(String ingredientsResult) {
+        int colonIndex = ingredientsResult.indexOf(":");
+
+        if (colonIndex != -1 && colonIndex < ingredientsResult.length() - 1) {
+            return ingredientsResult.substring(colonIndex + 2);
+        } else {
+            return ingredientsResult;
+        }
+    }
+
+    /**
+     * extractRecipePrompt 에서 사용
+     * 얻은 레시피를 원하는 형식으로 바꿔줌
+     */
+    private static GptRecipeResponseDto parseRecipe(String recipe) {
+        List<String> ingredients = new ArrayList<>();
+        List<String> instructions = new ArrayList<>();
+
+        int ingredientStartIndex = recipe.indexOf("재료:");
+        if (ingredientStartIndex != -1) {
+            int ingredientEndIndex = recipe.indexOf("레시피:", ingredientStartIndex);
+            if (ingredientEndIndex != -1) {
+                String ingredientsSection = recipe.substring(ingredientStartIndex + 4, ingredientEndIndex).trim();
+                extractItems(ingredientsSection, ingredients);
+            }
+        }
+
+        int instructionStartIndex = recipe.indexOf("레시피:");
+        if (instructionStartIndex != -1) {
+            String instructionsSection = recipe.substring(instructionStartIndex + 5).trim();
+            extractItems(instructionsSection, instructions);
+        }
+
+        return new GptRecipeResponseDto(ingredients, instructions);
+    }
+
+    /**
+     * parseRecipe 에서 사용
+     * 각각의 문장을 가공해서 List에 담아줌
+     */
+    private static void extractItems(String section, List<String> items) {
+        // Split the section into lines
+        String[] lines = section.split("\\n");
+
+        // Extract items from each line
+        for (String line : lines) {
+            // Remove the numbering (e.g., "1. ", "2. ") and trim the line
+            String item = line.replaceAll("^\\d+\\.\\s*", "").trim();
+            items.add(item);
+        }
+    }
+
+    /*****************************************************사용 X*****************************************************
+     * 사용 가능한 모델 리스트를 조회하는 비즈니스 로직
+     *
+     * @return List<Map < String, Object>>
+     */
+    @Override
+    public List<Map<String, Object>> modelList() {
+        log.debug("[+] 모델 리스트를 조회합니다.");
+        List<Map<String, Object>> resultList = null;
+
+        // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
+        HttpHeaders headers = chatGPTConfig.httpHeaders();
+
+        // [STEP2] 통신을 위한 RestTemplate을 구성합니다.
+        ResponseEntity<String> response = chatGPTConfig
+                .restTemplate()
+                .exchange(modelUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        try {
+            // [STEP3] Jackson을 기반으로 응답값을 가져옵니다.
+            ObjectMapper om = new ObjectMapper();
+            Map<String, Object> data = om.readValue(response.getBody(), new TypeReference<>() {
+            });
+
+            // [STEP4] 응답 값을 결과값에 넣고 출력을 해봅니다.
+            resultList = (List<Map<String, Object>>) data.get("data");
+            for (Map<String, Object> object : resultList) {
+                log.debug("ID: " + object.get("id"));
+                log.debug("Object: " + object.get("object"));
+                log.debug("Created: " + object.get("created"));
+                log.debug("Owned By: " + object.get("owned_by"));
+            }
+        } catch (JsonMappingException e) {
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            log.debug("JsonProcessingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
+        }
+        return resultList;
+    }
+
+    /**
+     * 모델이 유효한지 확인하는 비즈니스 로직
+     *
+     * @param modelName {}
+     * @return Map<String, Object>
+     */
+    @Override
+    public Map<String, Object> isValidModel(String modelName) {
+        log.debug("[+] 모델이 유효한지 조회합니다. 모델 : " + modelName);
+        Map<String, Object> result = new HashMap<>();
+
+        // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
+        HttpHeaders headers = chatGPTConfig.httpHeaders();
+
+        // [STEP2] 통신을 위한 RestTemplate을 구성합니다.
+        ResponseEntity<String> response = chatGPTConfig
+                .restTemplate()
+                .exchange(modelListUrl + "/" + modelName, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        try {
+            // [STEP3] Jackson을 기반으로 응답값을 가져옵니다.
+            ObjectMapper om = new ObjectMapper();
+            result = om.readValue(response.getBody(), new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * gpt-3.5-turbo-instruct
      *
      * @param question {}
      * 음식 + 재료를 포함한 레시피에 대한 질문을 question으로 받아줌

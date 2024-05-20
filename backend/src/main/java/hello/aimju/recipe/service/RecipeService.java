@@ -1,6 +1,5 @@
 package hello.aimju.recipe.service;
 
-import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import hello.aimju.login.session.SessionConst;
 import hello.aimju.recipe.domain.Recipe;
 import hello.aimju.recipe.dto.ChatRecipeRequestDto;
@@ -14,7 +13,6 @@ import hello.aimju.recipe.recipe_info.repository.RecipeInfoRepository;
 import hello.aimju.recipe.repository.RecipeRepository;
 import hello.aimju.user.domain.User;
 import hello.aimju.user.dto.StatusResponseDto;
-import hello.aimju.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +33,6 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientsRepository ingredientsRepository;
     private final RecipeInfoRepository recipeInfoRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public String saveRecipe(SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
@@ -102,24 +99,6 @@ public class RecipeService {
 
         return new ResponseEntity<>(new StatusResponseDto( requestDto.getMenu() + " 레시피를 저장했습니다.", 200), HttpStatus.OK);
     }
-
-    private void parseRecipe(List<String> ingredients, List<String> instructions, String recipe) {
-        int ingredientStartIndex = recipe.indexOf("재료:");
-        if (ingredientStartIndex != -1) {
-            int ingredientEndIndex = recipe.indexOf("레시피:", ingredientStartIndex);
-            if (ingredientEndIndex != -1) {
-                String ingredientsSection = recipe.substring(ingredientStartIndex + 4, ingredientEndIndex).trim();
-                extractItems(ingredientsSection, ingredients);
-            }
-        }
-
-        int instructionStartIndex = recipe.indexOf("레시피:");
-        if (instructionStartIndex != -1) {
-            String instructionsSection = recipe.substring(instructionStartIndex + 5).trim();
-            extractItems(instructionsSection, instructions);
-        }
-    }
-
 
     public List<GetAllRecipesResponseDto> getAllRecipes(HttpSession session) {
         List<Recipe> recipes = recipeRepository.findAllByUserId(getUserFromSession(session).getId());
@@ -220,6 +199,23 @@ public class RecipeService {
         }
 
         return loginUser;
+    }
+
+    private void parseRecipe(List<String> ingredients, List<String> instructions, String recipe) {
+        int ingredientStartIndex = recipe.indexOf("재료:");
+        if (ingredientStartIndex != -1) {
+            int ingredientEndIndex = recipe.indexOf("레시피:", ingredientStartIndex);
+            if (ingredientEndIndex != -1) {
+                String ingredientsSection = recipe.substring(ingredientStartIndex + 4, ingredientEndIndex).trim();
+                extractItems(ingredientsSection, ingredients);
+            }
+        }
+
+        int instructionStartIndex = recipe.indexOf("레시피:");
+        if (instructionStartIndex != -1) {
+            String instructionsSection = recipe.substring(instructionStartIndex + 5).trim();
+            extractItems(instructionsSection, instructions);
+        }
     }
 
     private static void extractItems(String section, List<String> items) {
