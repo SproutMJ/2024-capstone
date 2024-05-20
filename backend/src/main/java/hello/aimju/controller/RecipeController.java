@@ -1,5 +1,6 @@
 package hello.aimju.controller;
 
+import hello.aimju.recipe.dto.ChatRecipeRequestDto;
 import hello.aimju.recipe.dto.GetAllRecipesResponseDto;
 import hello.aimju.recipe.dto.GetRecipeResponseDto;
 import hello.aimju.recipe.dto.SaveRecipeRequestDto;
@@ -21,6 +22,11 @@ public class RecipeController {
     @PostMapping("/save-recipe")
     public String saveRecipe(@RequestBody SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
         return recipeService.saveRecipe(saveRecipeRequestDto, session);
+    }
+
+    @PostMapping("/recipe/save-chat")
+    public ResponseEntity<?> saveRecipe(@RequestBody ChatRecipeRequestDto requestDto, HttpSession session) {
+        return recipeService.saveChatAsRecipe(requestDto, session);
     }
 
     @GetMapping("/recipes")

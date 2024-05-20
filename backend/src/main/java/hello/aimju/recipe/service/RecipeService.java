@@ -1,7 +1,9 @@
 package hello.aimju.recipe.service;
 
+import hello.aimju.gpt.dto.GptRecipeResponseDto;
 import hello.aimju.login.session.SessionConst;
 import hello.aimju.recipe.domain.Recipe;
+import hello.aimju.recipe.dto.ChatRecipeRequestDto;
 import hello.aimju.recipe.dto.GetAllRecipesResponseDto;
 import hello.aimju.recipe.dto.GetRecipeResponseDto;
 import hello.aimju.recipe.dto.SaveRecipeRequestDto;
@@ -11,10 +13,12 @@ import hello.aimju.recipe.recipe_info.domain.RecipeInfo;
 import hello.aimju.recipe.recipe_info.repository.RecipeInfoRepository;
 import hello.aimju.recipe.repository.RecipeRepository;
 import hello.aimju.user.domain.User;
+import hello.aimju.user.dto.StatusResponseDto;
 import hello.aimju.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +66,58 @@ public class RecipeService {
         recipeInfoRepository.saveAll(recipeInfoList);
 
         return recipe.getMenu();
+    }
+
+    @Transactional
+    public ResponseEntity<?> saveChatAsRecipe(ChatRecipeRequestDto requestDto, HttpSession session) {
+        String recipe_info = requestDto.getRecipe();
+
+        Recipe recipe = new Recipe();
+        recipe.setMenu(requestDto.getMenu());
+        recipe.setUser(getUserFromSession(session));
+        recipe = recipeRepository.save(recipe);
+
+        List<String> ingredients = new ArrayList<>();
+        List<String> instructions = new ArrayList<>();
+
+        parseRecipe(ingredients, instructions, recipe_info); //전달받은 레시피를 원하는 형식으로 바꿔줌
+
+        List<Ingredients> ingredientsList = new ArrayList<>();
+        for (String ingredient : ingredients) {
+            Ingredients newIngredient = new Ingredients();
+            newIngredient.setIngredient(ingredient);
+            newIngredient.setRecipe(recipe);
+            ingredientsList.add(newIngredient);
+        }
+        ingredientsRepository.saveAll(ingredientsList);
+
+        List<RecipeInfo> recipeInfoList = new ArrayList<>();
+        for (String recipeInfo : instructions) {
+            RecipeInfo info = new RecipeInfo();
+            info.setInformation(recipeInfo);
+            info.setRecipe(recipe);
+            recipeInfoList.add(info);
+        }
+        recipeInfoRepository.saveAll(recipeInfoList);
+
+        return new ResponseEntity<>(new StatusResponseDto( requestDto.getMenu() + " 레시피를 저장했습니다.", 200), HttpStatus.OK);
+    }
+
+    private void parseRecipe(List<String> ingredients, List<String> instructions, String recipe) {
+        int ingredientStartIndex = recipe.indexOf("재료:");
+        if (ingredientStartIndex != -1) {
+            int ingredientEndIndex = recipe.indexOf("레시피:", ingredientStartIndex);
+            if (ingredientEndIndex != -1) {
+                String ingredientsSection = recipe.substring(ingredientStartIndex + 4, ingredientEndIndex).trim();
+                extractItems(ingredientsSection, ingredients);
+            }
+        }
+
+        int instructionStartIndex = recipe.indexOf("레시피:");
+        if (instructionStartIndex != -1) {
+            String instructionsSection = recipe.substring(instructionStartIndex + 5).trim();
+            extractItems(instructionsSection, instructions);
+        }
     }
 
 
@@ -164,5 +220,17 @@ public class RecipeService {
         }
 
         return loginUser;
+    }
+
+    private static void extractItems(String section, List<String> items) {
+        // Split the section into lines
+        String[] lines = section.split("\\n");
+
+        // Extract items from each line
+        for (String line : lines) {
+            // Remove the numbering (e.g., "1. ", "2. ") and trim the line
+            String item = line.replaceAll("^\\d+\\.\\s*", "").trim();
+            items.add(item);
+        }
     }
 }
