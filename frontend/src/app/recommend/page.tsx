@@ -25,7 +25,8 @@ export default function Page() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [file, setFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [inputExtraIngredients, setInputExtraIngredients] = useState('');
+  const [middleIngredients, setMiddleIngredients] = useState('');
+  const [lastIngredients, setLastIngredients] = useState('');
   const [menus, setMenus] = useState<string[]>([]);
   const [menu, setMenu] = useState('');
   const [recipe, setRecipe] = useState<Recipe>();
@@ -45,7 +46,7 @@ export default function Page() {
   };
 
   const handleModalOpen = ()=>{
-    setInputExtraIngredients(ingredients.join(', '))
+    setMiddleIngredients(ingredients.join(', '))
     setIsModalOpen(true);
   }
 
@@ -54,13 +55,12 @@ export default function Page() {
   }
 
   const handleModalSave = async ()=>{
-    setIngredients(inputExtraIngredients.split(', '));
     modalClose();
     await handleMenuRecommendation();
   }
 
   const handleMenuRecommendation = async ()=> {
-    const response = await axios.post('/api/recommendation-menu', ingredients.join(', '));
+    const response = await axios.post('/api/recommendation-menu', middleIngredients);
     const data = response.data;
     setMenus(data);
     handleNextStep();
@@ -70,23 +70,19 @@ export default function Page() {
     setMenu(menu);
     const request = {
       menu: menu,
-      ingredients: ingredients
+      ingredients: middleIngredients.split(', '),
     };
     const response = await axios.post('/api/recommendation-recipe', request);
-    const recipe: Recipe = {
-      menu: menu,
-      ingredients: response.data.ingredients,
-      instructions: response.data.instructions,
-    };
-    setInstructions(response.data.instructions);
-    setRecipe(recipe);
+
+    setLastIngredients(response.data.ingredients.join(', '))
+    setInstructions(response.data.instructions)
 
     const saveRecipeRequestDto = {
       menu: menu,
-      ingredients: recipe?.ingredients,
-      instructions: recipe?.instructions,
+      ingredients: response.data.ingredients,
+      instructions: response.data.instructions,
     }
-    console.log(saveRecipeRequestDto)
+
     await axios.post('/api/save-recipe', saveRecipeRequestDto);
 
     handleNextStep();
@@ -118,7 +114,7 @@ export default function Page() {
 
       const result = await response.text();
       setIngredients(result.split(', '));
-      setInputExtraIngredients(ingredients.join(', '));
+      setMiddleIngredients(ingredients.join(', '));
       // 다음 단계로 이동
       setStep((prevStep) => prevStep + 2);
     } catch (error) {
@@ -219,8 +215,8 @@ export default function Page() {
                       <div className="bg-blue-500 p-8 rounded w-3/4 md:w-1/2 lg:w-1/3">
                         <h2 className="text-xl mb-4">재료 수정</h2>
                         <textarea
-                            value={inputExtraIngredients}
-                            onChange={(e) => setInputExtraIngredients(e.target.value)}
+                            value={middleIngredients}
+                            onChange={(e) => setMiddleIngredients(e.target.value)}
                             className="border p-2 mb-4 w-full h-40"
                             style={{color: 'black'}}
                         />
@@ -245,7 +241,7 @@ export default function Page() {
                       <div className="flex flex-col space-y-2">
                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
                           <p>최종 입력된 재료는 다음과 같습니다.</p>
-                          <p>{ingredients.join(', ')}</p>
+                          <p>{middleIngredients}</p>
                         </div>
                       </div>
                     </div>
@@ -300,13 +296,13 @@ export default function Page() {
                           <p>{menu}의 레시피는 다음과 같습니다.</p>
                           <p>재료</p>
                           <ol>
-                            {recipe?.ingredients.map((val, index) => (
+                            {lastIngredients.split(', ').map((val, index) => (
                                 <li key={index}>{val}</li>
                             ))}
                           </ol>
                           <p>레시피</p>
                           <ol>
-                            {recipe?.instructions.map((val, index) => (
+                            {instructions.map((val, index) => (
                                 <li key={index}>{val}</li>
                             ))}
                           </ol>
