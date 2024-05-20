@@ -17,73 +17,118 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+'use client'
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import {Header} from "@/components/ui/header";
+import {useEffect, useState} from "react";
+import axios from "axios";
+
+type Board = {
+  id: number;
+  title: string;
+  commentNum: number;
+  createdTime: string;
+  username: string;
+};
 
 export default function page() {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [searchKeyword, setSearchKeyword] = useState(null);
+  const [boards, setBoards] = useState<Board[]>([]);
+
+  const getBoards = async (page = 0, searchKeyword = null)=>{
+    try {
+      let response;
+      if(searchKeyword === null){
+        response  = await axios.get('/api/boards', {
+          params: {
+            page: page,
+          }
+        });
+      }else{
+        response  = await axios.get('/api/boards', {
+          params: {
+            page: page,
+            searchKeyword: searchKeyword
+          }
+        });
+      }
+
+      console.log(response.data)
+
+      const boards: Board[] = await response.data.boardLists.map((b)=>({
+        id: b.id,
+        title: b.title,
+        commentNum: b.commentNum,
+        createdTime: b.createdTime,
+        username: b.username,
+      }));
+      setTotalPages((response?.data.totalPages ===0 ?0 : response?.data.totalPages-1));
+      setBoards(boards);
+      setSearchKeyword(searchKeyword);
+    } catch (error){
+      console.log(error)
+    }
+  };
+
+  useEffect(()=>{
+    getBoards();
+  }, []);
+
+  const handlePrevPage = ()=> {
+    getBoards(currentPage-1, searchKeyword);
+    setCurrentPage(currentPage-1);
+  }
+
+  const handleNextPage = ()=> {
+    getBoards(currentPage+1, searchKeyword);
+    setCurrentPage(currentPage+1);
+  }
+
   return (
     <>
       <Header></Header>
       <main className="py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-6">
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 1</CardTitle>
-                <CardDescription>This is the first card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 2</CardTitle>
-                <CardDescription>This is the second card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 3</CardTitle>
-                <CardDescription>This is the third card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Card 4</CardTitle>
-                <CardDescription>This is the fourth card.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Card content goes here.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">Learn More</Button>
-              </CardFooter>
-            </Card>
+            {boards.map((board)=>(
+                <Card className="w-full">
+                  <CardHeader>
+                    <CardTitle>{board.title + ' (' + board.commentNum + ')'}</CardTitle>
+                    <CardDescription>작성일: {board.createdTime}</CardDescription>
+                    <CardDescription>작성자: {board.username}</CardDescription>
+                  </CardHeader>
+                  <CardFooter>
+                    <Button variant="outline" ><Link href={'/api/boards/1'}>자세히 보기</Link></Button>
+                  </CardFooter>
+                </Card>
+            ))}
           </div>
         </div>
-        <div className="fixed bottom-6 right-6">
-          <Button size="lg" variant="fab">
-            <PlusIcon className="h-6 w-6" />
-            <span className="sr-only">Add new</span>
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-8">
+          <Button onClick={handlePrevPage} disabled={currentPage === 0}>
+            이전
           </Button>
+          <div className="mx-4">
+            {currentPage} / {totalPages}
+          </div>
+          <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+            다음
+          </Button>
+        </div>
+
+        <div className="fixed bottom-6 right-6">
+          <Link href={'/board/writing'}>
+            <Button size="lg" variant="fab">
+              <PlusIcon className="h-6 w-6" />
+              <span className="sr-only">Add new</span>
+            </Button>
+          </Link>
         </div>
       </main>
     </>
