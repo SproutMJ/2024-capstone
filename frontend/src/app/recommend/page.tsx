@@ -78,7 +78,6 @@ export default function Page() {
       ingredients: response.data.ingredients,
       instructions: response.data.instructions,
     };
-    setIngredients(response.data.ingredients);
     setInstructions(response.data.instructions);
     setRecipe(recipe);
 
