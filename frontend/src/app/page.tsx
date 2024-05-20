@@ -156,6 +156,14 @@ export default function page() {
             ))}
           </div>
         </div>
+        <div className="fixed bottom-6 right-6">
+          <Button size="lg" variant="fab">
+            <Link href={"/recommend"}>
+              <PlusIcon className="h-6 w-6"/>
+              <span className="sr-only">Add new</span>
+            </Link>
+          </Button>
+        </div>
         <div className="fixed bottom-6 right-6"/>
 
         {/* 삭제 확인 모달 */}
