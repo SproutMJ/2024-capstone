@@ -83,6 +83,11 @@ public class ChatGptController {
     public GptRecipeResponseDto recipePrompt(@RequestBody GptRecipeRequestDto requestDto) {
         return chatGptService.extractRecipePrompt(requestDto);
     }
+
+    @PostMapping("/recommendation-recipe-str")
+    public String recipePromptByString(@RequestBody GptRecipeRequestDto requestDto) {
+        return chatGptService.extractRecipePromptByString(requestDto);
+    }
     /*******************************************************************************************************************
 
 

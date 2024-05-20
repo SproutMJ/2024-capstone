@@ -174,6 +174,19 @@ public class ChatGptServiceImpl implements ChatGptService {
         return parseRecipe(realRecipe);
     }
 
+    public String extractRecipePromptByString(GptRecipeRequestDto requestDto) {
+        String ingredientsQuestion = realIngredientsQuestionBuilder(requestDto); // 질문 형성
+        ChatCompletionDto ingredientsCompletionDto = chatCompletionDtoBuilder(ingredientsQuestion); // 요청 형식 형성
+        Map<String, Object> ingredientsResultMap = prompt(ingredientsCompletionDto); // gpt api에 요청 및 반환
+        String realIngredients = extractRealIngredients(extractContent(ingredientsResultMap)); // 반환형에서 응답만 추출
+
+        String recipeQuestion = recipeQuestionBuilder(requestDto.getMenu(), realIngredients);
+        ChatCompletionDto recipeChatCompletionDto = chatCompletionDtoBuilder(recipeQuestion);
+        Map<String, Object> recipeResultMap = prompt(recipeChatCompletionDto);
+
+        return extractContent(recipeResultMap);
+    }
+
     /**
      * extractRecipePrompt 에서 사용
      * 해당 음식을 만드는데 꼭 필요한 재료를 추출하는 질문을 만들어줌

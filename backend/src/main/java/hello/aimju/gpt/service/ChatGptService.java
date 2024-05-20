@@ -32,6 +32,8 @@ public interface ChatGptService {
 
     GptRecipeResponseDto extractRecipePrompt(GptRecipeRequestDto requestDto);
 
+    String extractRecipePromptByString(GptRecipeRequestDto requestDto);
+
     GptRecipeResponseDto getRecipeResponse(String question);
 
     List<String> extractFoods(String question);
