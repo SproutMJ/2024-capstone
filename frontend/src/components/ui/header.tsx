@@ -54,7 +54,7 @@ export const Header = () => {
                             </Link>
                             <Link
                                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
-                                href="/board"
+                                href="/boards"
                             >
                                 <ClipboardIcon className="h-5 w-5" />
                                 게시판

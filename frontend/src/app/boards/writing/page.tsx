@@ -38,7 +38,7 @@ export default function BoardWriting() {
         title: title,
         content: content,
       });
-      router.push('/board');
+      router.push('/boards');
     }catch (error){
       console.log(error)
     }
@@ -58,7 +58,7 @@ export default function BoardWriting() {
                   <Textarea className="w-full h-full resize-none" style={{minHeight: '200px', maxHeight: '80vh'}} value={content} onChange={(e)=>(setContent(e.target.value))}/>
                 </div>
                 <div className="col-span-full flex justify-center gap-2">
-                  <Button onClick={()=>(router.push('/board'))} variant="outline">취소</Button>
+                  <Button onClick={()=>(router.push('/boards'))} variant="outline">취소</Button>
                   <Button onClick={handleBoardSave}>저장</Button>
                 </div>
               </div>
