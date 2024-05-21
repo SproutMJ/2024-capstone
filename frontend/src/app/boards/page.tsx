@@ -33,7 +33,7 @@ type Board = {
   username: string;
 };
 
-export default function page() {
+export default function Board() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState(null);
@@ -59,7 +59,7 @@ export default function page() {
 
       console.log(response.data)
 
-      const boards: Board[] = await response.data.boardLists.map((b)=>({
+      const boards: Board[] = await response.data.boardLists.map((b: any)=>({
         id: b.id,
         title: b.title,
         commentNum: b.commentNum,
@@ -94,22 +94,21 @@ export default function page() {
       <main className="py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-6">
-            {boards.map((board)=>(
-                <Card className="w-full">
+            {boards.map((board, index)=>(
+                <Card className="w-full" key={index}>
                   <CardHeader>
                     <CardTitle>{board.title + ' (' + board.commentNum + ')'}</CardTitle>
                     <CardDescription>작성일: {board.createdTime}</CardDescription>
                     <CardDescription>작성자: {board.username}</CardDescription>
                   </CardHeader>
                   <CardFooter>
-                    <Button variant="outline" ><Link href={'/api/boards/1'}>자세히 보기</Link></Button>
+                    <Link href={`boards/${board.id}`}><Button variant="outline"> 자세히 보기</Button></Link>
                   </CardFooter>
                 </Card>
             ))}
           </div>
         </div>
 
-        {/* Pagination */}
         <div className="flex justify-center mt-8">
           <Button onClick={handlePrevPage} disabled={currentPage === 0}>
             이전
@@ -123,8 +122,8 @@ export default function page() {
         </div>
 
         <div className="fixed bottom-6 right-6">
-          <Link href={'/board/writing'}>
-            <Button size="lg" variant="fab">
+          <Link href={'/boards/writing'}>
+            <Button size="lg">
               <PlusIcon className="h-6 w-6" />
               <span className="sr-only">Add new</span>
             </Button>
@@ -135,92 +134,7 @@ export default function page() {
   )
 }
 
-function BellIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-    </svg>
-  )
-}
-
-
-function ClipboardIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-    </svg>
-  )
-}
-
-
-function HomeIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  )
-}
-
-
-function MenuIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="4" x2="20" y1="12" y2="12" />
-      <line x1="4" x2="20" y1="6" y2="6" />
-      <line x1="4" x2="20" y1="18" y2="18" />
-    </svg>
-  )
-}
-
-
-function PlusIcon(props) {
+function PlusIcon(props: any) {
   return (
     <svg
       {...props}
@@ -236,51 +150,6 @@ function PlusIcon(props) {
     >
       <path d="M5 12h14" />
       <path d="M12 5v14" />
-    </svg>
-  )
-}
-
-
-function ScissorsIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="6" cy="6" r="3" />
-      <path d="M8.12 8.12 12 12" />
-      <path d="M20 4 8.12 15.88" />
-      <circle cx="6" cy="18" r="3" />
-      <path d="M14.8 14.8 20 20" />
-    </svg>
-  )
-}
-
-
-function UserIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
     </svg>
   )
 }

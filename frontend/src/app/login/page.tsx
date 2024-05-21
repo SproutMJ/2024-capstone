@@ -24,9 +24,10 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {useRouter} from "next/navigation";
+// @ts-ignore
 import Cookies from "js-cookie";
 
-export default function Page() {
+export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();

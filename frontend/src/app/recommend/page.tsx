@@ -20,7 +20,7 @@ type Chat = {
   chatType: string;
 };
 
-export default function Page() {
+export default function Recommend() {
   const [step, setStep] = useState(0);
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [file, setFile] = useState(null);
@@ -88,11 +88,11 @@ export default function Page() {
     handleNextStep();
   }
 
-  const fileChange = (event) => {
+  const fileChange = (event: any) => {
     setFile(event.target.files[0]);
   }
 
-  const handleUpload = async (event) => {
+  const handleUpload = async (event: any) => {
     event.preventDefault();
     if (!file) {
       alert('파일을 선택해주세요.');
@@ -273,7 +273,7 @@ export default function Page() {
                         <div className="rounded-lg bg-blue-500 text-white p-4">
                           <ul>
                             {menus.map((menu, index)=>(
-                                <li><Button onClick={()=>handleRecipeRecommendation(menu)}>{menu}</Button></li>
+                                <li key={index}><Button onClick={()=>handleRecipeRecommendation(menu)}>{menu}</Button></li>
                             ))}
                           </ul>
                         </div>

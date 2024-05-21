@@ -25,13 +25,13 @@ import { Button } from "@/components/ui/button"
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 
-export default function page() {
+export default function SignUp() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const router = useRouter();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { id, value } = e.target;
     if (id === 'id') {
       setId(value);
