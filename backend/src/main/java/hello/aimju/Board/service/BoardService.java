@@ -37,36 +37,40 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    public ResponseEntity<?> retrieveBoard(int page, int size) {
+    public ResponseEntity<RetrieveBoardListResponseDto> retrieveBoard(int page, int size) {
         Pageable pageable;
-        pageable = PageRequest.of(page, size, Sort.by("createdTime"));
+        pageable = PageRequest.of(page, size, Sort.by("id").descending());
         Page<Board> boardLists = boardRepository.findAll(pageable);
         List<RetrieveBoardResponseDto> getBoardLists = boardLists.stream()
                 .map(tmp -> RetrieveBoardResponseDto.builder()
                         .id(tmp.getId())
                         .title(tmp.getTitle())
-                        .content(tmp.getContent())
+                        .createdTime(tmp.getCreatedTime())
+                        .commentNum((long) tmp.getComments().size())
+                        .username(tmp.getUser().getUserName())
                         .build())
                 .collect(Collectors.toList());
 
-
-        return new ResponseEntity<>(getBoardLists,HttpStatus.OK);
+        return ResponseEntity.ok().body(new RetrieveBoardListResponseDto((long) boardLists.getTotalPages(), getBoardLists));
     }
 
-    public ResponseEntity<?> retrieveSearchBoard(int page, int size, String searchKeyword) {
-
+    public ResponseEntity<RetrieveBoardListResponseDto>  retrieveSearchBoard(int page, int size, String searchKeyword) {
         Pageable pageable;
-        pageable = PageRequest.of(page, size, Sort.by("createdTime"));
+        pageable = PageRequest.of(page, size, Sort.by("id").descending());
         Page<Board> boardLists = boardRepository.findByTitleContaining(searchKeyword,pageable);
         List<RetrieveBoardResponseDto> getBoardLists = boardLists.stream()
                 .map(tmp -> RetrieveBoardResponseDto.builder()
                         .id(tmp.getId())
                         .title(tmp.getTitle())
-                        .content(tmp.getContent())
+                        .createdTime(tmp.getCreatedTime())
+                        .commentNum((long) tmp.getComments().size())
+                        .username(tmp.getUser().getUserName())
                         .build())
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(getBoardLists,HttpStatus.OK);
+
+        return ResponseEntity.ok().body(new RetrieveBoardListResponseDto((long) boardLists.getTotalPages(), getBoardLists));
     }
+
     public ResponseEntity<?> retrieveOneBoard(Long id) {
         Board findBoard = boardRepository.findById(id).get();
         RetrieveOneBoardResponseDto board = RetrieveOneBoardResponseDto.builder()
