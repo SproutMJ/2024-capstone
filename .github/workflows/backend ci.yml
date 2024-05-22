@@ -2,20 +2,24 @@ name: backend ci
 
 on:
   workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: backend
+    inputs:
+      version:
+        description: "배포할 Version Tag"
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  build-backend:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
-      - name: set up Repository
+      - name: Set up Repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -23,10 +27,6 @@ jobs:
         with:
           java-version: "17"
           distribution: "corretto"
-
-      - name: set up TimeZone
-        run: |
-          sudo timedatectl set-timezone Asia/Seoul
 
       - name: Give permission for Gradle
         run: chmod +x gradlew
@@ -41,4 +41,10 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew bootJar
+
+      - name: Upload jar file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BackendApplicationJar
+          path: backend/build/libs/*.jar
