@@ -114,6 +114,7 @@ public class RecipeService {
                 .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다. ID: " + recipeId));
 
         GetRecipeResponseDto responseDto = new GetRecipeResponseDto();
+        responseDto.setRecipeId(recipeId);
         responseDto.setMenu(recipe.getMenu());
         responseDto.setIngredients(recipe.getIngredients().stream()
                 .map(Ingredients::getIngredient)
