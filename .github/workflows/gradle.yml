@@ -1,15 +1,15 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: backend
+    
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
 
