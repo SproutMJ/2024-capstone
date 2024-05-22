@@ -1,18 +1,37 @@
 'use client';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import { ClipboardIcon, HomeIcon, MenuIcon, ScissorsIcon, UserIcon } from "lucide-react";
+import {ClipboardIcon, HomeIcon, MenuIcon, ScissorsIcon, UserIcon} from "lucide-react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import React from "react";
+import {useRouter} from "next/navigation";
+import React, {useEffect} from "react";
+import useUserStore from "@/store/useUserStore";
 
 export const Header = () => {
     const router = useRouter();
+    const {setUser, clearUser} = useUserStore();
+
+    useEffect(()=> {
+        const fetchUser = async ()=> {
+            try {
+                const response = await axios.get('/api/current-user');
+                setUser(response.data);
+            }catch (e: any){
+                if(e.response.status === 401){
+                    router.push('/login');
+                }
+                console.log(e);
+            }
+        };
+
+        fetchUser();
+    }, []);
 
     const handleLogout = async () => {
         try {
             await axios.post('/api/logout');
+            clearUser();
             router.push('/login');
         } catch (error) {
             console.error('Error occurred during logout:', error);

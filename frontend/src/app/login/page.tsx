@@ -24,8 +24,6 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {useRouter} from "next/navigation";
-// @ts-ignore
-import Cookies from "js-cookie";
 
 export default function Login() {
   const [userName, setUserName] = useState('');
@@ -46,14 +44,10 @@ export default function Login() {
         throw new Error('Login failed');
       }
 
-      // 로그인 성공 시 처리
-      // 예: 페이지 이동 등
-      Cookies.set('auth_token', 'value', { expires: '', path: '' });
       router.push('/');
     } catch (error) {
       console.error('Login error:', error);
       window.alert("정보가 일치하지 않습니다");
-      // 에러 처리 로직 추가
     }
   };
 
