@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Project CI with Gradle On Button
 
 on:
   workflow_dispatch:
