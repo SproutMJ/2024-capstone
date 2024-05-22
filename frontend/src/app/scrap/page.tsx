@@ -34,6 +34,7 @@ type Recipe = {
 };
 
 type RecipeDetail = {
+  recipeId: number;
   menu: string;
   ingredients: string[];
   recipeInfoList: string[];
@@ -121,7 +122,7 @@ export default function Scrap() {
                       <CardTitle>{recipe.menu}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {selectedRecipe && selectedRecipe.menu === recipe.menu && (
+                      {selectedRecipe && selectedRecipe.recipeId === recipe.recipeId && (
                           <div>
                             <h2>재료:</h2>
                             <ul>
@@ -139,13 +140,13 @@ export default function Scrap() {
                     </CardContent>
                     <CardFooter className="flex justify-between">
                       <Button variant="outline" onClick={() => {
-                        if (selectedRecipe && selectedRecipe.menu === recipe.menu) {
+                        if (selectedRecipe && selectedRecipe.recipeId === recipe.recipeId) {
                           setSelectedRecipe(null); // 레시피가 이미 열려있을 경우에는 숨기기
                         } else {
                           handleLearnMoreClick(recipe.recipeId); // 레시피가 열려있지 않을 경우에는 자세히 알아보기
                         }
                       }}>
-                        {selectedRecipe && selectedRecipe.menu === recipe.menu ? "숨기기" : "레시피 보기"}
+                        {selectedRecipe && selectedRecipe.recipeId === recipe.recipeId ? "숨기기" : "레시피 보기"}
                       </Button>
                       <Button variant="outline" className="text-red-500 border-red-500"
                               onClick={() => openModal(recipe.recipeId)}>
