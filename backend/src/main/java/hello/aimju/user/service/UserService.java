@@ -37,6 +37,11 @@ public class UserService {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    public CurrentUserInfoResponseDto getCurrentUserInfo(HttpSession session) {
+        User user = getUserFromSession(session);
+        return new CurrentUserInfoResponseDto(user.getId(), user.getUserName());
+    }
+
     public UserInfoResponseDto getUserInfo(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {

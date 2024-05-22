@@ -19,6 +19,11 @@ public class UserController {
         return userService.signup(signupRequestDto);
     }
 
+    @GetMapping("/current-user")
+    public CurrentUserInfoResponseDto getCurrentUserInfo(HttpSession session) {
+        return userService.getCurrentUserInfo(session);
+    }
+
     @GetMapping("/user-info/{userId}")
     public UserInfoResponseDto getUserInfo(@PathVariable Long userId){
         return userService.getUserInfo(userId);
