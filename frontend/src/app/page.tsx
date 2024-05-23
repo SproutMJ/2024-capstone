@@ -22,11 +22,10 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
+import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Header } from "@/components/ui/header";
 import React, { useEffect, useState } from "react";
 import { TrashIcon } from "lucide-react";
-import Cookies from 'js-cookie';
 
 type ChatRoom = {
   menu: string;

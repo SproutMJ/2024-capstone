@@ -1,7 +1,7 @@
 'use client'
 import React, {useState, useEffect} from 'react';
 import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent} from "@/components/ui/card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Header} from "@/components/ui/header";
 import axios from "axios";
@@ -13,7 +13,7 @@ interface Message {
     content: string;
 }
 
-export default function ChatRoom({ params }: { params: { chatroomId: string } }) {
+export default function ChatRoom({ params }: { params: { chatroomId: number } }) {
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
     const [recipe, setRecipeString] = useState<string>('');
     const [menu, setMenuString] = useState<string>('');
@@ -52,6 +52,8 @@ export default function ChatRoom({ params }: { params: { chatroomId: string } })
                     content: message.content.replace(/\n/g, "<br>")
                 }));
 
+                console.log(messagesWithBr);
+
                 // menu 타입의 채팅만 필터링하여 문자열로 합침
                 const menuMessages = messagesWithBr.filter(message => message.chatType === "menu");
                 const menuString = menuMessages.map(message => message.content.replace(/<br>/g, "\n")).join("\n");
@@ -69,6 +71,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: string } })
                 console.error('Error fetching chat messages:', error);
             });
     }, []);
+
 
     return (
         <>

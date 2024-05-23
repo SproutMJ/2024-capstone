@@ -5,9 +5,8 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 // @ts-ignore
-import Cookies from 'js-cookie';
 import { Button } from "@/components/ui/button";
-import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
+import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Header } from "@/components/ui/header";
 import { UserIcon, HomeIcon, MenuIcon, ClipboardIcon, ScissorsIcon } from "lucide-react";
 
@@ -49,15 +48,6 @@ export default function UserPage() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [error, setError] = useState<string>("");
-
-    const handleLogout = async () => {
-        try {
-            await axios.post('/api/logout');
-            router.push('/login');
-        } catch (error) {
-            console.error('Error occurred during logout:', error);
-        }
-    };
 
     const handleChangeUserName = async () => {
         if (!newUserName || !currentPassword) {
@@ -137,13 +127,6 @@ export default function UserPage() {
             window.alert("사용자 삭제에 실패했습니다. 다시 시도하세요."); // 실패 메시지 표시
         }
     };
-
-    useEffect(() => {
-        const token = Cookies.get('auth_token');
-        if (!token) {
-            router.push('/login');
-        }
-    }, [router]);
 
     useEffect(() => {
         const fetchUserDetail = async () => {
