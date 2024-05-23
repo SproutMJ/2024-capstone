@@ -40,13 +40,6 @@ export default function Main() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get('auth_token');
-    if (!token) {
-      router.push('/login')
-    }
-  }, [router]);
-
-  useEffect(() => {
     const fetchChatRooms = async () => {
       try {
         const response = await axios.get("/api/chatrooms");
