@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ChatController {
 
     private final ChatService chatService;
@@ -34,8 +35,9 @@ public class ChatController {
         return chatService.getAllChatRooms(session);
     }
 
-    @GetMapping("/chatroom/{chatId}")
-    public List<GetAllChatMessageResponseDto> getAllChatMessages(@PathVariable Long chatId) {
+    @RequestMapping(value = "/chatroom/{chatId}", method = RequestMethod.GET)
+    public List<GetAllChatMessageResponseDto> getAllChatMessages(@PathVariable("chatId") Long chatId) {
+        System.out.println("요청 도착");
         return chatService.getAllChatMessages(chatId);
     }
 
