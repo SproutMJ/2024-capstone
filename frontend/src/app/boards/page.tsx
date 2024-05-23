@@ -22,8 +22,9 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import {Header} from "@/components/ui/header";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
+import useUserStore from "@/store/useUserStore";
 
 type Board = {
   id: number;
@@ -38,6 +39,7 @@ export default function Board() {
   const [totalPages, setTotalPages] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState(null);
   const [boards, setBoards] = useState<Board[]>([]);
+  const {getState} = useUserStore;
 
   const getBoards = async (page = 0, searchKeyword = null)=>{
     try {
@@ -56,8 +58,6 @@ export default function Board() {
           }
         });
       }
-
-      console.log(response.data)
 
       const boards: Board[] = await response.data.boardLists.map((b: any)=>({
         id: b.id,
@@ -102,7 +102,7 @@ export default function Board() {
                     <CardDescription>작성자: {board.username}</CardDescription>
                   </CardHeader>
                   <CardFooter>
-                    <Link href={`boards/${board.id}`}><Button variant="outline"> 자세히 보기</Button></Link>
+                    <Link href={`boards/${board.id}`}><Button variant="outline">자세히 보기</Button></Link>
                   </CardFooter>
                 </Card>
             ))}
