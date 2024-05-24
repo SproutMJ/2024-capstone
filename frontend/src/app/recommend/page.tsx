@@ -32,11 +32,16 @@ export default function Recommend() {
     const [menu, setMenu] = useState('');
     const [chatHistory, setChatHistory] = useState<ChatMessageRequestDto[]>([]);
     const [recipeString, setRecipeString] = useState<string>('');
+    const [recipeLink, setRecipeLink] = useState<string>(''); // 추가된 상태
     const [isLoading, setIsLoading] = useState(false);  // 로딩 상태 추가
 
     const router = useRouter();
     const handleRoutingMain = () => {
         router.push('/');
+    };
+
+    const handleRoutingScrap = () => {
+        router.push('/scrap');
     };
 
     const handleNextStep = () => {
@@ -81,7 +86,7 @@ export default function Recommend() {
         try {
             const response = await axios.post('/api/recipe/save-chat', chatRecipeRequestDto);
             console.log('Recipe saved successfully:', response.data);
-            handleRoutingMain();
+            handleRoutingScrap();
         } catch (error) {
             console.error('Error saving recipe:', error);
         }
@@ -97,6 +102,8 @@ export default function Recommend() {
         try {
             const response = await axios.post('/api/recommendation-recipe-str', request);
             setRecipeString(response.data);
+            const newRecipeLink = `https://www.10000recipe.com/recipe/list.html?q=${encodeURIComponent(menu)}`;
+            setRecipeLink(newRecipeLink);
             handleNextStep();
         } catch (error) {
             console.error('Error getting recipe string:', error);
@@ -127,6 +134,7 @@ export default function Recommend() {
         addChatMessage(`${menu}`, 1, 'menu');
         addChatMessage(`${menu}의 레시피는 다음과 같습니다.`, 0, 'message');
         addChatMessage(`${recipeString}`, 0, 'recipe');
+        addChatMessage(`${recipeLink}`, 0,'link');
     };
 
     useEffect(() => {
@@ -380,11 +388,12 @@ export default function Recommend() {
                                         <AvatarFallback>ML</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
-                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
-                                             style={{whiteSpace: 'pre-line'}}>
+                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" style={{whiteSpace: 'pre-line'}}>
                                             <p>{menu}의 레시피는 다음과 같습니다.</p>
                                             <p>{recipeString}</p>
-                                            <p>스크랩에 저장하시겠습니까?</p>
+                                            <p>모두의 레시피에서 검색하시겠습니까?</p>
+                                            {/* 모두의 레시피 링크 */}
+                                            <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{menu} 레시피 검색하기</a>
                                         </div>
                                     </div>
                                 </div>
@@ -395,6 +404,7 @@ export default function Recommend() {
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-blue-500 text-white p-4">
                                             <div>
+                                                <p>스크랩에 저장하시겠습니까?</p>
                                                 <Button onClick={handleSaveRecipe}>예</Button>
                                                 <Button onClick={handleRoutingMain}>아니오</Button>
                                             </div>

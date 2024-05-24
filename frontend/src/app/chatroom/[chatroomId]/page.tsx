@@ -1,11 +1,11 @@
 'use client'
-import React, {useState, useEffect} from 'react';
-import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Header} from "@/components/ui/header";
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Header } from "@/components/ui/header";
 import axios from "axios";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface Message {
     chatType: string;
@@ -43,29 +43,33 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
 
 
     useEffect(() => {
-        // API 호출하여 채팅 메시지 가져오기
         axios.get<Message[]>(`/api/chatroom/${params.chatroomId}`)
             .then(response => {
-                // \n을 <br>로 바꿔줌
                 const messagesWithBr = response.data.map(message => ({
                     ...message,
                     content: message.content.replace(/\n/g, "<br>")
                 }));
 
-                console.log(messagesWithBr);
-
-                // menu 타입의 채팅만 필터링하여 문자열로 합침
                 const menuMessages = messagesWithBr.filter(message => message.chatType === "menu");
                 const menuString = menuMessages.map(message => message.content.replace(/<br>/g, "\n")).join("\n");
                 setMenuString(menuString);
 
-                // recipe 타입의 채팅만 필터링하여 문자열로 합침
                 const recipeMessages = messagesWithBr.filter(message => message.chatType === "recipe");
                 const recipeString = recipeMessages.map(message => message.content.replace(/<br>/g, "\n")).join("\n");
                 setRecipeString(recipeString);
 
-                // 전체 채팅 메시지 설정
-                setChatMessages(messagesWithBr);
+                const messagesWithLinks = messagesWithBr.map(message => {
+                    if (message.chatType === "link") {
+                        return {
+                            ...message,
+                            content: `<a href="${message.content}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: #007bff;">${menuString} 검색하기</a>`
+                        };
+                    } else {
+                        return message;
+                    }
+                });
+
+                setChatMessages(messagesWithLinks);
             })
             .catch(error => {
                 alert('비정상적인 접근입니다.');
@@ -100,7 +104,6 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                                     )}
                                 </div>
                             ))}
-                            {/* 마지막에 버튼 추가 */}
                             <div className="flex justify-center mt-4">
                                 <Button onClick={handleSaveRecipe}>저장</Button>
                                 <Button onClick={handleRoutingMain}>나가기</Button>
