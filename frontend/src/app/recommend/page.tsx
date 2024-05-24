@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Header} from "@/components/ui/header";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import Spinner from "@/components/ui/spinner";// 로딩 스피너 컴포넌트
 
 type ChatMessageRequestDto = {
     content: string;
@@ -31,6 +32,7 @@ export default function Recommend() {
     const [menu, setMenu] = useState('');
     const [chatHistory, setChatHistory] = useState<ChatMessageRequestDto[]>([]);
     const [recipeString, setRecipeString] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);  // 로딩 상태 추가
 
     const router = useRouter();
     const handleRoutingMain = () => {
@@ -57,11 +59,18 @@ export default function Recommend() {
     }
 
     const handleMenuRecommendation = async () => {
+        setIsLoading(true);  // 로딩 시작
         console.log(middleIngredients)
-        const response = await axios.post('/api/recommendation-menu', middleIngredients);
-        const data = response.data;
-        setMenus(data);
-        handleNextStep();
+        try {
+            const response = await axios.post('/api/recommendation-menu', middleIngredients);
+            const data = response.data;
+            setMenus(data);
+            handleNextStep();
+        } catch (error) {
+            console.error('Error getting menu recommendation:', error);
+        } finally {
+            setIsLoading(false);  // 로딩 종료
+        }
     }
 
     const handleSaveRecipe = async () => {
@@ -79,6 +88,7 @@ export default function Recommend() {
     };
 
     const handleRecipeStringRecommendation = async (menu: string) => {
+        setIsLoading(true);  // 로딩 시작
         setMenu(menu);
         const request = {
             menu: menu,
@@ -90,6 +100,8 @@ export default function Recommend() {
             handleNextStep();
         } catch (error) {
             console.error('Error getting recipe string:', error);
+        } finally {
+            setIsLoading(false);  // 로딩 종료
         }
     }
 
@@ -188,10 +200,16 @@ export default function Recommend() {
             console.error('파일 업로드 에러:', error);
         }
     };
+
     return (
         <>
             <Header/>
-            <main className="py-8">
+            <main className="py-8 relative">
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <Spinner />  {/* 로딩 스피너 */}
+                    </div>
+                )}
                 <div className="grid grid-cols-1 gap-6">
                     <Card className="flex flex-col">
                         <CardHeader>
@@ -355,7 +373,6 @@ export default function Recommend() {
                                 </div>
                             )}
 
-
                             {step >= 4 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
@@ -389,7 +406,6 @@ export default function Recommend() {
                                     </Avatar>
                                 </div>
                             )}
-
                         </CardContent>
                     </Card>
                 </div>
