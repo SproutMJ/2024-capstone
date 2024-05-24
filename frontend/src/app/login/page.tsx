@@ -30,6 +30,12 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
+  const handleEnterKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   const handleLogin = async () => {
     try {
       const response = await fetch('/api/login', {
@@ -56,7 +62,10 @@ export default function Login() {
   };
 
   return (
-      <div className="flex h-screen w-full items-center justify-center bg-gray-100 px-4 dark:bg-gray-950">
+      <div
+          className="flex h-screen w-full items-center justify-center bg-gray-100 px-4 dark:bg-gray-950"
+          onKeyDown={handleEnterKeyPress}
+      >
         <div className="w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold">AI 명종원</h2>
