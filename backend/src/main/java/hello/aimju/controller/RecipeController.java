@@ -34,19 +34,19 @@ public class RecipeController {
         return recipeService.getAllRecipes(session);
     }
 
-    @GetMapping("/recipe/{recipeId}")
-    public GetRecipeResponseDto getRecipeDetails(@PathVariable Long recipeId) {
+    @RequestMapping(value = "/recipe/{recipeId}", method = RequestMethod.GET)
+    public GetRecipeResponseDto getRecipeDetails(@PathVariable("recipeId") Long recipeId) {
         GetRecipeResponseDto recipeDetails = recipeService.getRecipeDetails(recipeId);
         return recipeDetails;
     }
 
-    @DeleteMapping("/recipe/{recipeId}")
-    public ResponseEntity<?> deleteRecipe(@PathVariable Long recipeId, HttpSession session) {
+    @RequestMapping(value = "/recipe/{recipeId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteRecipe(@PathVariable("recipeId") Long recipeId, HttpSession session) {
         return recipeService.deleteRecipe(recipeId, session);
     }
 
-    @PutMapping("/recipe/{recipeId}")
-    public String updateRecipe(@PathVariable Long recipeId,
+    @RequestMapping(value = "/recipe/{recipeId}", method = RequestMethod.PUT)
+    public String updateRecipe(@PathVariable("recipeId") Long recipeId,
                                @RequestBody SaveRecipeRequestDto saveRecipeRequestDto, HttpSession session) {
         return  recipeService.updateRecipe(recipeId, saveRecipeRequestDto, session);
     }

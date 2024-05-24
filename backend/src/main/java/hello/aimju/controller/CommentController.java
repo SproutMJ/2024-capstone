@@ -22,12 +22,12 @@ public class CommentController {
         commentService.writeComment(writeCommentRequestDto,session);
         return ResponseEntity.status(HttpStatus.CREATED).body("댓글잘만듬");
     }
-    @GetMapping("/{boardId}")
-    public ResponseEntity<?> retrieveComment(@PathVariable Long boardId){
+    @RequestMapping(value = "/{boardId}", method = RequestMethod.GET)
+    public ResponseEntity<?> retrieveComment(@PathVariable("boardId") Long boardId){
         return commentService.retrieveComments(boardId);
     }
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long commentId,HttpSession session) throws Exception {
+    @RequestMapping(value = "/{commentId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteComment(@PathVariable("commentId") Long commentId,HttpSession session) throws Exception {
         commentService.deleteComment(commentId,session);
         return ResponseEntity.status(HttpStatus.OK).body("댓글삭제완료");
     }

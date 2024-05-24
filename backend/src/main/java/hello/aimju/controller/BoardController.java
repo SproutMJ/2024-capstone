@@ -31,12 +31,14 @@ public class BoardController {
             return boardService.retrieveSearchBoard(page, size,searchKeyword);
         }
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<?> retrieveOneBoard(@PathVariable Long id){
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> retrieveOneBoard(@PathVariable("id") Long id){
         return boardService.retrieveOneBoard(id);
     }
-    @DeleteMapping("/{boardId}")
-    public ResponseEntity<?> deleteBoard(@PathVariable Long boardId,HttpSession session) throws Exception {
+
+    @RequestMapping(value = "/{boardId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteBoard(@PathVariable("boardId") Long boardId,HttpSession session) throws Exception {
         boardService.deleteBoard(boardId,session);
         return ResponseEntity.status(HttpStatus.OK).body("댓글삭제완료");
     }

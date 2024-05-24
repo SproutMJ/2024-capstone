@@ -41,8 +41,8 @@ public class ChatController {
         return chatService.getAllChatMessages(chatId);
     }
 
-    @DeleteMapping("/chatroom/{chatId}")
-    public ResponseEntity<?> deleteChatRoom(@PathVariable Long chatId, HttpSession session) {
+    @RequestMapping(value = "/chatroom/{chatId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteChatRoom(@PathVariable("chatId") Long chatId, HttpSession session) {
         return chatService.deleteChatRoom(chatId, session);
     }
 }
