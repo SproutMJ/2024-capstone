@@ -36,9 +36,8 @@ public class ChatController {
     }
 
     @RequestMapping(value = "/chatroom/{chatId}", method = RequestMethod.GET)
-    public List<GetAllChatMessageResponseDto> getAllChatMessages(@PathVariable("chatId") Long chatId) {
-        System.out.println("요청 도착");
-        return chatService.getAllChatMessages(chatId);
+    public List<GetAllChatMessageResponseDto> getAllChatMessages(@PathVariable("chatId") Long chatId, HttpSession session) {
+        return chatService.getAllChatMessages(chatId, session);
     }
 
     @RequestMapping(value = "/chatroom/{chatId}", method = RequestMethod.DELETE)

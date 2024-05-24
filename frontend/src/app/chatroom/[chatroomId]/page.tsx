@@ -68,7 +68,8 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                 setChatMessages(messagesWithBr);
             })
             .catch(error => {
-                console.error('Error fetching chat messages:', error);
+                alert('비정상적인 접근입니다.');
+                handleRoutingMain();
             });
     }, []);
 

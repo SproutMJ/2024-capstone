@@ -54,7 +54,19 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public List<GetAllChatMessageResponseDto> getAllChatMessages(Long chatId) {
+    public List<GetAllChatMessageResponseDto> getAllChatMessages(Long chatId, HttpSession session) {
+        // 채팅방을 찾습니다.
+        Optional<ChatRoom> optionalChat = chatRoomRepository.findById(chatId);
+        if (!optionalChat.isPresent()) {
+            // 채팅방이 존재하지 않는 경우
+            throw new IllegalArgumentException("채팅방이 존재하지 않음");
+        }
+        ChatRoom chatRoom = optionalChat.get();
+
+        // 채팅방의 소유자가 아닌 경우
+        if (!Objects.equals(chatRoom.getUser().getId(), getUserFromSession(session).getId())) {
+            throw new IllegalArgumentException("접근 권한 없음");
+        }
         // 채팅방 ID로 해당 채팅방의 모든 메시지 조회
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatId);
 
