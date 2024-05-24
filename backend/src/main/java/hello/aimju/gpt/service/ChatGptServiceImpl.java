@@ -104,7 +104,7 @@ public class ChatGptServiceImpl implements ChatGptService {
     private String foodNameQuestionBuilder(String ingredients) {
         return ingredients + "\\n 위 재료중 일부를 활용해 만들 수 있는 음식 딱 5개 추천해줘."
                 + "\\n 형식은 반드시 아래와 같아야해 다른말은 하지 말아줘"
-                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름.";
+                + "\\n 음식이름, 음식이름, 음식이름, 음식이름, 음식이름";
     }
 
     /**
