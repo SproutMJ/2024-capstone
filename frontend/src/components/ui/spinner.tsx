@@ -2,47 +2,90 @@ import React from 'react';
 
 const Spinner = () => {
     return (
-        <div className="spinner" style={spinnerStyle}>
-            <div className="dot1" style={dotStyle}></div>
-            <div className="dot2" style={dotStyle}></div>
+        <div className="spinner-container" style={spinnerContainerStyle}>
+            <div className="spinner" style={spinnerStyle}>
+                <div className="circle1" style={circleStyle}></div>
+                <div className="circle2" style={circleStyle}></div>
+                <div className="circle3" style={circleStyle}></div>
+                <div className="circle4" style={circleStyle}></div>
+            </div>
         </div>
     );
 };
 
 // CSS 스타일
+const spinnerContainerStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999, // 다른 요소들 위에 나타나도록 설정
+};
+
 const spinnerStyle: React.CSSProperties = {
     width: '40px',
     height: '40px',
     position: 'relative',
-    margin: '100px auto',
+    animation: 'rotate 1.2s linear infinite',
 };
 
-const dotStyle: React.CSSProperties = {
-    width: '20px',
-    height: '20px',
+const circleStyle: React.CSSProperties = {
+    width: '10px',
+    height: '10px',
     backgroundColor: '#333',
-    borderRadius: '100%',
+    borderRadius: '50%',
     position: 'absolute',
-    animation: 'bouncedelay 1.2s infinite ease-in-out',
-    WebkitAnimation: 'bouncedelay 1.2s infinite ease-in-out',
 };
 
-// CSS 애니메이션
-const keyframes = `@keyframes bouncedelay {
+const keyframes = `@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.circle1 {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: circle 1.2s infinite ease-in-out;
+}
+
+.circle2 {
+    top: 50%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+    animation: circle 1.2s infinite ease-in-out;
+    animation-delay: -0.4s;
+}
+
+.circle3 {
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: circle 1.2s infinite ease-in-out;
+    animation-delay: -0.8s;
+}
+
+.circle4 {
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    animation: circle 1.2s infinite ease-in-out;
+    animation-delay: -1.2s;
+}
+
+@keyframes circle {
     0%, 80%, 100% {
         transform: scale(0);
     }
     40% {
-        transform: scale(1.0);
-    }
-}
-
-@-webkit-keyframes bouncedelay {
-    0%, 80%, 100% {
-        -webkit-transform: scale(0);
-    }
-    40% {
-        -webkit-transform: scale(1.0);
+        transform: scale(1);
     }
 }`;
 
