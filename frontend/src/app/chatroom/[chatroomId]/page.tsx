@@ -90,13 +90,13 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" dangerouslySetInnerHTML={{ __html: message.content }} />
                                     </div>
-                                    {message.isUser === 0 && (
+                                    {message.isUser === 1 && (
                                         <Avatar>
                                             <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
                                             <AvatarFallback>YU</AvatarFallback>
                                         </Avatar>
                                     )}
-                                    {message.isUser !== 0 && (
+                                    {message.isUser !== 1 && (
                                         <Avatar>
                                             <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
                                             <AvatarFallback>ML</AvatarFallback>
@@ -104,7 +104,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                                     )}
                                 </div>
                             ))}
-                            <div className="flex justify-center mt-4">
+                            <div className="flex justify-center mt-4 space-x-4">
                                 <Button onClick={handleSaveRecipe}>저장</Button>
                                 <Button onClick={handleRoutingMain}>나가기</Button>
                             </div>
