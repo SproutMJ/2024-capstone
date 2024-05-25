@@ -129,7 +129,9 @@ export default function Recommend() {
         addChatMessage(`인식된 재료는 다음과 같습니다.\n${ingredients}`, 0, 'message');
         addChatMessage("재료를 추가하거나 수정하시겠습니까?", 0, 'message');
         addChatMessage(`${yesOrNo}`, 1, 'message');
-        addChatMessage(`수정된 재료: ${middleIngredients}`, 1, 'message');
+        if (yesOrNo === "네") {
+            addChatMessage(`수정된 재료: ${middleIngredients}`, 1, 'message');
+        }
         addChatMessage(`해당 재료로 만들 수 있는 음식은 다음과 같습니다.\n${menus}\n어떤 재료의 음식의 레시피를 보시겠습니까?`, 0, 'message');
         addChatMessage(`${menu}`, 1, 'menu');
         addChatMessage(`${menu}의 레시피는 다음과 같습니다.`, 0, 'message');
@@ -187,11 +189,12 @@ export default function Recommend() {
         formData.append('file', file);
 
         try {
+            setIsLoading(true);
             const response = await fetch('/api/photo-recognition', {
                 method: 'POST',
                 body: formData,
             });
-
+            setIsLoading(false);
             if (!response.ok) {
                 throw new Error('파일 업로드 실패');
             }
@@ -211,7 +214,7 @@ export default function Recommend() {
 
     return (
         <>
-            <Header/>
+            <Header />
             <main className="py-8 relative">
                 {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -227,7 +230,7 @@ export default function Recommend() {
                             {step >= 0 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
-                                        <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback></AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
@@ -243,14 +246,14 @@ export default function Recommend() {
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-blue-500 text-white p-4">
                                             <p>사진 업로드 하기</p>
-                                            <Input type="file" onChange={fileChange}/>
-                                            <div className="flex justify-end">
+                                            <Input type="file" onChange={fileChange} />
+                                            <div className="flex justify-end mt-2 space-x-2">
                                                 <Button onClick={handleUpload}>보내기</Button>
                                             </div>
                                         </div>
                                     </div>
                                     <Avatar>
-                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>YU</AvatarFallback>
                                     </Avatar>
                                 </div>
@@ -259,7 +262,7 @@ export default function Recommend() {
                             {step >= 2 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
-                                        <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
@@ -274,7 +277,7 @@ export default function Recommend() {
                             {step >= 2 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
-                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>ML</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
@@ -289,14 +292,14 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4 justify-end">
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-blue-500 text-white p-4">
-                                            <div>
+                                            <div className="flex space-x-2">
                                                 <Button onClick={handleModalOpen}>예</Button>
                                                 <Button onClick={handleMenuRecommendation}>아니오</Button>
                                             </div>
                                         </div>
                                     </div>
                                     <Avatar>
-                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>YU</AvatarFallback>
                                     </Avatar>
                                 </div>
@@ -310,15 +313,13 @@ export default function Recommend() {
                                             value={middleIngredients}
                                             onChange={(e) => setMiddleIngredients(e.target.value)}
                                             className="border p-2 mb-4 w-full h-40"
-                                            style={{color: 'black'}}
+                                            style={{ color: 'black' }}
                                         />
-                                        <div className="flex justify-end">
-                                            <button onClick={handleModalSave}
-                                                    className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                                        <div className="flex justify-end space-x-2">
+                                            <button onClick={handleModalSave} className="bg-blue-500 text-white px-4 py-2 rounded">
                                                 저장
                                             </button>
-                                            <button onClick={modalClose}
-                                                    className="bg-gray-500 text-white px-4 py-2 rounded">
+                                            <button onClick={modalClose} className="bg-gray-500 text-white px-4 py-2 rounded">
                                                 취소
                                             </button>
                                         </div>
@@ -329,7 +330,7 @@ export default function Recommend() {
                             {step >= 3 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
-                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>ML</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
@@ -344,7 +345,7 @@ export default function Recommend() {
                             {step >= 3 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
-                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>ML</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
@@ -365,17 +366,19 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4 justify-end">
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-blue-500 text-white p-4">
-                                            <ul>
+                                            <ul className="space-y-2">
                                                 {menus.map((menu, index) => (
-                                                    <li key={index}><Button
-                                                        onClick={() => handleRecipeStringRecommendation(menu)}>{menu}</Button>
+                                                    <li key={index}>
+                                                        <Button onClick={() => handleRecipeStringRecommendation(menu)}>
+                                                            {menu}
+                                                        </Button>
                                                     </li>
                                                 ))}
                                             </ul>
                                         </div>
                                     </div>
                                     <Avatar>
-                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>YU</AvatarFallback>
                                     </Avatar>
                                 </div>
@@ -384,16 +387,31 @@ export default function Recommend() {
                             {step >= 4 && (
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
-                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>ML</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
-                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" style={{whiteSpace: 'pre-line'}}>
+                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" style={{ whiteSpace: 'pre-line' }}>
                                             <p>{menu}의 레시피는 다음과 같습니다.</p>
                                             <p>{recipeString}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {step >= 4 && (
+                                <div className="flex items-start space-x-4">
+                                    <Avatar>
+                                        <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
+                                        <AvatarFallback>ML</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col space-y-2">
+                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
                                             <p>모두의 레시피에서 검색하시겠습니까?</p>
                                             {/* 모두의 레시피 링크 */}
-                                            <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{menu} 레시피 검색하기</a>
+                                            <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                                {menu} 레시피 검색하기
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -403,15 +421,17 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4 justify-end">
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-blue-500 text-white p-4">
-                                            <div>
+                                            <div className="space-y-2">
                                                 <p>스크랩에 저장하시겠습니까?</p>
-                                                <Button onClick={handleSaveRecipe}>예</Button>
-                                                <Button onClick={handleRoutingMain}>아니오</Button>
+                                                <div className="space-x-2">
+                                                    <Button onClick={handleSaveRecipe}>예</Button>
+                                                    <Button onClick={handleRoutingMain}>아니오</Button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <Avatar>
-                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg"/>
+                                        <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
                                         <AvatarFallback>YU</AvatarFallback>
                                     </Avatar>
                                 </div>
@@ -419,7 +439,7 @@ export default function Recommend() {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="fixed bottom-6 right-6"/>
+                <div className="fixed bottom-6 right-6" />
             </main>
         </>
     );
