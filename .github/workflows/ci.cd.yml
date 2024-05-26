@@ -60,6 +60,4 @@ jobs:
           
       - name: Deploy BACK to production server
         working-directory: backend/prod/
-        run: |
-          $env:RUNNER_TRACKING_ID="" 
-          ./start.sh
+        run: RUNNER_TRACKING_ID="" && ./start.sh
