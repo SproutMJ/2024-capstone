@@ -26,7 +26,7 @@ export const Header = () => {
         };
 
         fetchUser();
-    }, []);
+    }, [router, setUser]);
 
     const handleLogout = async () => {
         try {

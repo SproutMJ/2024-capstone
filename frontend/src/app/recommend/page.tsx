@@ -1,5 +1,5 @@
 'use client'
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
@@ -116,7 +116,7 @@ export default function Recommend() {
         setChatHistory(prev => [...prev, {content, isUser, chatType}]);
     };
 
-    const handleSaveAllChatMessage = (
+    const handleSaveAllChatMessage = useCallback((
         ingredients: string,
         yesOrNo: string,
         middleIngredients: string,
@@ -137,7 +137,7 @@ export default function Recommend() {
         addChatMessage(`${menu}의 레시피는 다음과 같습니다.`, 0, 'message');
         addChatMessage(`${recipeString}`, 0, 'recipe');
         addChatMessage(`${recipeLink}`, 0,'link');
-    };
+    }, [recipeLink]);
 
     useEffect(() => {
         if (step === 4) {
@@ -150,7 +150,7 @@ export default function Recommend() {
                 recipeString
             );
         }
-    }, [step]);
+    }, [firstIngredients, handleSaveAllChatMessage, menu, menus, middleIngredients, recipeString, step, yesOrNo]);
 
     useEffect(() => {
         if (chatHistory.length > 0 && step === 4) {
@@ -172,7 +172,7 @@ export default function Recommend() {
                     console.error('Error saving chat data:', error);
                 });
         }
-    }, [chatHistory, step]);
+    }, [chatHistory, step, menu]);
 
     const fileChange = (event: any) => {
         setFile(event.target.files[0]);
@@ -231,7 +231,7 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@jaredpalmer" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback></AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">

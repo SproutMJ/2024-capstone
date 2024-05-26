@@ -23,10 +23,11 @@ import Link from "next/link"
 import { Textarea } from "@/components/ui/textarea"
 import {Header} from "@/components/ui/header";
 import {useRouter} from "next/navigation";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import useUserStore from "@/store/useUserStore";
 import {DeleteIcon, ScissorsIcon} from "lucide-react";
+import Image from "next/image";
 
 type Comment = {
   id: number;
@@ -47,6 +48,11 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
   const [currentModifyCommentId, setCurrentModifyCommentId] = useState<number | null>(null);
   const router = useRouter();
 
+  const fetchComment = useCallback(async () => {
+    const response = await axios.get(`/api/comments/${params.boardId}`);
+    setComments(response.data.map((c: Comment) => (c)));
+  }, [params.boardId]);
+
   useEffect(() => {
     const fetchBoard = async () => {
       const response = await axios.get(`/api/boards/${params.boardId}`);
@@ -58,12 +64,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
 
     fetchBoard();
     fetchComment();
-  }, []);
-
-  const fetchComment = async () => {
-    const response = await axios.get(`/api/comments/${params.boardId}`);
-    setComments(response.data.map((c: Comment) => (c)));
-  }
+  }, [params.boardId, fetchComment]);
 
   const addComment = async () => {
     const commentDto = {
@@ -117,7 +118,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
               <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-4">
-                    <img
+                    <Image
                         alt="Avatar"
                         className="rounded-full"
                         height={40}
@@ -163,7 +164,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
                   <div className="space-y-4">
                     {comments.map((comment, index) => (
                         <div key={index} className="flex items-start space-x-4">
-                          <img
+                          <Image
                               alt="Avatar"
                               className="rounded-full"
                               height={40}
@@ -220,7 +221,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
                 <div>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">댓글을 남겨주세요</h3>
                   <div className="flex items-start space-x-4">
-                    <img
+                    <Image
                         alt="Avatar"
                         className="rounded-full"
                         height={40}
