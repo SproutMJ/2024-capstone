@@ -3,6 +3,7 @@ package hello.aimju.login.config;
 import hello.aimju.login.argumentresolver.LoginMemberArgumentResolver;
 import hello.aimju.login.interceptor.LogInterceptor;
 import hello.aimju.login.interceptor.LoginCheckInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    @Value("${origin}")
+    private String origin;
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginMemberArgumentResolver());
@@ -35,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // 모든 요청에 대해 CORS 허용
-                .allowedOrigins("*") // 모든 Origin(도메인) 허용. 실제 운영 환경에서는 특정 Origin으로 제한할 것을 권장
+                .allowedOrigins(origin) // 모든 Origin(도메인) 허용. 실제 운영 환경에서는 특정 Origin으로 제한할 것을 권장
                 .allowedMethods("*") // 모든 HTTP 메서드 허용 (GET, POST, PUT, DELETE 등)
                 .allowedHeaders("*"); // 모든 요청 헤더 허용
     }
