@@ -43,14 +43,49 @@ jobs:
           name: BackendApplicationJar
           path: backend/build/libs/*.jar
           
+  build-frontend:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: frontend
+  
+    steps:
+      - name: Set up Repository
+        uses: actions/checkout@v4
+  
+      - name: Setup node with cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+  
+      - name: Install dependencies
+        run: npm install
+  
+      - name: Build App
+        run: npm run build
+  
+      - name: Upload frontend build file to artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FrontendApplication
+          path: frontend/out
+          
   deploy:
-    needs: [build-backend]
+    needs: [build-backend, build-frontend]
     runs-on: self-hosted
 
     steps:
       - name: Remove previous version FRONT app
         working-directory: frontend/prod/
         run: rm -rf dist
+
+      - name: Download FRONT build file from artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: FrontendApplication
+          path: frontend/prod/
 
       - name: Remove previous version BACK jar
         working-directory: backend/prod/
@@ -61,3 +96,7 @@ jobs:
         with:
           name: BackendApplicationJar
           path: backend/prod/
+          
+      - name: Deploy BACK to production server
+        working-directory: backend/prod/
+        run: ./start.sh
