@@ -49,6 +49,10 @@ export default function UserPage() {
     const [newPassword, setNewPassword] = useState("");
     const [error, setError] = useState<string>("");
 
+    const handleRoutingBoards = () => {
+        router.push('/boards');
+    };
+
     const handleChangeUserName = async () => {
         if (!newUserName || !currentPassword) {
             setError("모든 필드를 입력하세요.");
@@ -157,41 +161,55 @@ export default function UserPage() {
                                 <div className="text-center mb-4">
                                     <h2 className="text-xl font-semibold">{userDetail.userName}</h2>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Button variant="outline" className="flex items-center justify-center p-2 rounded-lg">
-                                            <HomeIcon className="h-5 w-5 text-gray-600" />
-                                            <span className="ml-2 text-gray-600">저장된 레시피: {userDetail.recipesCount}</span>
-                                        </Button>
-                                        <Button variant="outline" className="flex items-center justify-center p-2 rounded-lg">
-                                            <MenuIcon className="h-5 w-5 text-gray-600" />
-                                            <span className="ml-2 text-gray-600">저장된 채팅방: {userDetail.chatRoomsCount}</span>
-                                        </Button>
-                                        <Button variant="outline" className="flex items-center justify-center p-2 rounded-lg">
-                                            <ClipboardIcon className="h-5 w-5 text-gray-600" />
-                                            <span className="ml-2 text-gray-600">작성한 게시글: {userDetail.boardsCount}</span>
-                                        </Button>
-                                        <Button variant="outline" className="flex items-center justify-center p-2 rounded-lg">
-                                            <ScissorsIcon className="h-5 w-5 text-gray-600" />
-                                            <span className="ml-2 text-gray-600">작성한 댓글: {userDetail.commentsCount}</span>
-                                        </Button>
+                                        <div
+                                            className="flex items-center justify-center w-48 p-2 rounded-lg border border-gray-300 mx-auto">
+                                            <HomeIcon className="h-5 w-5 text-gray-600"/>
+                                            <span
+                                                className="ml-2 text-gray-600">저장된 레시피: {userDetail.recipesCount}</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center justify-center w-48 p-2 rounded-lg border border-gray-300 mx-auto">
+                                            <MenuIcon className="h-5 w-5 text-gray-600"/>
+                                            <span
+                                                className="ml-2 text-gray-600">저장된 채팅방: {userDetail.chatRoomsCount}</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center justify-center w-48 p-2 rounded-lg border border-gray-300 mx-auto">
+                                            <ClipboardIcon className="h-5 w-5 text-gray-600"/>
+                                            <span
+                                                className="ml-2 text-gray-600">작성한 게시글: {userDetail.boardsCount}</span>
+                                        </div>
+                                        <div
+                                            className="flex items-center justify-center w-48 p-2 rounded-lg border border-gray-300 mx-auto">
+                                            <ScissorsIcon className="h-5 w-5 text-gray-600"/>
+                                            <span
+                                                className="ml-2 text-gray-600">작성한 댓글: {userDetail.commentsCount}</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
+
                             <div className="flex flex-col items-center space-y-4">
-                                <Button variant="outline" onClick={() => router.push('/my-fridge')}>
-                                    나의 냉장고
+                                <Button variant="outline" className="w-48 text-center"
+                                        onClick={handleRoutingBoards}>
+                                    나의 게시글
                                 </Button>
-                                <Button variant="outline" onClick={() => setChangeUserNameModalOpen(true)}>
+                                <Button variant="outline" className="w-48 text-center"
+                                        onClick={() => setChangeUserNameModalOpen(true)}>
                                     사용자 이름 변경
                                 </Button>
-                                <Button variant="outline" onClick={() => setChangePasswordModalOpen(true)}>
+                                <Button variant="outline" className="w-48 text-center"
+                                        onClick={() => setChangePasswordModalOpen(true)}>
                                     비밀번호 변경
                                 </Button>
-                                <Button variant="outline" onClick={() => setDeleteUserModalOpen(true)} className="bg-red-500 text-white">
+                                <Button variant="outline" className="w-48 text-center bg-red-500 text-white"
+                                        onClick={() => setDeleteUserModalOpen(true)}>
                                     회원 탈퇴
                                 </Button>
                             </div>
+
                         </CardContent>
-                        <CardFooter />
+                        <CardFooter/>
                     </Card>
                 </div>
             </main>
@@ -204,7 +222,7 @@ export default function UserPage() {
                 className="fixed inset-0 flex items-center justify-center z-50 outline-none"
                 overlayClassName="fixed inset-0 bg-black bg-opacity-70 z-40"
             >
-                <div style={{ backgroundColor: "#333", color: "#fff", padding: "20px", borderRadius: "8px" }}>
+                <div style={{backgroundColor: "#333", color: "#fff", padding: "20px", borderRadius: "8px" }}>
                     <h2 className="text-lg font-semibold mb-4">사용자 이름 변경</h2>
                     <input
                         type="text"
