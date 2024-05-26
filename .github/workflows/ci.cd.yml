@@ -61,4 +61,5 @@ jobs:
       - name: Deploy BACK to production server
         working-directory: backend/prod/
         run: |
-          nohup bash -c './start.sh </dev/null >nohup.out 2>&1 &' &
+          $env:RUNNER_TRACKING_ID="" 
+          ./start.sh
