@@ -38,7 +38,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

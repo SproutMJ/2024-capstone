@@ -41,7 +41,7 @@ export default function Main() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await axios.get("/api/chatrooms");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chatrooms`);
         setChatRooms(response.data);
       } catch (error) {
         console.error("Error fetching chat rooms:", error);
@@ -58,7 +58,7 @@ export default function Main() {
 
   const handleDeleteClick = async (chatId: number) => {
     try {
-      await axios.delete(`/api/chatroom/${chatId}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chatroom/${chatId}`);
       setChatRooms(chatRooms.filter(chat => chat.chatId !== chatId));
     } catch (error) {
       console.error("Error deleting chat room:", error);

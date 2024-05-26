@@ -45,13 +45,13 @@ export default function Board() {
     try {
       let response;
       if(searchKeyword === null){
-        response  = await axios.get('/api/boards', {
+        response  = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards`, {
           params: {
             page: page,
           }
         });
       }else{
-        response  = await axios.get('/api/boards', {
+        response  = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards`, {
           params: {
             page: page,
             searchKeyword: searchKeyword

@@ -67,7 +67,7 @@ export default function Recommend() {
         setIsLoading(true);  // 로딩 시작
         console.log(middleIngredients)
         try {
-            const response = await axios.post('/api/recommendation-menu', middleIngredients);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation-menu`, middleIngredients);
             const data = response.data;
             setMenus(data);
             handleNextStep();
@@ -84,7 +84,7 @@ export default function Recommend() {
             recipe: recipeString,
         };
         try {
-            const response = await axios.post('/api/recipe/save-chat', chatRecipeRequestDto);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recipe/save-chat`, chatRecipeRequestDto);
             console.log('Recipe saved successfully:', response.data);
             handleRoutingScrap();
         } catch (error) {
@@ -100,7 +100,7 @@ export default function Recommend() {
             ingredients: middleIngredients.split(', '),
         };
         try {
-            const response = await axios.post('/api/recommendation-recipe-str', request);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation-recipe-str`, request);
             setRecipeString(response.data);
             const newRecipeLink = `https://www.10000recipe.com/recipe/list.html?q=${encodeURIComponent(menu)}`;
             setRecipeLink(newRecipeLink);
@@ -164,7 +164,7 @@ export default function Recommend() {
             };
             console.log(chatRoomRequestDto);
 
-            axios.post('/api/recommendation-save', chatRoomRequestDto)
+            axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation-save`, chatRoomRequestDto)
                 .then(response => {
                     console.log('Chat data saved successfully:', response.data);
                 })
@@ -190,7 +190,7 @@ export default function Recommend() {
 
         try {
             setIsLoading(true);
-            const response = await fetch('/api/photo-recognition', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/photo-recognition`, {
                 method: 'POST',
                 body: formData,
             });

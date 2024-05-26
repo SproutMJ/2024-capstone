@@ -33,7 +33,7 @@ export default function BoardWriting({params}: {params: {boardId: string}}) {
 
   useEffect(()=>{
     const fetchBoard = async ()=> {
-      const response = await axios.get(`/api/boards/${params.boardId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${params.boardId}`);
       setTitle(response.data.title);
       setContent(response.data.content);
     };
@@ -43,7 +43,7 @@ export default function BoardWriting({params}: {params: {boardId: string}}) {
 
   const handleBoardModify = async ()=>{
     try {
-      const response = await axios.put('/api/boards', {
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards`, {
         id: params.boardId,
         title: title,
         content: content,

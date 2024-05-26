@@ -61,7 +61,7 @@ export default function UserPage() {
             newUserName
         };
         try {
-            const response = await axios.put('/api/user/change-userName', data);
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/change-userName`, data);
             if (response.data && response.data.statuscode === 200) {
                 setChangeUserNameModalOpen(false);
                 setUserDetail(prevDetail => (prevDetail ? { ...prevDetail, userName: newUserName } : null));
@@ -88,7 +88,7 @@ export default function UserPage() {
             newPassword
         };
         try {
-            const response = await axios.put('/api/user/change-password', data);
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/change-password`, data);
             if (response.data && response.data.statuscode === 200) {
                 setChangePasswordModalOpen(false);
                 window.alert(response.data.msg); // 성공 메시지 표시
@@ -114,7 +114,7 @@ export default function UserPage() {
         };
 
         try {
-            const response = await axios.delete('/api/user', { data });
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user`, { data });
             if (response.data && response.data.statuscode === 200) {
                 setChangeUserNameModalOpen(false);
                 window.alert(response.data.msg); // 성공 메시지 표시
@@ -131,7 +131,7 @@ export default function UserPage() {
     useEffect(() => {
         const fetchUserDetail = async () => {
             try {
-                const response = await axios.get('/api/user-detail');
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-detail`);
                 setUserDetail(response.data);
             } catch (error) {
                 console.error('Error fetching user details:', error);

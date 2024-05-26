@@ -33,7 +33,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
             recipe: recipe,
         };
         try {
-            const response = await axios.post('/api/recipe/save-chat', chatRecipeRequestDto);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recipe/save-chat`, chatRecipeRequestDto);
             console.log('Recipe saved successfully:', response.data);
             handleRoutingScrap();
         } catch (error) {
@@ -43,7 +43,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
 
 
     useEffect(() => {
-        axios.get<Message[]>(`/api/chatroom/${params.chatroomId}`)
+        axios.get<Message[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chatroom/${params.chatroomId}`)
             .then(response => {
                 const messagesWithBr = response.data.map(message => ({
                     ...message,

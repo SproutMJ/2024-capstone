@@ -15,7 +15,7 @@ export const Header = () => {
     useEffect(()=> {
         const fetchUser = async ()=> {
             try {
-                const response = await axios.get('/api/current-user');
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/current-user`);
                 setUser(response.data);
             }catch (e: any){
                 if(e.response.status === 401){
@@ -30,7 +30,7 @@ export const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('/api/logout');
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/logout`);
             clearUser();
             router.push('/login');
         } catch (error) {

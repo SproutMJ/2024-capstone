@@ -49,13 +49,13 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
   const router = useRouter();
 
   const fetchComment = useCallback(async () => {
-    const response = await axios.get(`/api/comments/${params.boardId}`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${params.boardId}`);
     setComments(response.data.map((c: Comment) => (c)));
   }, [params.boardId]);
 
   useEffect(() => {
     const fetchBoard = async () => {
-      const response = await axios.get(`/api/boards/${params.boardId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${params.boardId}`);
       setTitle(response.data.title);
       setContent(response.data.content);
       setCreatedTime(response.data.createdTime);
@@ -71,7 +71,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
       boardId: boardId,
       content: comment,
     }
-    const response = await axios.post('/api/comments', commentDto);
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments`, commentDto);
     setComment('');
     await fetchComment();
   }
@@ -87,7 +87,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
       content: modifyComment,
     }
 
-    const response = await axios.patch('/api/comments', commentDto);
+    const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments`, commentDto);
     await fetchComment();
     restoreModifyComment();
   }
@@ -97,12 +97,12 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
   }
 
   const handleDeleteComment = async (id: number) => {
-    const response = await axios.delete(`/api/comments/${id}`);
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${id}`);
     await fetchComment();
   }
 
   const handleDeleteBoard = async () => {
-    const response = await axios.delete(`/api/boards/${boardId}`);
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`);
     await router.push('/boards');
   }
 

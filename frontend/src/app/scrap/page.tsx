@@ -49,7 +49,7 @@ export default function Scrap() {
   const handleLogout = async () => {
     try {
       // 로그아웃 요청 보내기
-      await axios.post('/api/logout');
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/logout`);
       // 로그아웃 후 로그인 페이지로 이동
       router.push('/login');
     } catch (error) {
@@ -62,7 +62,7 @@ export default function Scrap() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get("/api/recipes");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recipes`);
         setRecipes(response.data);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -74,7 +74,7 @@ export default function Scrap() {
 
     const handleLearnMoreClick = async (recipeId: number) => {
         try {
-            const response = await axios.get(`/api/recipe/${recipeId}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recipe/${recipeId}`);
             const recipeDetails: RecipeDetail = response.data;
 
             setSelectedRecipe({
@@ -90,7 +90,7 @@ export default function Scrap() {
   const handleDeleteClick = async () => {
     if (recipeToDelete !== null) {
       try {
-        await axios.delete(`/api/recipe/${recipeToDelete}`);
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recipe/${recipeToDelete}`);
         setRecipes(recipes.filter(recipe => recipe.recipeId !== recipeToDelete));
         closeModal();
       } catch (error) {
