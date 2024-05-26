@@ -49,15 +49,15 @@ jobs:
 
     steps:
       - name: Remove previous version FRONT app
-        working-directory: ~/frontend/prod/
+        working-directory: frontend/prod/
         run: rm -rf dist
 
       - name: Remove previous version BACK jar
-        working-directory: ~/backend/prod/
+        working-directory: backend/prod/
         run: rm -f *.jar
 
       - name: Download BACK jar file from artifact
         uses: actions/download-artifact@v4
         with:
           name: BackendApplicationJar
-          path: ~/backend/prod/
+          path: backend/prod/
