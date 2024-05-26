@@ -61,4 +61,4 @@ jobs:
       - name: Deploy BACK to production server
         working-directory: backend/prod/
         run: |
-          setsid ./start.sh >/dev/null 2>&1 < /dev/null &
+          nohup bash -c './start.sh </dev/null >nohup.out 2>&1 &' &
