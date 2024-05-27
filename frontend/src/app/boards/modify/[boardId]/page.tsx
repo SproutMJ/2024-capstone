@@ -39,7 +39,7 @@ export default function BoardWriting({params}: {params: {boardId: string}}) {
     };
 
     fetchBoard();
-  },[]);
+  },[params.boardId]);
 
   const handleBoardModify = async ()=>{
     try {

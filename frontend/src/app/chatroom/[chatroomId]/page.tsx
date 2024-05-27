@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,9 +19,9 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
     const [menu, setMenuString] = useState<string>('');
     const router = useRouter();
 
-    const handleRoutingMain = () => {
+    const handleRoutingMain = useCallback(() => {
         router.push('/');
-    };
+    }, [router]);
 
     const handleRoutingScrap = () => {
         router.push('/scrap');
@@ -75,7 +75,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                 alert('비정상적인 접근입니다.');
                 handleRoutingMain();
             });
-    }, []);
+    }, [params.chatroomId, handleRoutingMain]);
 
 
     return (

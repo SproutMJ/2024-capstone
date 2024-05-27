@@ -1,6 +1,67 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const Spinner = () => {
+    useEffect(() => {
+        const keyframes = `@keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .circle1 {
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: circle 1.2s infinite ease-in-out;
+        }
+
+        .circle2 {
+            top: 50%;
+            left: 100%;
+            transform: translate(-50%, -50%);
+            animation: circle 1.2s infinite ease-in-out;
+            animation-delay: -0.4s;
+        }
+
+        .circle3 {
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: circle 1.2s infinite ease-in-out;
+            animation-delay: -0.8s;
+        }
+
+        .circle4 {
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            animation: circle 1.2s infinite ease-in-out;
+            animation-delay: -1.2s;
+        }
+
+        @keyframes circle {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }`;
+
+        const styleTag = document.createElement('style');
+        styleTag.type = 'text/css';
+        styleTag.appendChild(document.createTextNode(keyframes));
+        document.head.appendChild(styleTag);
+
+        // Clean up function to remove the style tag when the component unmounts
+        return () => {
+            document.head.removeChild(styleTag);
+        };
+    }, []); // Empty dependency array ensures this effect runs only once when the component mounts
+
     return (
         <div className="spinner-container" style={spinnerContainerStyle}>
             <div className="spinner" style={spinnerStyle}>
@@ -39,60 +100,5 @@ const circleStyle: React.CSSProperties = {
     borderRadius: '50%',
     position: 'absolute',
 };
-
-const keyframes = `@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.circle1 {
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: circle 1.2s infinite ease-in-out;
-}
-
-.circle2 {
-    top: 50%;
-    left: 100%;
-    transform: translate(-50%, -50%);
-    animation: circle 1.2s infinite ease-in-out;
-    animation-delay: -0.4s;
-}
-
-.circle3 {
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: circle 1.2s infinite ease-in-out;
-    animation-delay: -0.8s;
-}
-
-.circle4 {
-    top: 50%;
-    left: 0;
-    transform: translate(-50%, -50%);
-    animation: circle 1.2s infinite ease-in-out;
-    animation-delay: -1.2s;
-}
-
-@keyframes circle {
-    0%, 80%, 100% {
-        transform: scale(0);
-    }
-    40% {
-        transform: scale(1);
-    }
-}`;
-
-// CSS 애니메이션 추가
-const styleTag = document.createElement('style');
-styleTag.type = 'text/css';
-styleTag.appendChild(document.createTextNode(keyframes));
-document.head.appendChild(styleTag);
 
 export default Spinner;
