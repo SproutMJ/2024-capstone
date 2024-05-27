@@ -22,9 +22,9 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body("잘만들음");
     }
     @GetMapping
-    public ResponseEntity<?> retrieve(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "5") int size,
-                                      @RequestParam(required = false) String searchKeyword){
+    public ResponseEntity<?> retrieve(@RequestParam(name = "page", defaultValue = "0") int page,
+                                      @RequestParam(name = "size", defaultValue = "5") int size,
+                                      @RequestParam(name = "searchKeyword", required = false) String searchKeyword){
         if (searchKeyword == null) {
             return boardService.retrieveBoard(page, size);
         }else{
