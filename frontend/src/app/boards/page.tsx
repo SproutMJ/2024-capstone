@@ -20,7 +20,7 @@ To read more about using these font, please visit the Next.js documentation:
 'use client'
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
+import { CardTitle, CardDescription, CardHeader, CardFooter, Card } from "@/components/ui/card"
 import {Header} from "@/components/ui/header";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -122,7 +122,7 @@ export default function Board() {
         </div>
 
         <div className="fixed bottom-6 right-6">
-          <Link href={'/boards/writing'}>
+          <Link href={'/boards/writing/0'}>
             <Button size="lg">
               <PlusIcon className="h-6 w-6" />
               <span className="sr-only">Add new</span>
