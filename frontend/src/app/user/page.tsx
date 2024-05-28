@@ -1,8 +1,10 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from "react";
+// @ts-ignore
 import Modal from "react-modal";
 import axios from "axios";
+// @ts-ignore
 import { Button } from "@/components/ui/button";
 import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Header } from "@/components/ui/header";
