@@ -22,6 +22,7 @@ public class Board {
     private Long id;
     private String title;
     private LocalDate createdTime = LocalDate.now();
+    @Column(columnDefinition = "TEXT")
     private String content;
     @OneToMany(mappedBy = "board",cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
