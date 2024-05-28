@@ -35,8 +35,8 @@ public class RecipeController {
     }
 
     @RequestMapping(value = "/recipe/{recipeId}", method = RequestMethod.GET)
-    public GetRecipeResponseDto getRecipeDetails(@PathVariable("recipeId") Long recipeId) {
-        GetRecipeResponseDto recipeDetails = recipeService.getRecipeDetails(recipeId);
+    public GetRecipeResponseDto getRecipeDetails(@PathVariable("recipeId") Long recipeId ,HttpSession session) {
+        GetRecipeResponseDto recipeDetails = recipeService.getRecipeDetails(recipeId, session);
         return recipeDetails;
     }
 

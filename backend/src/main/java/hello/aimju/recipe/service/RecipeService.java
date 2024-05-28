@@ -109,10 +109,13 @@ public class RecipeService {
         return responseDtoList;
     }
 
-    public GetRecipeResponseDto getRecipeDetails(Long recipeId) {
+    public GetRecipeResponseDto getRecipeDetails(Long recipeId, HttpSession session) {
+        User user = getUserFromSession(session);
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다. ID: " + recipeId));
-
+        if (!Objects.equals(user.getId(), recipe.getUser().getId())){
+            throw new IllegalArgumentException("접근 권한이 없습니다");
+        }
         GetRecipeResponseDto responseDto = new GetRecipeResponseDto();
         responseDto.setRecipeId(recipeId);
         responseDto.setMenu(recipe.getMenu());
