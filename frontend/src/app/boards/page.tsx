@@ -20,11 +20,12 @@ To read more about using these font, please visit the Next.js documentation:
 'use client'
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
+import { CardTitle, CardDescription, CardHeader, CardFooter, Card } from "@/components/ui/card"
 import {Header} from "@/components/ui/header";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import useUserStore from "@/store/useUserStore";
+import useBoardStore from '@/store/useBoardStore';
 
 type Board = {
   id: number;
@@ -40,6 +41,7 @@ export default function Board() {
   const [searchKeyword, setSearchKeyword] = useState(null);
   const [boards, setBoards] = useState<Board[]>([]);
   const {getState} = useUserStore;
+  const ownBoard = useBoardStore((state) => state.ownBoard);
 
   const getBoards = async (page = 0, searchKeyword = null)=>{
     try {
@@ -74,18 +76,63 @@ export default function Board() {
     }
   };
 
-  useEffect(()=>{
-    getBoards();
-  }, []);
+  const getOwnBoards = async (page = 0, searchKeyword = null) => {
+    try {
+      let response;
+      if (searchKeyword === null) {
+        response = await axios.get('/api/boards/current-user', {
+          params: {
+            page: page,
+          }
+        });
+      } else {
+        response = await axios.get('/api/boards/current-user', {
+          params: {
+            page: page,
+            searchKeyword: searchKeyword
+          }
+        });
+      }
 
-  const handlePrevPage = ()=> {
-    getBoards(currentPage-1, searchKeyword);
-    setCurrentPage(currentPage-1);
+      const boards: Board[] = await response.data.boardLists.map((b: any) => ({
+        id: b.id,
+        title: b.title,
+        commentNum: b.commentNum,
+        createdTime: b.createdTime,
+        username: b.username,
+      }));
+      setTotalPages((response?.data.totalPages === 0 ? 0 : response?.data.totalPages - 1));
+      setBoards(boards);
+      setSearchKeyword(searchKeyword);
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  useEffect(() => {
+    if (ownBoard === 1) {
+      getOwnBoards();
+    } else {
+      getBoards();
+    }
+  }, [ownBoard]);
+
+  const handlePrevPage = () => {
+    if (ownBoard === 1) {
+      getOwnBoards(currentPage - 1, searchKeyword);
+    } else {
+      getBoards(currentPage - 1, searchKeyword);
+    }
+    setCurrentPage(currentPage - 1);
   }
 
-  const handleNextPage = ()=> {
-    getBoards(currentPage+1, searchKeyword);
-    setCurrentPage(currentPage+1);
+  const handleNextPage = () => {
+    if (ownBoard === 1) {
+      getOwnBoards(currentPage + 1, searchKeyword);
+    } else {
+      getBoards(currentPage + 1, searchKeyword);
+    }
+    setCurrentPage(currentPage + 1);
   }
 
   return (
@@ -122,7 +169,7 @@ export default function Board() {
         </div>
 
         <div className="fixed bottom-6 right-6">
-          <Link href={'/boards/writing'}>
+          <Link href={'/boards/writing/0'}>
             <Button size="lg">
               <PlusIcon className="h-6 w-6" />
               <span className="sr-only">Add new</span>

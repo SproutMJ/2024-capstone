@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Header } from "@/components/ui/header";
 import { UserIcon, HomeIcon, MenuIcon, ClipboardIcon, ScissorsIcon } from "lucide-react";
+import useBoardStore from "@/store/useBoardStore";
 
 // UserDetail 타입 정의
 type UserDetail = {
@@ -48,8 +49,14 @@ export default function UserPage() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [error, setError] = useState<string>("");
+    const setOwnBoard = useBoardStore((state) => state.setOwnBoard);
+
+    const handleBoardsClick = () => {
+        setOwnBoard(1);
+    };
 
     const handleRoutingBoards = () => {
+        handleBoardsClick();
         router.push('/boards');
     };
 

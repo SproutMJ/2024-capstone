@@ -99,6 +99,10 @@ export default function Scrap() {
     }
   };
 
+  const handleRoutingBoards = (recipeId: number) => {
+    router.push(`/boards/writing/${recipeId}`);
+  };
+
   const openModal = (recipeId: number) => {
     setRecipeToDelete(recipeId);
     setIsModalOpen(true);
@@ -148,8 +152,11 @@ export default function Scrap() {
                       }}>
                         {selectedRecipe && selectedRecipe.recipeId === recipe.recipeId ? "숨기기" : "레시피 보기"}
                       </Button>
-                      <Button variant="outline" className="text-red-500 border-red-500"
-                              onClick={() => openModal(recipe.recipeId)}>
+                      {/* 리뷰 작성 버튼은 선택된 레시피가 없거나 숨김 상태일 때만 보이도록 설정 */}
+                      {(selectedRecipe && selectedRecipe.recipeId === recipe.recipeId) && (
+                          <Button variant="outline" className="ml-2" onClick={() => handleRoutingBoards(recipe.recipeId)}>리뷰 작성</Button>
+                      )}
+                      <Button variant="outline" className="text-red-500 border-red-500" onClick={() => openModal(recipe.recipeId)}>
                         <TrashIcon className="h-6 w-6"/>
                       </Button>
                     </CardFooter>

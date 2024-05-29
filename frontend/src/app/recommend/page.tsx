@@ -34,6 +34,9 @@ export default function Recommend() {
     const [recipeString, setRecipeString] = useState<string>('');
     const [recipeLink, setRecipeLink] = useState<string>(''); // 추가된 상태
     const [isLoading, setIsLoading] = useState(false);  // 로딩 상태 추가
+    const [uploadButtonEnabled, setUploadButtonEnabled] = useState(true);
+    const [yesOrNoButtonEnabled, setYesOrNoButtonEnabled] = useState(true);
+    const [recipeButtonEnabled, setRecipeButtonEnabled] = useState(true);
 
     const router = useRouter();
     const handleRoutingMain = () => {
@@ -49,8 +52,8 @@ export default function Recommend() {
     };
 
     const handleModalOpen = () => {
-        setYesOrNo("네")
-        setMiddleIngredients(ingredients.join(', '))
+        setYesOrNo("네");
+        setMiddleIngredients(ingredients.join(', '));
         setIsModalOpen(true);
     }
 
@@ -66,6 +69,7 @@ export default function Recommend() {
     const handleMenuRecommendation = async () => {
         setIsLoading(true);  // 로딩 시작
         console.log(middleIngredients)
+        setYesOrNoButtonEnabled(false);
         try {
             const response = await axios.post('/api/recommendation-menu', middleIngredients);
             const data = response.data;
@@ -108,6 +112,7 @@ export default function Recommend() {
         } catch (error) {
             console.error('Error getting recipe string:', error);
         } finally {
+            setRecipeButtonEnabled(false)
             setIsLoading(false);  // 로딩 종료
         }
     }
@@ -200,13 +205,19 @@ export default function Recommend() {
             }
 
             const result = await response.text();
-            setIngredients(result.split(', '));
-            setFirstIngredients(result);
-            setMiddleIngredients(result);
-            console.log(result);
-            console.log(middleIngredients);
-            // 다음 단계로 이동
-            setStep((prevStep) => prevStep + 2);
+            if (result === "") {
+                window.alert("재료가 인식되지 않았습니다. 다시 시도해주세요.")
+            }
+            else {
+                setIngredients(result.split(', '));
+                setFirstIngredients(result);
+                setMiddleIngredients(result);
+                console.log(result);
+                console.log(middleIngredients);
+                setUploadButtonEnabled(false);
+                // 다음 단계로 이동
+                setStep((prevStep) => prevStep + 2);
+            }
         } catch (error) {
             console.error('파일 업로드 에러:', error);
         }
@@ -248,7 +259,7 @@ export default function Recommend() {
                                             <p>사진 업로드 하기</p>
                                             <Input type="file" onChange={fileChange} />
                                             <div className="flex justify-end mt-2 space-x-2">
-                                                <Button onClick={handleUpload}>보내기</Button>
+                                                <Button onClick={handleUpload} disabled={!uploadButtonEnabled}>보내기</Button>
                                             </div>
                                         </div>
                                     </div>
@@ -293,8 +304,8 @@ export default function Recommend() {
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-blue-500 text-white p-4">
                                             <div className="flex space-x-2">
-                                                <Button onClick={handleModalOpen}>예</Button>
-                                                <Button onClick={handleMenuRecommendation}>아니오</Button>
+                                                <Button onClick={handleModalOpen} disabled={!yesOrNoButtonEnabled}>예</Button>
+                                                <Button onClick={handleMenuRecommendation} disabled={!yesOrNoButtonEnabled}>아니오</Button>
                                             </div>
                                         </div>
                                     </div>
@@ -369,7 +380,7 @@ export default function Recommend() {
                                             <ul className="space-y-2">
                                                 {menus.map((menu, index) => (
                                                     <li key={index}>
-                                                        <Button onClick={() => handleRecipeStringRecommendation(menu)}>
+                                                        <Button onClick={() => handleRecipeStringRecommendation(menu)} disabled={!recipeButtonEnabled}>
                                                             {menu}
                                                         </Button>
                                                     </li>
