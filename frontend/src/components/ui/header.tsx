@@ -7,10 +7,12 @@ import axios from "axios";
 import {useRouter} from "next/navigation";
 import React, {useEffect} from "react";
 import useUserStore from "@/store/useUserStore";
+import useBoardStore from "@/store/useBoardStore";
 
 export const Header = () => {
     const router = useRouter();
     const {setUser, clearUser} = useUserStore();
+    const setOwnBoard = useBoardStore((state) => state.setOwnBoard);
 
     useEffect(()=> {
         const fetchUser = async ()=> {
@@ -36,6 +38,10 @@ export const Header = () => {
         } catch (error) {
             console.error('Error occurred during logout:', error);
         }
+    };
+
+    const handleBoardsClick = () => {
+        setOwnBoard(0);
     };
 
     return (
@@ -73,6 +79,7 @@ export const Header = () => {
                             </Link>
                             <Link
                                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-800"
+                                onClick={handleBoardsClick}
                                 href="/boards"
                             >
                                 <ClipboardIcon className="h-5 w-5" />
