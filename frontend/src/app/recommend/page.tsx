@@ -200,13 +200,18 @@ export default function Recommend() {
             }
 
             const result = await response.text();
-            setIngredients(result.split(', '));
-            setFirstIngredients(result);
-            setMiddleIngredients(result);
-            console.log(result);
-            console.log(middleIngredients);
-            // 다음 단계로 이동
-            setStep((prevStep) => prevStep + 2);
+            if (result === "") {
+                window.alert("재료가 인식되지 않았습니다. 다시 시도해주세요.")
+            }
+            else {
+                setIngredients(result.split(', '));
+                setFirstIngredients(result);
+                setMiddleIngredients(result);
+                console.log(result);
+                console.log(middleIngredients);
+                // 다음 단계로 이동
+                setStep((prevStep) => prevStep + 2);
+            }
         } catch (error) {
             console.error('파일 업로드 에러:', error);
         }
