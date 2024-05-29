@@ -31,6 +31,17 @@ public class BoardController {
             return boardService.retrieveSearchBoard(page, size,searchKeyword);
         }
     }
+    @GetMapping("/current-user")
+    public ResponseEntity<?> retrieveCurrentUser(@RequestParam(name = "page", defaultValue = "0") int page,
+                                      @RequestParam(name = "size", defaultValue = "5") int size,
+                                      @RequestParam(name = "searchKeyword", required = false) String searchKeyword,
+                                                 HttpSession session){
+        if (searchKeyword == null) {
+            return boardService.retrieveCurrentUserBoard(page, size, session);
+        }else{
+            return boardService.retrieveCurrentUserSearchBoard(page, size, session, searchKeyword);
+        }
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> retrieveOneBoard(@PathVariable("id") Long id){

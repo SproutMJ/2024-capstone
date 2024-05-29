@@ -71,6 +71,42 @@ public class BoardService {
         return ResponseEntity.ok().body(new RetrieveBoardListResponseDto((long) boardLists.getTotalPages(), getBoardLists));
     }
 
+    public ResponseEntity<RetrieveBoardListResponseDto> retrieveCurrentUserBoard(int page, int size, HttpSession session) {
+        Pageable pageable;
+        pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        User user = getUserFromSession(session);
+        Page<Board> boardLists = boardRepository.findAllByUserId(user.getId(), pageable);
+        List<RetrieveBoardResponseDto> getBoardLists = boardLists.stream()
+                .map(tmp -> RetrieveBoardResponseDto.builder()
+                        .id(tmp.getId())
+                        .title(tmp.getTitle())
+                        .createdTime(tmp.getCreatedTime())
+                        .commentNum((long) tmp.getComments().size())
+                        .username(tmp.getUser().getUserName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(new RetrieveBoardListResponseDto((long) boardLists.getTotalPages(), getBoardLists));
+    }
+
+    public ResponseEntity<RetrieveBoardListResponseDto>  retrieveCurrentUserSearchBoard(int page, int size, HttpSession session, String searchKeyword) {
+        Pageable pageable;
+        pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        User user = getUserFromSession(session);
+        Page<Board> boardLists = boardRepository.findByUserIdAndTitleContaining(user.getId(), searchKeyword, pageable);
+        List<RetrieveBoardResponseDto> getBoardLists = boardLists.stream()
+                .map(tmp -> RetrieveBoardResponseDto.builder()
+                        .id(tmp.getId())
+                        .title(tmp.getTitle())
+                        .createdTime(tmp.getCreatedTime())
+                        .commentNum((long) tmp.getComments().size())
+                        .username(tmp.getUser().getUserName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(new RetrieveBoardListResponseDto((long) boardLists.getTotalPages(), getBoardLists));
+    }
+
     public ResponseEntity<?> retrieveOneBoard(Long id) {
         Board findBoard = boardRepository.findById(id).get();
         RetrieveOneBoardResponseDto board = RetrieveOneBoardResponseDto.builder()
