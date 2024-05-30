@@ -3,6 +3,12 @@ package hello.aimju.image.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.aimju.image.Enum.IngredientMapper;
+import hello.aimju.login.session.SessionConst;
+import hello.aimju.tteesstt.Image;
+import hello.aimju.tteesstt.ImageRepository;
+import hello.aimju.user.domain.User;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,12 +28,25 @@ public class ImageService {
     // Roboflow API Endpoint
     @Value("${roboflow.api-endpoint}")
     private String ROBOFLOW_API_ENDPOINT;
+    @Autowired
+    private ImageRepository imageRepository;
 
     /**
      * roboflow 모델 API에 이미지 보내서 인식된 재료를 String 형으로 가져옴
      * @return : "파, 마늘, 양파, 삼겹살, ..."
      * */
-    public String uploadAndProcessImage(MultipartFile imageFile) {
+    public String uploadAndProcessImage(MultipartFile imageFile, HttpSession httpSession) throws IOException {
+        //이미지 저장 로직
+        String fileName = imageFile.getOriginalFilename();
+        byte[] imageData = imageFile.getBytes();
+//        User user = getUserFromSession(httpSession);
+
+        Image image = new Image();
+        image.setName(fileName);
+        image.setImage(imageData);
+//        image.setUser(user);
+        imageRepository.save(image);
+
         try {
             // Base64 인코딩
             String encodedFile = new String(Base64.getEncoder().encode(imageFile.getBytes()), StandardCharsets.US_ASCII);
@@ -170,5 +189,17 @@ public class ImageService {
 
         // StringJoiner를 사용하여 최종 결과 문자열 생성
         return resultJoiner.toString();
+    }
+
+    private User getUserFromSession(HttpSession session) {
+        // 세션에서 사용자 정보 가져오기
+        User loginUser = (User) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        // 만약 세션에 사용자 정보가 없다면 로그인하지 않은 상태이므로 적절히 처리
+        if (loginUser == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
+
+        return loginUser;
     }
 }
