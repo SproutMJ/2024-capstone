@@ -37,6 +37,8 @@ export default function Recommend() {
     const [uploadButtonEnabled, setUploadButtonEnabled] = useState(true);
     const [yesOrNoButtonEnabled, setYesOrNoButtonEnabled] = useState(true);
     const [recipeButtonEnabled, setRecipeButtonEnabled] = useState(true);
+    const [imageUrl, setImageUrl] = useState('');
+
 
     const router = useRouter();
     const handleRoutingMain = () => {
@@ -103,6 +105,17 @@ export default function Recommend() {
             menu: menu,
             ingredients: middleIngredients.split(', '),
         };
+
+        try {
+            const routingPoint = '/api/menu-image/' + menu
+            console.log(routingPoint)
+            const response = await axios.get(routingPoint); // menu 값 사용
+            const imageUrl = response.data;
+            setImageUrl(imageUrl);
+            console.log(imageUrl)
+        } catch (error) {
+            console.error('Error fetching image:', error);
+        }
         try {
             const response = await axios.post('/api/recommendation-recipe-str', request);
             setRecipeString(response.data);
@@ -403,6 +416,13 @@ export default function Recommend() {
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" style={{ whiteSpace: 'pre-line' }}>
+                                            {imageUrl && (
+                                                <div className="flex items-start space-x-4">
+                                                    <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                                                        <img src={imageUrl} alt="검색된 이미지" className="rounded-lg w-64 h-auto" /> {/* 이미지 너비를 w-64로 조정 */}
+                                                    </div>
+                                                </div>
+                                            )}
                                             <p>{menu}의 레시피는 다음과 같습니다.</p>
                                             <p>{recipeString}</p>
                                         </div>
