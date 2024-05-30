@@ -40,6 +40,8 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator-cdi:6.2.0.Final'
 
     implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+
+    implementation 'org.jsoup:jsoup:1.15.3'
 }
 
 tasks.named('test') {
