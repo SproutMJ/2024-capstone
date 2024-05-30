@@ -112,7 +112,7 @@ export default function Recommend() {
             const response = await axios.get(routingPoint); // menu 값 사용
             const imageUrl = response.data;
             setImageUrl(imageUrl);
-            console.log(imageUrl)
+            console.log(imageUrl);
         } catch (error) {
             console.error('Error fetching image:', error);
         }
@@ -419,7 +419,9 @@ export default function Recommend() {
                                             {imageUrl && (
                                                 <div className="flex items-start space-x-4">
                                                     <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
-                                                        <img src={imageUrl} alt="검색된 이미지" className="rounded-lg w-64 h-auto" /> {/* 이미지 너비를 w-64로 조정 */}
+                                                        <div>
+                                                            <img src={imageUrl} alt="My Image"/>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}
