@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
-public class ImageService {
+public class RoboflowService {
     // Roboflow API 키
     @Value("${roboflow.api-key}")
     private String ROBOFLOW_API_KEY;
