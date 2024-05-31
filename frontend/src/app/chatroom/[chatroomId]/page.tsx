@@ -1,5 +1,5 @@
 'use client'
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 interface Message {
+    id: number;
     chatType: string;
     isUser: number;
     content: string;
@@ -41,6 +42,24 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
         }
     };
 
+    // 이미지를 가져오는 함수
+    const fetchImage = async (chatId: number) => {
+        try {
+            // 이미지를 가져오는 API 엔드포인트 호출
+            const response = await axios.get(`/api/photo/${chatId}`, {
+                responseType: 'arraybuffer' // 이미지 데이터를 바이너리로 받음
+            });
+
+            // 응답에서 이미지 데이터 추출
+            const imageData = Buffer.from(response.data, 'binary').toString('base64');
+
+            // 이미지를 data URI 형식으로 변환하여 반환
+            return `data:image/jpeg;base64,${imageData}`;
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            return null;
+        }
+    };
 
     useEffect(() => {
         axios.get<Message[]>(`/api/chatroom/${params.chatroomId}`)
@@ -58,7 +77,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                 const recipeString = recipeMessages.map(message => message.content.replace(/<br>/g, "\n")).join("\n");
                 setRecipeString(recipeString);
 
-                const messagesWithLinks = messagesWithBr.map(message => {
+                const messagesWithComponents = messagesWithBr.map(async (message) => {
                     if (message.chatType === "link") {
                         return {
                             ...message,
@@ -69,19 +88,24 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                             ...message,
                             content: `<img src="${message.content}" alt="Chat Image" className="rounded-lg" />`
                         };
+                    } else if (message.chatType === "image") {
+                        // 이미지 가져오기
+                        const imageData = await fetchImage(params.chatroomId);
+                        return {
+                            ...message,
+                            content: `<img src="${imageData}" alt="Chat Image" style="max-width: 400px; height: auto;" className="rounded-lg" />`
+                        };
                     } else {
                         return message;
                     }
                 });
-                setChatMessages(messagesWithLinks);
-
+                Promise.all(messagesWithComponents).then(setChatMessages);
             })
             .catch(error => {
                 alert('비정상적인 접근입니다.');
                 handleRoutingMain();
             });
     }, [params.chatroomId, handleRoutingMain]);
-
 
     return (
         <>
