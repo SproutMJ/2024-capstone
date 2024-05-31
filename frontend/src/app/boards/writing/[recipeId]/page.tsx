@@ -31,6 +31,7 @@ export default function PostWriting({ params }: { params: { recipeId: number } }
             fetchRecipeContent();
         } else {
             setTitle('제목을 입력해주세요');
+            fetchRecipes();
             setContent('내용을 입력해주세요');
         }
     }, [params.recipeId]);
