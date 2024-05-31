@@ -153,6 +153,9 @@ export default function Recommend() {
         addChatMessage(`해당 재료로 만들 수 있는 음식은 다음과 같습니다.\n${menus}\n어떤 재료의 음식의 레시피를 보시겠습니까?`, 0, 'message');
         addChatMessage(`${menu}`, 1, 'menu');
         addChatMessage(`${menu}의 레시피는 다음과 같습니다.`, 0, 'message');
+        if (imageUrl !== null && imageUrl !== undefined) {
+            addChatMessage(imageUrl, 0, 'imageUrl');
+        }
         addChatMessage(`${recipeString}`, 0, 'recipe');
         addChatMessage(`${recipeLink}`, 0,'link');
     }, [recipeLink]);

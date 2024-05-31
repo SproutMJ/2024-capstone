@@ -64,12 +64,17 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                             ...message,
                             content: `<a href="${message.content}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: #007bff;">${menuString} 검색하기</a>`
                         };
+                    } else if (message.chatType === "imageUrl") {
+                        return {
+                            ...message,
+                            content: `<img src="${message.content}" alt="Chat Image" className="rounded-lg" />`
+                        };
                     } else {
                         return message;
                     }
                 });
-
                 setChatMessages(messagesWithLinks);
+
             })
             .catch(error => {
                 alert('비정상적인 접근입니다.');
@@ -86,20 +91,21 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                     <Card className="flex flex-col">
                         <CardContent className="flex-1 space-y-4">
                             {chatMessages.map((message, index) => (
-                                <div key={index} className={`flex items-start space-x-4 ${message.isUser === 0 ? 'justify-end' : ''}`}>
+                                <div key={index} className={`flex items-start space-x-4 ${message.isUser === 1 ? 'justify-end' : ''}`}>
+                                    {message.isUser !== 1 && (
+                                        <Avatar>
+                                            <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
+                                            <AvatarFallback>ML</AvatarFallback>
+                                        </Avatar>
+                                    )}
                                     <div className="flex flex-col space-y-2">
-                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" dangerouslySetInnerHTML={{ __html: message.content }} />
+                                        <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+                                             dangerouslySetInnerHTML={{ __html: message.content }}/>
                                     </div>
                                     {message.isUser === 1 && (
                                         <Avatar>
                                             <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
                                             <AvatarFallback>YU</AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                    {message.isUser !== 1 && (
-                                        <Avatar>
-                                            <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                            <AvatarFallback>ML</AvatarFallback>
                                         </Avatar>
                                     )}
                                 </div>
