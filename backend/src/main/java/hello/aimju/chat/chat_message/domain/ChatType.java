@@ -6,5 +6,6 @@ public enum ChatType {
     menu,
     ingredient,
     recipe,
+    imageUrl,
     link
 }
