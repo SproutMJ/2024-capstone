@@ -38,15 +38,15 @@ type Board = {
 export default function Board() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchKeyword, setSearchKeyword] = useState(null);
   const [boards, setBoards] = useState<Board[]>([]);
   const {getState} = useUserStore;
   const ownBoard = useBoardStore((state) => state.ownBoard);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
 
-  const getBoards = async (page = 0, searchKeyword = null)=>{
+  const getBoards = async (page = 0)=>{
     try {
       let response;
-      if(searchKeyword === null){
+      if(searchKeyword === ''){
         response  = await axios.get('/api/boards', {
           params: {
             page: page,
@@ -76,10 +76,10 @@ export default function Board() {
     }
   };
 
-  const getOwnBoards = async (page = 0, searchKeyword = null) => {
+  const getOwnBoards = async (page = 0) => {
     try {
       let response;
-      if (searchKeyword === null) {
+      if (searchKeyword === '') {
         response = await axios.get('/api/boards/current-user', {
           params: {
             page: page,
@@ -119,26 +119,50 @@ export default function Board() {
 
   const handlePrevPage = () => {
     if (ownBoard === 1) {
-      getOwnBoards(currentPage - 1, searchKeyword);
+      getOwnBoards(currentPage - 1);
     } else {
-      getBoards(currentPage - 1, searchKeyword);
+      getBoards(currentPage - 1);
     }
     setCurrentPage(currentPage - 1);
   }
 
   const handleNextPage = () => {
     if (ownBoard === 1) {
-      getOwnBoards(currentPage + 1, searchKeyword);
+      getOwnBoards(currentPage + 1);
     } else {
-      getBoards(currentPage + 1, searchKeyword);
+      getBoards(currentPage + 1);
     }
     setCurrentPage(currentPage + 1);
   }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  };
 
   return (
     <>
       <Header></Header>
       <main className="py-8">
+        <form onSubmit={(event)=>{
+          event.preventDefault()
+          if (ownBoard === 1) {
+            getOwnBoards();
+          } else {
+            getBoards();
+          }
+        }} className="mb-6 flex items-center justify-center">
+          <input
+              type="text"
+              value={searchKeyword}
+              onChange={handleSearchChange}
+              placeholder="검색어를 입력하세요"
+              className="border border-gray-300 rounded px-4 py-2 mr-2 flex-grow"
+              style={{ maxWidth: '300px', color: 'black' }}
+          />
+          <Button type="submit" className="flex-shrink-0">
+            검색
+          </Button>
+        </form>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 gap-6">
             {boards.map((board, index)=>(
