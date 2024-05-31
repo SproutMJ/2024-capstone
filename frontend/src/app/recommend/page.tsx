@@ -38,6 +38,7 @@ export default function Recommend() {
     const [yesOrNoButtonEnabled, setYesOrNoButtonEnabled] = useState(true);
     const [recipeButtonEnabled, setRecipeButtonEnabled] = useState(true);
     const [imageUrl, setImageUrl] = useState('');
+    const [recipeId, setRecipeId] = useState<string>('');
 
 
     const router = useRouter();
@@ -143,7 +144,7 @@ export default function Recommend() {
         recipeString: string
     ) => {
         addChatMessage("환영합니다! 재료를 인식할 사진을 업로드 해주세요!", 0, 'message');
-        addChatMessage("이미지", 1, 'message');
+        addChatMessage("이미지", 1, 'image');
         addChatMessage(`인식된 재료는 다음과 같습니다.\n${ingredients}`, 0, 'message');
         addChatMessage("재료를 추가하거나 수정하시겠습니까?", 0, 'message');
         addChatMessage(`${yesOrNo}`, 1, 'message');
@@ -188,12 +189,39 @@ export default function Recommend() {
             axios.post('/api/recommendation-save', chatRoomRequestDto)
                 .then(response => {
                     console.log('Chat data saved successfully:', response.data);
+                    setRecipeId(response.data);
                 })
                 .catch(error => {
                     console.error('Error saving chat data:', error);
                 });
+            handleNextStep();
         }
     }, [chatHistory, step, menu]);
+
+    useEffect(() => {
+        if (chatHistory.length > 0 && step === 5) {
+            if (!file) {
+                alert('파일을 선택해주세요.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('recipeId', recipeId);
+
+            axios.post('/api/photo-save', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    console.log('Image saved successfully:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error saving image:', error);
+                });
+        }
+    }, [chatHistory, step, file, recipeId]);
 
     const fileChange = (event: any) => {
         setFile(event.target.files[0]);
