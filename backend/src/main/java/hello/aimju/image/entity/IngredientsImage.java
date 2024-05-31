@@ -21,7 +21,7 @@ public class IngredientsImage {
     @Column(name = "image", nullable = false, columnDefinition = "LONGBLOB")
     private byte[] image;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "chat_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_Id")
     private ChatRoom chatRoom;
 }

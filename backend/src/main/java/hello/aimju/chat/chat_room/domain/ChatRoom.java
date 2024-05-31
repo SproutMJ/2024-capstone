@@ -1,6 +1,7 @@
 package hello.aimju.chat.chat_room.domain;
 
 import hello.aimju.chat.chat_message.domain.ChatMessage;
+import hello.aimju.image.entity.IngredientsImage;
 import hello.aimju.user.domain.User;
 import hello.aimju.timestamp.Timestamped;
 import jakarta.persistence.*;
@@ -24,6 +25,8 @@ public class ChatRoom extends Timestamped{ // created_at 알아서 생성해줌
     private User user;
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> chatMessages = new ArrayList<>();
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<IngredientsImage> ingredientsImages = new ArrayList<>();
 
     public ChatRoom(User user, String menu) {
         this.user = user;
