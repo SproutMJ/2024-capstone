@@ -15,7 +15,9 @@ export default function PostWriting({ params }: { params: { recipeId: number } }
     const [selectedRecipe, setSelectedRecipe] = useState<number | null>(null); // 선택된 레시피 ID
 
     useEffect(() => {
-        if (params.recipeId !== 0) {
+        const recipeId = Number(params.recipeId);
+        if (recipeId !== 0) {
+            console.log(params.recipeId);
             const fetchRecipeContent = async () => {
                 try {
                     const response = await axios.get(`/api/recipe/${params.recipeId}`);

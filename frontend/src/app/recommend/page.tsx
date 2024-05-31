@@ -37,6 +37,8 @@ export default function Recommend() {
     const [uploadButtonEnabled, setUploadButtonEnabled] = useState(true);
     const [yesOrNoButtonEnabled, setYesOrNoButtonEnabled] = useState(true);
     const [recipeButtonEnabled, setRecipeButtonEnabled] = useState(true);
+    const [imageUrl, setImageUrl] = useState('');
+
 
     const router = useRouter();
     const handleRoutingMain = () => {
@@ -103,6 +105,17 @@ export default function Recommend() {
             menu: menu,
             ingredients: middleIngredients.split(', '),
         };
+
+        try {
+            const routingPoint = '/api/menu-image/' + menu
+            console.log(routingPoint)
+            const response = await axios.get(routingPoint); // menu 값 사용
+            const imageUrl = response.data;
+            setImageUrl(imageUrl);
+            console.log(imageUrl);
+        } catch (error) {
+            console.error('Error fetching image:', error);
+        }
         try {
             const response = await axios.post('/api/recommendation-recipe-str', request);
             setRecipeString(response.data);
@@ -140,6 +153,9 @@ export default function Recommend() {
         addChatMessage(`해당 재료로 만들 수 있는 음식은 다음과 같습니다.\n${menus}\n어떤 재료의 음식의 레시피를 보시겠습니까?`, 0, 'message');
         addChatMessage(`${menu}`, 1, 'menu');
         addChatMessage(`${menu}의 레시피는 다음과 같습니다.`, 0, 'message');
+        if (imageUrl !== null && imageUrl !== undefined) {
+            addChatMessage(imageUrl, 0, 'imageUrl');
+        }
         addChatMessage(`${recipeString}`, 0, 'recipe');
         addChatMessage(`${recipeLink}`, 0,'link');
     }, [recipeLink]);
@@ -403,6 +419,15 @@ export default function Recommend() {
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" style={{ whiteSpace: 'pre-line' }}>
+                                            {imageUrl && (
+                                                <div className="flex items-start space-x-4">
+                                                    <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                                                        <div>
+                                                            <img src={imageUrl} alt="My Image"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                             <p>{menu}의 레시피는 다음과 같습니다.</p>
                                             <p>{recipeString}</p>
                                         </div>
