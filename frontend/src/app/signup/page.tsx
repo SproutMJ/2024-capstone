@@ -25,6 +25,11 @@ import { Button } from "@/components/ui/button"
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 
+interface SignUpResponse {
+  msg: string;
+  statuscode: number;
+}
+
 export default function SignUp() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -43,20 +48,29 @@ export default function SignUp() {
   };
 
   async function signUp() {
-    const userName = id;
-    const res = await fetch('/api/signup',{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({userName, password})
-    });
+    if (password === confirmPassword) {
+      const userName = id;
+      const res = await fetch('/api/signup',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({userName, password})
+      });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch data')
+      const data: SignUpResponse = await res.json();
+      console.log(data);
+
+      if (data.statuscode === 401) {
+        alert(data.msg);
+      } else if (!res.ok) {
+        throw new Error('Failed to fetch data');
+      } else {
+        router.push('/login');
+      }
+    } else {
+      alert('비밀번호가 일치하지 않습니다');
     }
-
-    router.push('/login')
   }
 
   return (
