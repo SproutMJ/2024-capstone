@@ -173,7 +173,7 @@ export default function UserPage() {
                             {userDetail && (
                                 <div className="text-center mb-4">
                                     <h2 className="text-xl font-semibold">{userDetail.userName}</h2>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         <div
                                             className="flex items-center justify-center w-48 p-2 rounded-lg border border-gray-300 mx-auto">
                                             <HomeIcon className="h-5 w-5 text-gray-600"/>
