@@ -14,6 +14,11 @@ interface Message {
     content: string;
 }
 
+interface BoardTitle {
+    id: number;
+    title: string;
+}
+
 export default function ChatRoom({ params }: { params: { chatroomId: number } }) {
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
     const [recipe, setRecipeString] = useState<string>('');
@@ -61,6 +66,26 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
         }
     };
 
+    // 게시판을 불러오는 함수
+    const fetchBoardTitles = async (menu: string): Promise<BoardTitle[]> => {
+        try {
+            const response = await axios.get('/api/boards', {
+                params: {
+                    searchKeyword: menu,
+                    page: 0,
+                    size: 5
+                }
+            });
+            return response.data.boardLists.map((item: BoardTitle) => ({
+                id: item.id,
+                title: item.title
+            }));
+        } catch (error) {
+            console.error('Error fetching board titles:', error);
+            return [];
+        }
+    };
+
     useEffect(() => {
         axios.get<Message[]>(`/api/chatroom/${params.chatroomId}`)
             .then(response => {
@@ -79,9 +104,19 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
 
                 const messagesWithComponents = messagesWithBr.map(async (message) => {
                     if (message.chatType === "link") {
+                        const boardTitles = await fetchBoardTitles(menuString);
+                        const boardLinks = boardTitles.map(board => (
+                            `<a href="/boards/${board.id}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: #007bff;">${board.title}</a>`
+                        ));
+                        const boardLinkContent = boardLinks.length > 0 ?
+                            `<div>게시판 검색 결과:<br>${boardLinks.join("<br>")}</div>` :
+                            '';
+
+                        const searchLink = `<div>모두의 레시피에서 검색하시겠습니까?<br><a href="${message.content}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: #007bff;">${menuString} 검색하기</a></div>`;
+
                         return {
                             ...message,
-                            content: `<a href="${message.content}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: #007bff;">${menuString} 검색하기</a>`
+                            content: `${boardLinkContent}${searchLink}`
                         };
                     } else if (message.chatType === "imageUrl") {
                         return {
@@ -94,6 +129,14 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                         return {
                             ...message,
                             content: `<img src="${imageData}" alt="Chat Image" style="max-width: 400px; height: auto;" className="rounded-lg" />`
+                        };
+                    } else if (message.chatType === "boardTitle") {
+                        const boardTitles = await fetchBoardTitles(menuString);
+                        return {
+                            ...message,
+                            content: boardTitles.map(board => (
+                                `<a href="/boards/${board.id}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: #007bff;">${board.title}</a>`
+                            )).join("<br>")
                         };
                     } else {
                         return message;
@@ -119,7 +162,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                                     {message.isUser !== 1 && (
                                         <Avatar>
                                             <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                            <AvatarFallback>ML</AvatarFallback>
+                                            <AvatarFallback>AI</AvatarFallback>
                                         </Avatar>
                                     )}
                                     <div className="flex flex-col space-y-2">
@@ -129,7 +172,7 @@ export default function ChatRoom({ params }: { params: { chatroomId: number } })
                                     {message.isUser === 1 && (
                                         <Avatar>
                                             <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
-                                            <AvatarFallback>YU</AvatarFallback>
+                                            <AvatarFallback>나</AvatarFallback>
                                         </Avatar>
                                     )}
                                 </div>

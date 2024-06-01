@@ -20,6 +20,14 @@ type ChatRoomRequestDto = {
     messages: ChatMessageRequestDto[];
 };
 
+type RetrieveBoardResponseDto = {
+    id: number;
+    title: string;
+    createdTime: string;
+    commentNum: number;
+    username: string;
+};
+
 export default function Recommend() {
     const [step, setStep] = useState(0);
     const [ingredients, setIngredients] = useState<string[]>([]);
@@ -39,6 +47,7 @@ export default function Recommend() {
     const [recipeButtonEnabled, setRecipeButtonEnabled] = useState(true);
     const [imageUrl, setImageUrl] = useState('');
     const [chatId, setChatId] = useState<string>('');
+    const [boardTitles, setBoardTitles] = useState<{ id: number, title: string }[]>([]);
 
 
     const router = useRouter();
@@ -122,6 +131,24 @@ export default function Recommend() {
             setRecipeString(response.data);
             const newRecipeLink = `https://www.10000recipe.com/recipe/list.html?q=${encodeURIComponent(menu)}`;
             setRecipeLink(newRecipeLink);
+        } catch (error) {
+            console.error('Error getting recipe string:', error);
+        }
+        try {
+            // 게시판 검색 요청 추가
+            const boardResponse = await axios.get('/api/boards', {
+                params: {
+                    page: 0,
+                    size: 5,
+                    searchKeyword: menu,
+                }
+            });
+            const boardData = boardResponse.data.boardLists.map((item: RetrieveBoardResponseDto) => ({
+                id: item.id,
+                title: item.title
+            }));
+            setBoardTitles(boardData);
+            console.log(boardTitles)
             handleNextStep();
         } catch (error) {
             console.error('Error getting recipe string:', error);
@@ -309,7 +336,7 @@ export default function Recommend() {
                                     </div>
                                     <Avatar>
                                         <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>YU</AvatarFallback>
+                                        <AvatarFallback>나</AvatarFallback>
                                     </Avatar>
                                 </div>
                             )}
@@ -318,7 +345,7 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@shadcn" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>CN</AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
@@ -333,7 +360,7 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>ML</AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
@@ -355,7 +382,7 @@ export default function Recommend() {
                                     </div>
                                     <Avatar>
                                         <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>YU</AvatarFallback>
+                                        <AvatarFallback>나</AvatarFallback>
                                     </Avatar>
                                 </div>
                             )}
@@ -386,7 +413,7 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>ML</AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
@@ -401,7 +428,7 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>ML</AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
@@ -434,7 +461,7 @@ export default function Recommend() {
                                     </div>
                                     <Avatar>
                                         <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>YU</AvatarFallback>
+                                        <AvatarFallback>나</AvatarFallback>
                                     </Avatar>
                                 </div>
                             )}
@@ -443,7 +470,7 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>ML</AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800" style={{ whiteSpace: 'pre-line' }}>
@@ -467,10 +494,24 @@ export default function Recommend() {
                                 <div className="flex items-start space-x-4">
                                     <Avatar>
                                         <AvatarImage alt="@maxleiter" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>ML</AvatarFallback>
+                                        <AvatarFallback>AI</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col space-y-2">
                                         <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                                            {boardTitles.length > 0 && (
+                                                <div>
+                                                    <h3>게시판 검색 결과:</h3>
+                                                    <ul>
+                                                        {boardTitles.map((board) => (
+                                                            <li key={board.id}>
+                                                                <a href={`/boards/${board.id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                                                    {board.title}
+                                                                </a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
                                             <p>모두의 레시피에서 검색하시겠습니까?</p>
                                             {/* 모두의 레시피 링크 */}
                                             <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
@@ -496,7 +537,7 @@ export default function Recommend() {
                                     </div>
                                     <Avatar>
                                         <AvatarImage alt="@you" src="/placeholder-avatar.jpg" />
-                                        <AvatarFallback>YU</AvatarFallback>
+                                        <AvatarFallback>나</AvatarFallback>
                                     </Avatar>
                                 </div>
                             )}
