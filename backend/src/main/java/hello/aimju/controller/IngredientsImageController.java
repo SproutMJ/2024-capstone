@@ -3,7 +3,6 @@ package hello.aimju.controller;
 import hello.aimju.image.Service.IngredientsImageService;
 import hello.aimju.image.Service.RoboflowService;
 import hello.aimju.image.entity.IngredientsImage;
-import hello.aimju.user.dto.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +32,11 @@ public class IngredientsImageController {
      * */
     @PostMapping("/photo-save")
     public ResponseEntity<String> saveImage(@RequestParam("file") MultipartFile file,
-                                                       @RequestParam("recipeId") String recipeId) throws IOException{
-        if (recipeId.isEmpty() || file.isEmpty()) {
+                                                       @RequestParam("chatId") String chatId) throws IOException{
+        if (chatId.isEmpty() || file.isEmpty()) {
             return null;
         }
-        Long numberId = Long.parseLong(recipeId);
+        Long numberId = Long.parseLong(chatId);
         System.out.println("저장 요청 도착: " + numberId);
         return ingredientsImageService.saveImage(file, numberId);
     }

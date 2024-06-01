@@ -38,7 +38,7 @@ export default function Recommend() {
     const [yesOrNoButtonEnabled, setYesOrNoButtonEnabled] = useState(true);
     const [recipeButtonEnabled, setRecipeButtonEnabled] = useState(true);
     const [imageUrl, setImageUrl] = useState('');
-    const [recipeId, setRecipeId] = useState<string>('');
+    const [chatId, setChatId] = useState<string>('');
 
 
     const router = useRouter();
@@ -189,7 +189,7 @@ export default function Recommend() {
             axios.post('/api/recommendation-save', chatRoomRequestDto)
                 .then(response => {
                     console.log('Chat data saved successfully:', response.data);
-                    setRecipeId(response.data);
+                    setChatId(response.data);
                 })
                 .catch(error => {
                     console.error('Error saving chat data:', error);
@@ -207,7 +207,7 @@ export default function Recommend() {
 
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('recipeId', recipeId);
+            formData.append('chatId', chatId);
 
             axios.post('/api/photo-save', formData, {
                 headers: {
@@ -221,7 +221,7 @@ export default function Recommend() {
                     console.error('Error saving image:', error);
                 });
         }
-    }, [chatHistory, step, file, recipeId]);
+    }, [chatHistory, step, file, chatId]);
 
     const fileChange = (event: any) => {
         setFile(event.target.files[0]);
