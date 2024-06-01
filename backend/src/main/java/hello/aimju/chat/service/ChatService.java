@@ -29,7 +29,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    public void saveChatData(ChatRoomRequestDto chatRoomRequestDto, HttpSession session) {
+    public Long saveChatData(ChatRoomRequestDto chatRoomRequestDto, HttpSession session) {
         // ChatRoom 데이터 저장
         ChatRoom chatRoom = new ChatRoom(getUserFromSession(session), chatRoomRequestDto.getMenu());
         chatRoomRepository.save(chatRoom);
@@ -45,6 +45,7 @@ public class ChatService {
             chatMessages.add(chatMessage);
         }
         chatMessageRepository.saveAll(chatMessages);
+        return chatRoom.getId();
     }
 
     public List<GetAllChatRoomResponseDto> getAllChatRooms(HttpSession session) {

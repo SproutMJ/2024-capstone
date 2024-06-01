@@ -29,7 +29,8 @@ public class CrawlingService {
         System.out.println("Document fetched");
 
         // 이미지 URL 추출
-        Element imgElement = doc.select("div.common_sp_thumb img").first();
+        Element imgElement = doc.select("div.common_sp_thumb img:not(.common_vod_label img)").first();
+
         if (imgElement != null) {
             String imageUrl = imgElement.attr("src");
             System.out.println("Image URL: " + imageUrl);
