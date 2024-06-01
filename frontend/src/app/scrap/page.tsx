@@ -118,6 +118,9 @@ export default function Scrap() {
       <>
         <Header></Header>
         <main className="py-8">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <h1 className="text-6xl font-bold text-red-400 opacity-20">스크랩</h1>
+          </div>
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 gap-6">
               {recipes.map((recipe, index) => (
@@ -154,9 +157,11 @@ export default function Scrap() {
                       </Button>
                       {/* 리뷰 작성 버튼은 선택된 레시피가 없거나 숨김 상태일 때만 보이도록 설정 */}
                       {(selectedRecipe && selectedRecipe.recipeId === recipe.recipeId) && (
-                          <Button variant="outline" className="ml-2" onClick={() => handleRoutingBoards(recipe.recipeId)}>리뷰 작성</Button>
+                          <Button variant="outline" className="ml-2"
+                                  onClick={() => handleRoutingBoards(recipe.recipeId)}>리뷰 작성</Button>
                       )}
-                      <Button variant="outline" className="text-red-500 border-red-500" onClick={() => openModal(recipe.recipeId)}>
+                      <Button variant="outline" className="text-red-500 border-red-500"
+                              onClick={() => openModal(recipe.recipeId)}>
                         <TrashIcon className="h-6 w-6"/>
                       </Button>
                     </CardFooter>
@@ -184,7 +189,8 @@ export default function Scrap() {
               <h2 className="text-lg font-semibold mb-4">정말 삭제하시겠습니까?</h2>
               <div className="flex justify-end mt-4">
                 <Button variant="outline" onClick={closeModal}>취소</Button>
-                <Button variant="outline" className="ml-2 text-red-500 border-red-500" onClick={handleDeleteClick}>네</Button>
+                <Button variant="outline" className="ml-2 text-red-500 border-red-500"
+                        onClick={handleDeleteClick}>네</Button>
               </div>
             </div>
           </Modal>

@@ -69,6 +69,9 @@ export default function Main() {
       <>
         <Header></Header>
         <main className="py-8">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <h1 className="text-6xl font-bold text-red-400 opacity-20">메인페이지</h1>
+          </div>
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 gap-6">
               {chatRooms.map((chat, index) => (
@@ -85,7 +88,7 @@ export default function Main() {
                       </Button>
                       <Button variant="outline" className="text-red-500 border-red-500"
                               onClick={() => handleDeleteClick(chat.chatId)}>
-                        <TrashIcon className="h-6 w-6" />
+                        <TrashIcon className="h-6 w-6"/>
                       </Button>
                     </CardFooter>
                   </Card>
@@ -95,7 +98,7 @@ export default function Main() {
           <div className="fixed bottom-6 right-6">
             <Button size="lg">
               <Link href={"/recommend"}>
-                <PlusIcon className="h-6 w-6" />
+                <PlusIcon className="h-6 w-6"/>
                 <span className="sr-only">Add new</span>
               </Link>
             </Button>

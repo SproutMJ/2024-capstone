@@ -140,80 +140,83 @@ export default function Board() {
   };
 
   return (
-    <>
-      <Header></Header>
-      <main className="py-8">
-        <form onSubmit={(event)=>{
-          event.preventDefault()
-          if (ownBoard === 1) {
-            getOwnBoards();
-          } else {
-            getBoards();
-          }
-        }} className="mb-6 flex items-center justify-center">
-          <input
-              type="text"
-              value={searchKeyword}
-              onChange={handleSearchChange}
-              placeholder="검색어를 입력하세요"
-              className="border border-gray-300 rounded px-4 py-2 mr-2 flex-grow"
-              style={{ maxWidth: '300px', color: 'black' }}
-          />
-          <Button type="submit" className="flex-shrink-0">
-            검색
-          </Button>
-        </form>
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 gap-6">
-            {boards.map((board, index)=>(
-                <Card className="w-full" key={index}>
-                  <CardHeader>
-                    <CardTitle>{board.title + ' (' + board.commentNum + ')'}</CardTitle>
-                    <CardDescription>작성일: {board.createdTime}</CardDescription>
-                    <CardDescription>작성자: {board.username}</CardDescription>
-                  </CardHeader>
-                  <CardFooter>
-                    <Link href={`boards/${board.id}`}><Button variant="outline">자세히 보기</Button></Link>
-                  </CardFooter>
-                </Card>
-            ))}
-          </div>
+      <>
+        <Header></Header>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <h1 className="text-6xl font-bold text-red-400 opacity-20">게시판</h1>
         </div>
-
-        <div className="flex justify-center mt-8">
-          <Button onClick={handlePrevPage} disabled={currentPage === 0}>
-            이전
-          </Button>
-          <div className="mx-4">
-            {currentPage} / {totalPages}
-          </div>
-          <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
-            다음
-          </Button>
-        </div>
-
-        <div className="fixed bottom-6 right-6">
-          <Link href={'/boards/writing/0'}>
-            <Button size="lg">
-              <PlusIcon className="h-6 w-6" />
-              <span className="sr-only">Add new</span>
+        <main className="py-8">
+          <form onSubmit={(event) => {
+            event.preventDefault()
+            if (ownBoard === 1) {
+              getOwnBoards();
+            } else {
+              getBoards();
+            }
+          }} className="mb-6 flex items-center justify-center">
+            <input
+                type="text"
+                value={searchKeyword}
+                onChange={handleSearchChange}
+                placeholder="검색어를 입력하세요"
+                className="border border-gray-300 rounded px-4 py-2 mr-2 flex-grow"
+                style={{maxWidth: '300px', color: 'black'}}
+            />
+            <Button type="submit" className="flex-shrink-0">
+              검색
             </Button>
-          </Link>
-        </div>
-      </main>
-    </>
+          </form>
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 gap-6">
+              {boards.map((board, index) => (
+                  <Card className="w-full" key={index}>
+                    <CardHeader>
+                      <CardTitle>{board.title + ' (' + board.commentNum + ')'}</CardTitle>
+                      <CardDescription>작성일: {board.createdTime}</CardDescription>
+                      <CardDescription>작성자: {board.username}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                      <Link href={`boards/${board.id}`}><Button variant="outline">자세히 보기</Button></Link>
+                    </CardFooter>
+                  </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-8">
+            <Button onClick={handlePrevPage} disabled={currentPage === 0}>
+              이전
+            </Button>
+            <div className="mx-4">
+              {currentPage} / {totalPages}
+            </div>
+            <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+              다음
+            </Button>
+          </div>
+
+          <div className="fixed bottom-6 right-6">
+            <Link href={'/boards/writing/0'}>
+              <Button size="lg">
+                <PlusIcon className="h-6 w-6"/>
+                <span className="sr-only">Add new</span>
+              </Button>
+            </Link>
+          </div>
+        </main>
+      </>
   )
 }
 
 function PlusIcon(props: any) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
+      <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
