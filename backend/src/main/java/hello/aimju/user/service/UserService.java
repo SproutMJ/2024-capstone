@@ -57,7 +57,10 @@ public class UserService {
 
     public UserDetailResponseDto getUserDetail(HttpSession session) {
         User user = getUserFromSession(session);
-        return new UserDetailResponseDto(user);
+        User curruentUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다: " + user.getId()));
+
+        return new UserDetailResponseDto(curruentUser);
     }
 
     @Transactional
