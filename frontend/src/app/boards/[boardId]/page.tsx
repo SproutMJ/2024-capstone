@@ -28,6 +28,7 @@ import axios from "axios";
 import useUserStore from "@/store/useUserStore";
 import {DeleteIcon, ScissorsIcon} from "lucide-react";
 import Image from "next/image";
+import Modal from "react-modal";
 
 type Comment = {
   id: number;
@@ -46,6 +47,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
   const {getState} = useUserStore;
   const [modifyComment, setModifyComment] = useState('');
   const [currentModifyCommentId, setCurrentModifyCommentId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   const fetchComment = useCallback(async () => {
@@ -103,8 +105,17 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
 
   const handleDeleteBoard = async () => {
     const response = await axios.delete(`/api/boards/${boardId}`);
+    closeModal();
     await router.push('/boards');
   }
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
       <>
@@ -143,7 +154,7 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
                         </Link>
                     )}
                     {getState().user?.userName === author && (
-                        <Button onClick={handleDeleteBoard} className="text-red-500 border-red-500" variant="outline">
+                        <Button onClick={openModal} className="text-red-500 border-red-500" variant="outline">
                           <DeleteIcon className="h-5 w-5"/>
                         </Button>
                     )}
@@ -243,6 +254,28 @@ export default function BoardDetail({params}: {params: {boardId: string}}) {
             </div>
           </div>
           <div className="fixed bottom-6 right-6"/>
+          {/* 삭제 확인 모달 */}
+          <Modal
+              isOpen={isModalOpen}
+              onRequestClose={closeModal}
+              contentLabel="레시피 삭제 확인"
+              className="fixed inset-0 flex items-center justify-center z-50 outline-none"
+              overlayClassName="fixed inset-0 bg-black bg-opacity-70 z-40"
+          >
+            {/* 모달 내부 스타일을 JSX 내에서 설정 */}
+            <div style={{
+              backgroundColor: "#333", /* 검은색 배경색 */
+              color: "#fff", /* 텍스트 색상 */
+              padding: "20px", /* 내부 간격 설정 */
+              borderRadius: "8px" /* 모서리 둥글게 설정 */
+            }}>
+              <h2 className="text-lg font-semibold mb-4">정말 삭제하시겠습니까?</h2>
+              <div className="flex justify-end mt-4">
+                <Button variant="outline" onClick={closeModal}>취소</Button>
+                <Button variant="outline" className="ml-2 text-red-500 border-red-500" onClick={handleDeleteBoard}>네</Button>
+              </div>
+            </div>
+          </Modal>
         </main>
       </>
   )

@@ -26,6 +26,8 @@ import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/componen
 import { Header } from "@/components/ui/header";
 import React, { useEffect, useState } from "react";
 import { TrashIcon } from "lucide-react";
+// @ts-ignore
+import Modal from "react-modal";
 
 type ChatRoom = {
   menu: string;
@@ -35,8 +37,10 @@ type ChatRoom = {
 
 export default function Main() {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  const [selectedChatRoom, setSelectedChatRoom] = useState<number | null>(null);
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [chatToDelete, setChatToDelete] = useState<number | null>(null);
+
 
   useEffect(() => {
     const fetchChatRooms = async () => {
@@ -52,17 +56,29 @@ export default function Main() {
   }, []);
 
   const handleChatRoomClick = (chatId: number) => {
-    setSelectedChatRoom(chatId);
     router.push(`/chatroom/${chatId}`);
   };
 
-  const handleDeleteClick = async (chatId: number) => {
+  const handleDeleteClick = async () => {
     try {
+      const chatId = chatToDelete;
+      console.log(chatId);
       await axios.delete(`/api/chatroom/${chatId}`);
       setChatRooms(chatRooms.filter(chat => chat.chatId !== chatId));
+      closeModal();
     } catch (error) {
       console.error("Error deleting chat room:", error);
     }
+  };
+
+  const openModal = (chatId: number) => {
+    setChatToDelete(chatId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setChatToDelete(null);
   };
 
   return (
@@ -87,7 +103,7 @@ export default function Main() {
                         채팅방 보기
                       </Button>
                       <Button variant="outline" className="text-red-500 border-red-500"
-                              onClick={() => handleDeleteClick(chat.chatId)}>
+                              onClick={() => openModal(chat.chatId)}>
                         <TrashIcon className="h-6 w-6" />
                       </Button>
                     </CardFooter>
@@ -103,6 +119,28 @@ export default function Main() {
               </Button>
             </Link>
           </div>
+          {/* 삭제 확인 모달 */}
+          <Modal
+              isOpen={isModalOpen}
+              onRequestClose={closeModal}
+              contentLabel="레시피 삭제 확인"
+              className="fixed inset-0 flex items-center justify-center z-50 outline-none"
+              overlayClassName="fixed inset-0 bg-black bg-opacity-70 z-40"
+          >
+            {/* 모달 내부 스타일을 JSX 내에서 설정 */}
+            <div style={{
+              backgroundColor: "#333", /* 검은색 배경색 */
+              color: "#fff", /* 텍스트 색상 */
+              padding: "20px", /* 내부 간격 설정 */
+              borderRadius: "8px" /* 모서리 둥글게 설정 */
+            }}>
+              <h2 className="text-lg font-semibold mb-4">정말 삭제하시겠습니까?</h2>
+              <div className="flex justify-end mt-4">
+                <Button variant="outline" onClick={closeModal}>취소</Button>
+                <Button variant="outline" className="ml-2 text-red-500 border-red-500" onClick={handleDeleteClick}>네</Button>
+              </div>
+            </div>
+          </Modal>
         </main>
       </>
   )
