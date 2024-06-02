@@ -97,7 +97,9 @@ public class UserService {
     public ResponseEntity<?> deleteUser(SignupRequestDto requestDto, HttpSession session) {
         User user = getUserFromSession(session);
         if (requestDto.getUserName().equals(user.getUserName()) && requestDto.getPassword().equals(user.getPassword())) {
-            userRepository.delete(user);
+            User deleteUser = userRepository.findById(user.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다: " + user.getId()));;
+            userRepository.delete(deleteUser);
             session.invalidate();
             StatusResponseDto res = new StatusResponseDto("삭제되었습니다.", 200);
             return new ResponseEntity<>(res, HttpStatus.OK);
