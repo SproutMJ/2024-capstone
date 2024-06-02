@@ -28,6 +28,7 @@ import axios from "axios";
 import useUserStore from "@/store/useUserStore";
 import {DeleteIcon, ScissorsIcon} from "lucide-react";
 import Image from "next/image";
+// @ts-ignore
 import Modal from "react-modal";
 
 type Comment = {
