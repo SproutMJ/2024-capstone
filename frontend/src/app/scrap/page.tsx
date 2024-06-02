@@ -25,7 +25,7 @@ import Modal from "react-modal";
 import axios from "axios";
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
+import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import {Header} from "@/components/ui/header";
 
 type Recipe = {
@@ -45,17 +45,6 @@ export default function Scrap() {
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recipeToDelete, setRecipeToDelete] = useState<number | null>(null);
-
-  const handleLogout = async () => {
-    try {
-      // 로그아웃 요청 보내기
-      await axios.post('/api/logout');
-      // 로그아웃 후 로그인 페이지로 이동
-      router.push('/login');
-    } catch (error) {
-      console.error('로그아웃 중 오류가 발생했습니다:', error);
-    }
-  };
 
   const router = useRouter();
 
